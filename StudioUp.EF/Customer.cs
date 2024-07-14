@@ -35,5 +35,5 @@ namespace StudioUp.Models
         //public HMO HMO { get; set; }
         //public PaymentOptions PaymentOptions { get; set; }
         //public SubscriptionType SubscriptionType { get; set; }
-    }   
+    }
 }
