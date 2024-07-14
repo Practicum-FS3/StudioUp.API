@@ -9,10 +9,11 @@ using AutoMapper;
 
 namespace StudioUp.Repo
 {
-    public class MappingProfile:Profile
+    public class MappingProfile : Profile
     {
         public MappingProfile()
         {
         }
     }
 }
+
