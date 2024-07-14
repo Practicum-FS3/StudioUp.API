@@ -15,6 +15,8 @@ namespace StudioUp.Models
         [ForeignKey("CustomerType")]
         public int CustomerTypeID { get; set; }
         public virtual CustomerType CustomerType { get; set; }
+        public bool IsActive { get; set; }
+
     }
 }
 
