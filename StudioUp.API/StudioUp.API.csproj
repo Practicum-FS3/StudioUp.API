@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StudioUp.EF\StudioUp.Models.csproj" />
+    <ProjectReference Include="..\StudioUp.Repo\StudioUp.Repo.csproj" />
   </ItemGroup>
 
 </Project>
