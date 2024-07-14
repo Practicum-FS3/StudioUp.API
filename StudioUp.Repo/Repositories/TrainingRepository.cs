@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace StudioUp.Models
+namespace StudioUp.Repo.Repositories
 {
     public class TrainingRepository : ITrainingRepository
     {
