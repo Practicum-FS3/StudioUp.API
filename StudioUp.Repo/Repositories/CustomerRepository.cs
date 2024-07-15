@@ -42,7 +42,7 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var c = await GetByIdAsync(id);                  
+                var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
                 var mapC = mapper.Map<Customer>(c);
                 context.Customers.Remove(mapC);
                 await context.SaveChangesAsync();
@@ -89,13 +89,24 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var customerToUpdate = await GetByIdAsync(entity.Id);
+                var customerToUpdate = await context.Customers.FirstOrDefaultAsync(customerToUpdate => customerToUpdate.Id == entity.Id);
+
                 if (customerToUpdate == null)
                 {
                     return false;
                 }
-                var mapC = mapper.Map<Customer>(entity);
-                context.Customers.Update(mapC);
+
+                customerToUpdate.Adress = entity.Adress;
+                customerToUpdate.LastName = entity.LastName;
+                customerToUpdate.FirstName = entity.FirstName;
+                customerToUpdate.PaymentOptionsId = entity.PaymentOptionsId;
+                customerToUpdate.HMOId = entity.HMOId;
+                customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
+                customerToUpdate.IsActive = entity.IsActive;
+                customerToUpdate.SubscriptionTypeId = entity.SubscriptionTypeId;
+                customerToUpdate.Tel = entity.Tel;
+                context.Customers.Update(mapper.Map<Customer>(customerToUpdate));
+
                 await context.SaveChangesAsync();
                 return true;
 
