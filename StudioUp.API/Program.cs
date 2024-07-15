@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StudioUp.Models;
+using StudioUp.Repo.IRepositories;
 namespace StudioUp.API
 {
     public class Program
@@ -12,7 +13,7 @@ namespace StudioUp.API
                 builder.Configuration.GetConnectionString("StudioUp")));
 
             // Add services to the container
-
+            builder.Services.AddScoped<ITrainingRepository,TrainingRepository>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
