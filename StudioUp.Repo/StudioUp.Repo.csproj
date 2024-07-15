@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StudioUp.API\StudioUp.API.csproj" />
+    <ProjectReference Include="..\StudioUp.EF\StudioUp.Models.csproj" />
+  </ItemGroup>
+
 </Project>
