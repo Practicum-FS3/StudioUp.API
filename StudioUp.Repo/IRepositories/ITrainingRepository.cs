@@ -1,4 +1,5 @@
-﻿using StudioUp.Models;
+﻿using StudioUp.DTO;
+using StudioUp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ namespace StudioUp.Repo.IRepositories
 {
     public interface ITrainingRepository
     {
-        public Task<IEnumerable<Training>> GetAllTrainings();
-        public Task<Training> GetTrainingById(int id);
-        public Task AddTraining(Training training);
-        public Task UpdateTraining(Training training);
+        public Task<IEnumerable<TrainingDTO>> GetAllTrainings();
+        public Task<TrainingDTO> GetTrainingById(int id);
+        public Task AddTraining(TrainingDTO trainingDto);
+        public Task UpdateTraining(TrainingDTO trainingDto);
         public Task DeleteTraining(int id);
     }
 }

@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
+using System.ComponentModel;
+
 namespace StudioUp.API
 {
     public class Program
@@ -9,21 +12,30 @@ namespace StudioUp.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
-                builder.Configuration.GetConnectionString("StudioUp")));
+            // Configuration
+            builder.Configuration.AddJsonFile("appsettings.json", optional: false);
 
-            // Add services to the container
-            builder.Services.AddScoped<ITrainingRepository,TrainingRepository>();
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Database context
+            builder.Services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("StudioUp")));
+
+            // Repositories
+            builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
+            });
+
+            // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // AutoMapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Middleware setup
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -31,10 +43,7 @@ namespace StudioUp.API
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();

@@ -31,9 +31,9 @@ namespace StudioUp.Models
         public string Adress { get; set; }
 
         //relationShip
-        //public CustomerType CustomerType { get; set; }
-        //public HMO HMO { get; set; }
-        //public PaymentOptions PaymentOptions { get; set; }
-        //public SubscriptionType SubscriptionType { get; set; }
+        public CustomerType CustomerType { get; set; }
+        public HMO HMO { get; set; }
+        public PaymentOption PaymentOption { get; set; }
+        public SubscriptionType SubscriptionType { get; set; }
     }
 }

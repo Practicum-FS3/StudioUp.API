@@ -1,43 +1,79 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.Identity.Client;
+using StudioUp.API.models;
+using StudioUp.DTO;
+using StudioUp.Repo.IRepositories;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace StudioUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TrainigController : ControllerBase
+    public class TrainingController : ControllerBase
     {
-        // GET: api/<TrainigController>
+        private readonly ITrainingRepository _trainingRepository;
+
+        public TrainingController(ITrainingRepository trainingRepository)
+        {
+            _trainingRepository = trainingRepository;
+        }
+
+        // GET: api/Training
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<IEnumerable<TrainingDTO>>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var trainings = await _trainingRepository.GetAllTrainings();
+            return Ok(trainings);
         }
 
-        // GET api/<TrainigController>/5
+        // GET: api/Training/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<TrainingDTO>> Get(int id)
         {
-            return "value";
+            var training = await _trainingRepository.GetTrainingById(id);
+            if (training == null)
+            {
+                return NotFound();
+            }
+            return Ok(training);
         }
 
-        // POST api/<TrainigController>
+        // POST: api/Training
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> Post([FromBody] TrainingDTO trainingDTO)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            await _trainingRepository.AddTraining(trainingDTO);
+            return CreatedAtAction(nameof(Get), new { id = trainingDTO.ID }, trainingDTO);
         }
 
-        // PUT api/<TrainigController>/5
+        // PUT: api/Training/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult> Put(int id, [FromBody] TrainingDTO trainingDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var training = await _trainingRepository.GetTrainingById(id);
+
+            if (training == null)
+                return NotFound();
+
+            await _trainingRepository.UpdateTraining(trainingDto);
+            return NoContent();
         }
 
-        // DELETE api/<TrainigController>/5
+        // DELETE: api/Training/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            var training = await _trainingRepository.GetTrainingById(id);
+            if (training == null)
+                return NotFound();
+            await _trainingRepository.DeleteTraining(id);
+            return NoContent();
         }
     }
 }
