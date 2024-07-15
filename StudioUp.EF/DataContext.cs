@@ -22,6 +22,7 @@ namespace StudioUp.Models
         public DbSet<Training> Trainings { get; set; }
         public DbSet<TrainingCustomer> TrainingCustomers { get; set; }
         public DbSet<TrainingType> TrainingTypes { get; set; }
+        public DbSet<AvailableTraining> AvailableTraining { get; set; }
 
     }
 }
