@@ -83,11 +83,12 @@ namespace StudioUp.Repo.Repository
         {
             try
             {
-                var h = await GetByIdAsync(hmo.ID);
+                var h = await this._context.HMOs.FirstOrDefaultAsync(h => h.ID == hmo.ID);
                 if (h == null) { 
                     return false;
                 }
                 h.Title = hmo.Title;
+                h.IsActive = hmo.IsActive;
                 _context.HMOs.Update(mapper.Map<HMO>(h));
                 await this._context.SaveChangesAsync();
                 return true;
