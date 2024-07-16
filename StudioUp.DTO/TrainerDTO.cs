@@ -12,7 +12,7 @@ namespace StudioUp.DTO
         public int ID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        //public bool IsActive { get; set; }
+        public bool IsActive { get; set; }
         public string Mail { get; set; }
         public string Tel { get; set; }
         public string Adress { get; set; }
