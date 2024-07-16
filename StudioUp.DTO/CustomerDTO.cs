@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StudioUp.DTO
 {
-    public class CastomerDTO
+    public class CustomerDTO
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

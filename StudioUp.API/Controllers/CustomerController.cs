@@ -15,7 +15,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<DTO.CastomerDTO>> GetAllCustomer()
+        public async Task<List<DTO.CustomerDTO>> GetAllCustomer()
         {
             try
             {
@@ -23,14 +23,14 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return new List<DTO.CastomerDTO>();
+                return new List<DTO.CustomerDTO>();
             }
         }
 
         [HttpGet]
         [Route("/byId")]
 
-        public async Task<DTO.CastomerDTO> GetCustomerById(int id)
+        public async Task<DTO.CustomerDTO> GetCustomerById(int id)
         {
             try
             {
@@ -38,13 +38,13 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return new DTO.CastomerDTO();
+                return new DTO.CustomerDTO();
             }
         }
 
         [HttpPost]
 
-        public async Task<int> AddCustomer(DTO.CastomerDTO customer)
+        public async Task<int> AddCustomer(DTO.CustomerDTO customer)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace StudioUp.API.Controllers
 
         [HttpPut]
 
-        public async Task<bool> UpdateCustomer(DTO.CastomerDTO customer)
+        public async Task<bool> UpdateCustomer(DTO.CustomerDTO customer)
         {
             try
             {

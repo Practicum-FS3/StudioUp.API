@@ -23,7 +23,7 @@ namespace StudioUp.Repo.Repositories
             this.mapper = mapper;
             
         }
-        public async Task<int> AddAsync(CastomerDTO entity)
+        public async Task<int> AddAsync(CustomerDTO entity)
         {
             try
             {
@@ -54,38 +54,38 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        public async Task<List<CastomerDTO>> GetAllAsync()
+        public async Task<List<CustomerDTO>> GetAllAsync()
         {
             try
             {
                 var l = await context.Customers.ToListAsync();
 
-                return mapper.Map<List<CastomerDTO>>(l);
+                return mapper.Map<List<CustomerDTO>>(l);
                 
             }
             catch (Exception ex)
             {
-                return new List<CastomerDTO>();
+                return new List<CustomerDTO>();
             }
 
         }
 
-        public async Task<CastomerDTO> GetByIdAsync(int id)
+        public async Task<CustomerDTO> GetByIdAsync(int id)
         {
             try
             {
                 var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
-                var mapCust = mapper.Map<CastomerDTO>(c);
+                var mapCust = mapper.Map<CustomerDTO>(c);
                 return mapCust;
 
             }
             catch (Exception ex)
             {
-                return new CastomerDTO();
+                return new CustomerDTO();
             }
         }
 
-        public async Task<bool> UpdateAsync(CastomerDTO entity)
+        public async Task<bool> UpdateAsync(CustomerDTO entity)
         {
             try
             {
