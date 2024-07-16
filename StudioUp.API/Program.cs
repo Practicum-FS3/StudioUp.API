@@ -14,6 +14,7 @@ namespace StudioUp.API
                 builder.Configuration.GetConnectionString("StudioUp")));
 
             // Add services to the container
+            builder.Services.AddScoped<IHMORepository, HMORepository>();
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
             builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
