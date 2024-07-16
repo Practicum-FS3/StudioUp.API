@@ -2,8 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 using StudioUp.Repo.Repositories;
-using System.ComponentModel;
-
+using StudioUp.Repo.Repository;
 namespace StudioUp.API
 {
     public class Program
@@ -26,7 +25,13 @@ namespace StudioUp.API
                 options.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
             });
 
-            // Swagger
+            // Add services to the container
+            builder.Services.AddScoped<IHMORepository, HMORepository>();
+            builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
+            builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+               // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
