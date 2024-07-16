@@ -44,9 +44,10 @@ namespace StudioUp.Repo.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateTraining(TrainingDTO trainingDto)
+        public async Task UpdateTraining(TrainingDTO trainingDto, int id)
         {
-            Training training = _mapper.Map<Training>(trainingDto);
+            Training training=_context.Trainings.FirstOrDefault(t => t.ID == id);
+            _mapper.Map(trainingDto, training);
             _context.Trainings.Update(training);
             await _context.SaveChangesAsync();
         }

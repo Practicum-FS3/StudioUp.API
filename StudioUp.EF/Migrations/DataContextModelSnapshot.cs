@@ -33,9 +33,6 @@ namespace StudioUp.Models.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<int>("ParticipantsCount")
                         .HasColumnType("int");
 
@@ -71,12 +68,12 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("HMOId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("PaymentOptionID")
+                        .HasColumnType("int");
 
                     b.Property<int>("PaymentOptionsId")
                         .HasColumnType("int");
@@ -90,6 +87,14 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerTypeId");
+
+                    b.HasIndex("HMOId");
+
+                    b.HasIndex("PaymentOptionID");
+
+                    b.HasIndex("SubscriptionTypeId");
+
                     b.ToTable("T_Customers");
                 });
 
@@ -101,9 +106,6 @@ namespace StudioUp.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -114,7 +116,7 @@ namespace StudioUp.Models.Migrations
                     b.ToTable("T_CustomerTypes");
                 });
 
-            modelBuilder.Entity("StudioUp.Models.PaymentOption", b =>
+            modelBuilder.Entity("StudioUp.Models.HMO", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -122,8 +124,23 @@ namespace StudioUp.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("T_HMOS");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.PaymentOption", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -142,9 +159,6 @@ namespace StudioUp.Models.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -173,9 +187,6 @@ namespace StudioUp.Models.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -211,9 +222,6 @@ namespace StudioUp.Models.Migrations
                     b.Property<TimeOnly>("Hour")
                         .HasColumnType("time");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<int>("ParticipantsCount")
                         .HasColumnType("int");
 
@@ -246,9 +254,6 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<int>("TrainingID")
                         .HasColumnType("int");
 
@@ -272,9 +277,6 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("CustomerTypeID")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -296,6 +298,41 @@ namespace StudioUp.Models.Migrations
                         .IsRequired();
 
                     b.Navigation("Training");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.Customer", b =>
+                {
+                    b.HasOne("StudioUp.Models.CustomerType", "CustomerType")
+                        .WithMany()
+                        .HasForeignKey("CustomerTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudioUp.Models.HMO", "HMO")
+                        .WithMany()
+                        .HasForeignKey("HMOId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudioUp.Models.PaymentOption", "PaymentOption")
+                        .WithMany()
+                        .HasForeignKey("PaymentOptionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudioUp.Models.SubscriptionType", "SubscriptionType")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomerType");
+
+                    b.Navigation("HMO");
+
+                    b.Navigation("PaymentOption");
+
+                    b.Navigation("SubscriptionType");
                 });
 
             modelBuilder.Entity("StudioUp.Models.Training", b =>
