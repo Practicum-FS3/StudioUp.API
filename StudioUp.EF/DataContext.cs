@@ -17,7 +17,7 @@ namespace StudioUp.Models
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<PaymentOption> PaymentOptions { get; set; }
-        public DbSet<SubscriptionType> SusbscriptionTypes { get; set; }
+        public DbSet<SubscriptionType> SubscriptionTypes { get; set; }
         public DbSet<Trainer> Trainers { get; set; }
         public DbSet<Training> Trainings { get; set; }
         public DbSet<TrainingCustomer> TrainingCustomers { get; set; }
