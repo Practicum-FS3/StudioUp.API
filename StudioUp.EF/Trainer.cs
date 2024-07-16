@@ -14,7 +14,7 @@ namespace StudioUp.Models
 
         [StringLength(50)]
         public string LastName { get; set; }
-        public bool IsActive { get; set; }
+        //public bool IsActive { get; set; }
 
         [StringLength(20)]
         public string Mail { get; set; }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
-using StudioUp.API.models;
 using StudioUp.DTO;
 using StudioUp.Repo.IRepositories;
 using System.Collections.Generic;
