@@ -56,7 +56,7 @@ namespace StudioUp.Repo.Repositories
                 TrainingId = availableTrainingDTO.TrainingId,
                 Date = availableTrainingDTO.Date,
                 ParticipantsCount = availableTrainingDTO.ParticipantsCount,
-                IsActive = true // Assuming new trainings are active by default
+                //IsActive = true // Assuming new trainings are active by default
             };
 
             await _context.AvailableTraining.AddAsync(availableTraining);

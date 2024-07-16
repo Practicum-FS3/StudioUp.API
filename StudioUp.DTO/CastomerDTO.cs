@@ -15,7 +15,7 @@ namespace StudioUp.DTO
         public int HMOId { get; set; }
         public int PaymentOptionsId { get; set; }
         public int SubscriptionTypeId { get; set; }
-        public bool IsActive { get; set; }
+        //public bool IsActive { get; set; }
         public string Tel { get; set; }
         public string Adress { get; set; }
     }

@@ -88,7 +88,7 @@ namespace StudioUp.Repo.Repository
                     return false;
                 }
                 h.Title = hmo.Title;
-                h.IsActive = hmo.IsActive;
+               // h.IsActive = hmo.IsActive;
                 _context.HMOs.Update(mapper.Map<HMO>(h));
                 await this._context.SaveChangesAsync();
                 return true;

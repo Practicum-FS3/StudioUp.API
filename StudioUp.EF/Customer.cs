@@ -22,7 +22,7 @@ namespace StudioUp.Models
         public int HMOId { get; set; }
         public int PaymentOptionsId { get; set; }
         public int SubscriptionTypeId { get; set; }
-        public bool IsActive { get; set; }
+        //public bool IsActive { get; set; }
 
         [Column(TypeName = "nvarchar(10)")]
         public string Tel { get; set; }
