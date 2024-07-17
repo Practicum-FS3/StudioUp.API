@@ -16,9 +16,9 @@ namespace StudioUp.DTO
         public int PaymentOptionId { get; set; }
         public int SubscriptionTypeId { get; set; }
         public bool IsActive { get; set; }
+        public string Email { get; set; }
         public string Tel { get; set; }
         public string Address { get; set; }
-        public string Email { get; set; }
 
     }
 }

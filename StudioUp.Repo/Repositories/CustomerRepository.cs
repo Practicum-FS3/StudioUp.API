@@ -102,10 +102,10 @@ namespace StudioUp.Repo.Repositories
                 customerToUpdate.PaymentOptionId = entity.PaymentOptionId;
                 customerToUpdate.HMOId = entity.HMOId;
                 customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
+                customerToUpdate.Email = entity.Email;
                 //customerToUpdate.IsActive = entity.IsActive;
                 customerToUpdate.SubscriptionTypeId = entity.SubscriptionTypeId;
                 customerToUpdate.Tel = entity.Tel;
-                customerToUpdate.Email = entity.Email;
                 context.Customers.Update(mapper.Map<Customer>(customerToUpdate));
 
                 await context.SaveChangesAsync();

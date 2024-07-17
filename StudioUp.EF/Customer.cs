@@ -18,17 +18,15 @@ namespace StudioUp.Models
 
         [Column(TypeName = "nvarchar(20)")]
         public string LastName { get; set; }
-       
+
+        [Column(TypeName = "nvarchar(50)")]
+        public string Email { get; set; }
 
         [Column(TypeName = "nvarchar(10)")]
         public string Tel { get; set; }
 
         [Column(TypeName = "nvarchar(50)")]
         public string Address { get; set; }
-
-        [Column(TypeName = "nvarchar(50)")]
-        public string Email { get; set; }
-
 
         public bool IsActive { get; set; }
 
