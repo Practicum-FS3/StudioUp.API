@@ -27,7 +27,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("byId/{id}")]
 
         public async Task<DTO.CustomerDTO> GetCustomerById(int id)
         {
@@ -42,7 +42,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost]
-        [Route("api/Customer/addCustomer")]
+        [Route("addCustomer")]
         public async Task<DTO.CustomerDTO> AddCustomer(DTO.CustomerDTO customer)
         {
             try
