@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 
@@ -24,13 +25,13 @@ namespace StudioUp.API.Controllers
                 return await HMOService.GetAllAsync();
             }catch (Exception ex)
             {
-                return new List<DTO.HMODTO>();
+                throw new Exception("-1");
             }
         }
 
         [HttpPost]
         [Route ("/add")]
-        public async Task<int> add(DTO.HMODTO hmo)
+        public async Task<HMODTO> add(DTO.HMODTO hmo)
         {
             try
             {
@@ -38,7 +39,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return -1;
+                throw new Exception("-1");
             }
             
         }
@@ -53,7 +54,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception("-1");
             }
         }
 
@@ -67,7 +68,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return new DTO.HMODTO();
+                throw new Exception("-1");
             }
         }
 
@@ -81,7 +82,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception("-1");
             }
 
         }
