@@ -23,6 +23,6 @@ namespace StudioUp.Models
         public string Tel { get; set; }
 
         [StringLength(50)]
-        public string Adress { get; set; }
+        public string Address { get; set; }
     }
 }

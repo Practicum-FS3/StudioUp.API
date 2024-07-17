@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\StudioUp.DTO\StudioUp.DTO.csproj" />
     <ProjectReference Include="..\StudioUp.EF\StudioUp.Models.csproj" />
     <ProjectReference Include="..\StudioUp.Repo\StudioUp.Repo.csproj" />
   </ItemGroup>

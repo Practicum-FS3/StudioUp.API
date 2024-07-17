@@ -7,9 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioUp.API", "StudioUp.AP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioUp.Models", "StudioUp.EF\StudioUp.Models.csproj", "{592A2A33-47CA-458C-8866-863D3D84753D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudioUp.DTO", "StudioUp.DTO\StudioUp.DTO.csproj", "{A7C5988B-587E-4673-97C2-0A185F6715EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioUp.DTO", "StudioUp.DTO\StudioUp.DTO.csproj", "{A7C5988B-587E-4673-97C2-0A185F6715EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudioUp.Repo", "StudioUp.Repo\StudioUp.Repo.csproj", "{11853D2D-92AD-45A1-ABF3-88CA1337F767}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudioUp.Repo", "StudioUp.Repo\StudioUp.Repo.csproj", "{11853D2D-92AD-45A1-ABF3-88CA1337F767}"
+	ProjectSection(ProjectDependencies) = postProject
+		{592A2A33-47CA-458C-8866-863D3D84753D} = {592A2A33-47CA-458C-8866-863D3D84753D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

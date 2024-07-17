@@ -18,7 +18,7 @@ namespace StudioUp.Models
         public DateOnly Date {  get; set; }
         //public int Tonnage { get; set; }
         public int ParticipantsCount { get; set; }
-        public bool IsActive { get; set; }
+        //public bool IsActive { get; set; }
 
     }
 }
