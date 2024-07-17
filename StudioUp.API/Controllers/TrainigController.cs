@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using StudioUp.DTO;
 using StudioUp.Repo.IRepositories;
@@ -60,7 +61,7 @@ namespace StudioUp.API.Controllers
             if (training == null)
                 return NotFound();
 
-            await _trainingRepository.UpdateTraining(trainingDto);
+            await _trainingRepository.UpdateTraining(trainingDto,id);
             return NoContent();
         }
 

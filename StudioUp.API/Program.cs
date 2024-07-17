@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StudioUp.Models;
+using StudioUp.Repo;
 using StudioUp.Repo.IRepositories;
 using StudioUp.Repo.Repositories;
 using StudioUp.Repo.Repository;
@@ -20,7 +21,6 @@ namespace StudioUp.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("StudioUp")));
 
             // Repositories
-            builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
@@ -31,8 +31,11 @@ namespace StudioUp.API
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
             builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IRepository<CustomerType>, CustomerTypeRepository>();
+            builder.Services.AddScoped<IRepository<SubscriptionType>, SubscriptionTypeRepository>();
+            builder.Services.AddScoped<IRepository<PaymentOption>, PaymentOptionRepository>();
 
-               // Swagger
+            // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 

@@ -6,32 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudioUp.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class _1000 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "T_Customers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(20)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(20)", nullable: false),
-                    CustomerTypeId = table.Column<int>(type: "int", nullable: false),
-                    HMOId = table.Column<int>(type: "int", nullable: false),
-                    PaymentOptionsId = table.Column<int>(type: "int", nullable: false),
-                    SubscriptionTypeId = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Tel = table.Column<string>(type: "nvarchar(10)", nullable: false),
-                    Adress = table.Column<string>(type: "nvarchar(50)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_T_Customers", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "T_CustomerTypes",
                 columns: table => new
@@ -44,6 +23,20 @@ namespace StudioUp.Models.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_T_CustomerTypes", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "T_HMOs",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_T_HMOs", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,7 +78,7 @@ namespace StudioUp.Models.Migrations
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Mail = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Tel = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Adress = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Address = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -99,16 +92,54 @@ namespace StudioUp.Models.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CustomerTypeID = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_T_TrainigTypes", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "T_Customers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    Tel = table.Column<string>(type: "nvarchar(10)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CustomerTypeId = table.Column<int>(type: "int", nullable: false),
+                    HMOId = table.Column<int>(type: "int", nullable: false),
+                    PaymentOptionId = table.Column<int>(type: "int", nullable: false),
+                    SubscriptionTypeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_T_Customers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_T_TrainigTypes_T_CustomerTypes_CustomerTypeID",
-                        column: x => x.CustomerTypeID,
+                        name: "FK_T_Customers_T_CustomerTypes_CustomerTypeId",
+                        column: x => x.CustomerTypeId,
                         principalTable: "T_CustomerTypes",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_T_Customers_T_HMOs_HMOId",
+                        column: x => x.HMOId,
+                        principalTable: "T_HMOs",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_T_Customers_T_PaymentOptions_PaymentOptionId",
+                        column: x => x.PaymentOptionId,
+                        principalTable: "T_PaymentOptions",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_T_Customers_T_SubscriptionTypes_SubscriptionTypeId",
+                        column: x => x.SubscriptionTypeId,
+                        principalTable: "T_SubscriptionTypes",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -144,6 +175,32 @@ namespace StudioUp.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TrainingCustomersTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerTypeID = table.Column<int>(type: "int", nullable: false),
+                    TrainingTypeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrainingCustomersTypes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TrainingCustomersTypes_T_CustomerTypes_CustomerTypeID",
+                        column: x => x.CustomerTypeID,
+                        principalTable: "T_CustomerTypes",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TrainingCustomersTypes_T_TrainigTypes_TrainingTypeId",
+                        column: x => x.TrainingTypeId,
+                        principalTable: "T_TrainigTypes",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "T_AvailableTrainings",
                 columns: table => new
                 {
@@ -151,8 +208,7 @@ namespace StudioUp.Models.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TrainingId = table.Column<int>(type: "int", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    ParticipantsCount = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    ParticipantsCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -199,9 +255,24 @@ namespace StudioUp.Models.Migrations
                 column: "TrainingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_T_TrainigTypes_CustomerTypeID",
-                table: "T_TrainigTypes",
-                column: "CustomerTypeID");
+                name: "IX_T_Customers_CustomerTypeId",
+                table: "T_Customers",
+                column: "CustomerTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_T_Customers_HMOId",
+                table: "T_Customers",
+                column: "HMOId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_T_Customers_PaymentOptionId",
+                table: "T_Customers",
+                column: "PaymentOptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_T_Customers_SubscriptionTypeId",
+                table: "T_Customers",
+                column: "SubscriptionTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_T_Trainings_TrainerID",
@@ -222,19 +293,26 @@ namespace StudioUp.Models.Migrations
                 name: "IX_T_TrainingsCustomers_TrainingID",
                 table: "T_TrainingsCustomers",
                 column: "TrainingID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingCustomersTypes_CustomerTypeID",
+                table: "TrainingCustomersTypes",
+                column: "CustomerTypeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainingCustomersTypes_TrainingTypeId",
+                table: "TrainingCustomersTypes",
+                column: "TrainingTypeId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "T_PaymentOptions");
-
-            migrationBuilder.DropTable(
-                name: "T_SubscriptionTypes");
-
-            migrationBuilder.DropTable(
                 name: "T_TrainingsCustomers");
+
+            migrationBuilder.DropTable(
+                name: "TrainingCustomersTypes");
 
             migrationBuilder.DropTable(
                 name: "T_AvailableTrainings");
@@ -246,13 +324,22 @@ namespace StudioUp.Models.Migrations
                 name: "T_Trainings");
 
             migrationBuilder.DropTable(
+                name: "T_CustomerTypes");
+
+            migrationBuilder.DropTable(
+                name: "T_HMOs");
+
+            migrationBuilder.DropTable(
+                name: "T_PaymentOptions");
+
+            migrationBuilder.DropTable(
+                name: "T_SubscriptionTypes");
+
+            migrationBuilder.DropTable(
                 name: "T_Trainers");
 
             migrationBuilder.DropTable(
                 name: "T_TrainigTypes");
-
-            migrationBuilder.DropTable(
-                name: "T_CustomerTypes");
         }
     }
 }
