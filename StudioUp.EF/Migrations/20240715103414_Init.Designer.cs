@@ -12,7 +12,7 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240714102622_Init")]
+    [Migration("20240715103414_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -35,6 +35,9 @@ namespace StudioUp.Models.Migrations
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ParticipantsCount")
                         .HasColumnType("int");
@@ -101,6 +104,9 @@ namespace StudioUp.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -119,6 +125,9 @@ namespace StudioUp.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -136,6 +145,9 @@ namespace StudioUp.Models.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -202,6 +214,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<TimeOnly>("Hour")
                         .HasColumnType("time");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ParticipantsCount")
                         .HasColumnType("int");
 
@@ -234,6 +249,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int>("TrainingID")
                         .HasColumnType("int");
 
@@ -256,6 +274,9 @@ namespace StudioUp.Models.Migrations
 
                     b.Property<int>("CustomerTypeID")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
