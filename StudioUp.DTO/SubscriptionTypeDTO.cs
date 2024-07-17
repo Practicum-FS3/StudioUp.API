@@ -11,6 +11,10 @@ namespace StudioUp.DTO
         public int ID { get; set; }
         public string Title { get; set; }
         public bool IsActive { get; set; }
+        public int TotalTraining { get; set; }
+        public int PriceForTraining{ get; set; }
+        public int NumberOfTrainingPerWeek{ get; set; }
+        public string Description { get; set; }
 
     }
 }
