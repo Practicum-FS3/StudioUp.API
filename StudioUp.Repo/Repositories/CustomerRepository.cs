@@ -23,18 +23,19 @@ namespace StudioUp.Repo.Repositories
             this.mapper = mapper;
             
         }
-        public async Task<int> AddAsync(CustomerDTO entity)
+        public async Task<DTO.CustomerDTO> AddAsync(CustomerDTO entity)
         {
             try
             {
                 var mapCast = mapper.Map<Models.Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);
                 await context.SaveChangesAsync();
-                return newCustomer.Entity.Id;
+                entity.Id = newCustomer.Entity.Id;
+                return entity;
             }
             catch (Exception ex)
             {
-                return 0;
+                throw new Exception("Cann't add this object");
             }
         }
 
@@ -65,7 +66,8 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return new List<CustomerDTO>();
+                throw new Exception("Not secceed");
+
             }
 
         }
@@ -81,7 +83,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return new CustomerDTO();
+                throw new Exception("Not secceed");
             }
         }
 
@@ -113,7 +115,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception("Not secceed");
             }
         }
     }
