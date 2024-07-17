@@ -23,11 +23,11 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("byId/{id}")]
 
         public async Task<DTO.CustomerDTO> GetCustomerById(int id)
         {
@@ -37,12 +37,12 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
         [HttpPost]
-        [Route("api/Customer/addCustomer")]
+        [Route("addCustomer")]
         public async Task<DTO.CustomerDTO> AddCustomer(DTO.CustomerDTO customer)
         {
             try
@@ -51,7 +51,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
@@ -65,7 +65,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
@@ -78,7 +78,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 

@@ -35,7 +35,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception("Cann't add this object");
+                throw ex;
             }
         }
 
@@ -55,7 +55,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception("Cann't delete this object");
+                throw ex;
 
             }
         }
@@ -71,7 +71,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception("Not secceed");
+                throw ex;
 
             }
 
@@ -89,7 +89,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception("Not secceed");
+                throw ex;
             }
         }
 
@@ -122,7 +122,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception("Cann't update this object");
+                throw ex;
             }
         }
     }
