@@ -43,7 +43,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost]
-
+        [Route("/addCustomer")]
         public async Task<int> AddCustomer(DTO.CustomerDTO customer)
         {
             try
