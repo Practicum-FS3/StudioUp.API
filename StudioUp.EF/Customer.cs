@@ -25,10 +25,10 @@ namespace StudioUp.Models
 
         [Column(TypeName = "nvarchar(50)")]
         public string Address { get; set; }
-
         [Column(TypeName = "nvarchar(50)")]
         public string Email { get; set; }
         public bool IsActive { get; set; }
+
 
         [ForeignKey("CustomerTypes")]
         public int CustomerTypeId { get; set; }
