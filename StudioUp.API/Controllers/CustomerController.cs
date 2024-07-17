@@ -23,7 +23,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
@@ -37,7 +37,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
@@ -51,7 +51,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
@@ -65,7 +65,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
@@ -78,7 +78,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
