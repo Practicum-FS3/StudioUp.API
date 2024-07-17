@@ -25,7 +25,7 @@ namespace StudioUp.API.Controllers
                 return await HMOService.GetAllAsync();
             }catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
@@ -39,7 +39,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
             
         }
@@ -54,7 +54,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
@@ -68,7 +68,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("-1");
+                throw ex;
             }
         }
 
@@ -80,9 +80,8 @@ namespace StudioUp.API.Controllers
             {
                 return await HMOService.UpdateAsync(hmo);
             }
-            catch (Exception ex)
-            {
-                throw new Exception("-1");
+            catch(Exception ex) {
+                throw ex;
             }
 
         }
