@@ -23,12 +23,11 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return new List<DTO.CustomerDTO>();
+                throw new Exception("-1");
             }
         }
 
-        [HttpGet]
-        [Route("/byId")]
+        [HttpGet("{id}")]
 
         public async Task<DTO.CustomerDTO> GetCustomerById(int id)
         {
@@ -38,13 +37,13 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return new DTO.CustomerDTO();
+                throw new Exception("-1");
             }
         }
 
         [HttpPost]
-        [Route("/addCustomer")]
-        public async Task<int> AddCustomer(DTO.CustomerDTO customer)
+        [Route("api/Customer/addCustomer")]
+        public async Task<DTO.CustomerDTO> AddCustomer(DTO.CustomerDTO customer)
         {
             try
             {
@@ -52,7 +51,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return -1;
+                throw new Exception("-1");
             }
         }
 
@@ -66,11 +65,11 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception("-1");
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<bool> DeleteCustomer(int id)
         {
             try
@@ -79,7 +78,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception("-1");
             }
         }
 
