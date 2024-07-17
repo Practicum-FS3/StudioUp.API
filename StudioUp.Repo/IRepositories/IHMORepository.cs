@@ -16,7 +16,8 @@ namespace StudioUp.Repo.IRepositories
 
         Task<bool> UpdateAsync(HMODTO hmo);
 
-        Task<int> AddAsync(HMODTO hmo);
+
+        Task<HMODTO> AddAsync(HMODTO hmo);
 
         Task<bool> DeleteAsync(int id);
     }

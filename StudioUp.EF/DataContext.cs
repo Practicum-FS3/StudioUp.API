@@ -17,7 +17,8 @@ namespace StudioUp.Models
         
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<PaymentOption> PaymentOptions { get; set; }
-        public DbSet<SubscriptionType> SusbscriptionTypes { get; set; }
+
+        public DbSet<SubscriptionType> SubscriptionTypes { get; set; }
         public DbSet<TrainingType> TrainingTypes { get; set; }
         public DbSet<HMO> HMOs { get; set; }
         public DbSet<Customer> Customers { get; set; }
@@ -25,13 +26,11 @@ namespace StudioUp.Models
         public DbSet<Training> Trainings { get; set; }
         public DbSet<AvailableTraining> AvailableTraining { get; set; }
         public DbSet<TrainingCustomer> TrainingCustomers { get; set; }
-<<<<<<< HEAD
         public DbSet<TrainingType> TrainingTypes { get; set; }
         public DbSet<ContentType> ContentTypes { get; set; }
-=======
         public DbSet<TrainingCustomerType> TrainingCustomersTypes { get;set; }
+
        
->>>>>>> 2046e07670e084449cc1c1bd26c42e875eeef1ef
 
 
     }

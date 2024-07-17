@@ -23,18 +23,21 @@ namespace StudioUp.Repo.Repositories
             this.mapper = mapper;
             
         }
-        public async Task<int> AddAsync(CustomerDTO entity)
+
+        public async Task<DTO.CustomerDTO> AddAsync(CustomerDTO entity)
+
         {
             try
             {
                 var mapCast = mapper.Map<Models.Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);
                 await context.SaveChangesAsync();
-                return newCustomer.Entity.Id;
+                entity.Id = newCustomer.Entity.Id;
+                return entity;
             }
             catch (Exception ex)
             {
-                return 0;
+                throw ex;
             }
         }
 
@@ -43,6 +46,10 @@ namespace StudioUp.Repo.Repositories
             try
             {
                 var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
+                if (c == null)
+                {
+                    return false;
+                }
                 var mapC = mapper.Map<Customer>(c);
                 context.Customers.Remove(mapC);
                 await context.SaveChangesAsync();
@@ -50,7 +57,8 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
+
             }
         }
 
@@ -65,7 +73,8 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return new List<CustomerDTO>();
+                throw ex;
+
             }
 
         }
@@ -81,7 +90,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return new CustomerDTO();
+                throw ex;
             }
         }
 
@@ -102,9 +111,11 @@ namespace StudioUp.Repo.Repositories
                 customerToUpdate.PaymentOptionId = entity.PaymentOptionId;
                 customerToUpdate.HMOId = entity.HMOId;
                 customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
-                //customerToUpdate.IsActive = entity.IsActive;
+
+                customerToUpdate.IsActive = entity.IsActive;
                 customerToUpdate.SubscriptionTypeId = entity.SubscriptionTypeId;
                 customerToUpdate.Tel = entity.Tel;
+                customerToUpdate.Email = entity.Email;
                 context.Customers.Update(mapper.Map<Customer>(customerToUpdate));
 
                 await context.SaveChangesAsync();
@@ -113,7 +124,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
     }
