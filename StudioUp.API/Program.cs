@@ -4,6 +4,7 @@ using StudioUp.Repo;
 using StudioUp.Repo.IRepositories;
 using StudioUp.Repo.Repositories;
 using StudioUp.Repo.Repository;
+
 namespace StudioUp.API
 {
     public class Program
