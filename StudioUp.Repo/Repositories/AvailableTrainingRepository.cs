@@ -7,6 +7,7 @@ using StudioUp.Models;
 using StudioUp.DTO;
 using Microsoft.EntityFrameworkCore;
 using StudioUp.Repo.IRepositories;
+using AutoMapper;
 
 
 
@@ -16,75 +17,52 @@ namespace StudioUp.Repo.Repositories
     public class AvailableTrainingRepository : IAvailableTrainingRepository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public AvailableTrainingRepository(DataContext context)
+        public AvailableTrainingRepository(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public async Task<IEnumerable<AvailableTrainingDTO>> GetAllAvailableTrainingsAsync()
         {
             var availableTrainings = await _context.AvailableTraining.ToListAsync();
-            return availableTrainings.Select(at => new AvailableTrainingDTO
-            {
-                Id = at.Id,
-                TrainingId = at.TrainingId,
-                Date = at.Date,
-                ParticipantsCount = at.ParticipantsCount
-            }).ToList();
+            return _mapper.Map<IEnumerable<AvailableTrainingDTO>>(availableTrainings);
         }
 
         public async Task<AvailableTrainingDTO> GetAvailableTrainingByIdAsync(int id)
         {
             var availableTraining = await _context.AvailableTraining.FindAsync(id);
-            if (availableTraining == null)
-            {
-                return null;
-            }
-
-            return new AvailableTrainingDTO
-            {
-                Id = availableTraining.Id,
-                TrainingId = availableTraining.TrainingId,
-                Date = availableTraining.Date,
-                ParticipantsCount = availableTraining.ParticipantsCount
-            };
+            return _mapper.Map<AvailableTrainingDTO>(availableTraining);
         }
-        public async Task AddAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO)
+        public async Task<AvailableTrainingDTO> AddAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO)
         {
-            var availableTraining = new AvailableTraining
-            {
-                TrainingId = availableTrainingDTO.TrainingId,
-                Date = availableTrainingDTO.Date,
-                ParticipantsCount = availableTrainingDTO.ParticipantsCount,
-                IsActive = true // Assuming new trainings are active by default
-            };
-
-            await _context.AvailableTraining.AddAsync(availableTraining);
+            var availableTraining = _mapper.Map<Models.AvailableTraining>(availableTrainingDTO);
+            availableTraining.Id = 0;
+            var newavailableTraining = await _context.AvailableTraining.AddAsync(availableTraining);
             await _context.SaveChangesAsync();
-
-            availableTrainingDTO.Id = availableTraining.Id;
+            availableTrainingDTO.Id = newavailableTraining.Entity.Id;
+            return availableTrainingDTO;
         }
-        public async Task UpdateAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO)
-        {
-            var existingAvailableTraining = await _context.AvailableTraining.FindAsync(availableTrainingDTO.Id);
-            if (existingAvailableTraining != null)
-            {
-                existingAvailableTraining.TrainingId = availableTrainingDTO.TrainingId;
-                existingAvailableTraining.Date = availableTrainingDTO.Date;
-                existingAvailableTraining.ParticipantsCount = availableTrainingDTO.ParticipantsCount;
-
-                _context.AvailableTraining.Update(existingAvailableTraining);
-                await _context.SaveChangesAsync();
-            }
-        }
-        public async Task DeleteAvailableTrainingAsync(int id)
+        public async Task<AvailableTrainingDTO> UpdateAvailableTrainingAsync(int id, AvailableTrainingDTO availableTrainingDTO)
         {
             var availableTraining = await _context.AvailableTraining.FindAsync(id);
-            if (availableTraining != null)
-            {
-                _context.AvailableTraining.Remove(availableTraining);
-                await _context.SaveChangesAsync();
-            }
+            if (availableTraining == null) return null;
+
+            _mapper.Map(availableTrainingDTO, availableTraining);
+            _context.Entry(availableTraining).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<AvailableTrainingDTO>(availableTraining);
+        }
+        public async Task<bool> DeleteAvailableTrainingAsync(int id)
+        {
+            var availableTraining = await _context.AvailableTraining.FindAsync(id);
+            if (availableTraining == null) return false;
+
+            _context.AvailableTraining.Remove(availableTraining);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
