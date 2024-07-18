@@ -15,7 +15,9 @@ namespace StudioUp.API
 
             // Add services to the container
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
-            builder.Services.AddScoped<ITrainingRepository,TrainingRepository>();
+            builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
