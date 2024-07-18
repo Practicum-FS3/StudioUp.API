@@ -6,7 +6,7 @@ namespace StudioUp.Models
     [Table("T_Trainings")]
     public class Training
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        
         public int ID { get; set; }
 
         [ForeignKey("TrainingType")]
@@ -18,5 +18,7 @@ namespace StudioUp.Models
         public int DayOfWeek { get; set; }
         public TimeOnly Hour { get; set; }
         public int ParticipantsCount { get; set; }
+        public bool IsActive { get; set; }
+
     }
 }

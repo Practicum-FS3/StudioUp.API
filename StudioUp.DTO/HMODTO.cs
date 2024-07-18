@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudioUp.Models
+namespace StudioUp.DTO
 {
-    [Table("T_PaymentOptions")]
-    public class PaymentOption
+    public class HMODTO
     {
         public int ID { get; set; }
-        [MaxLength(50)]
         public string Title { get; set; }
         public bool IsActive { get; set; }
+
 
     }
 }

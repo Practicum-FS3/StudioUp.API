@@ -18,22 +18,37 @@ namespace StudioUp.Models
 
         [Column(TypeName = "nvarchar(20)")]
         public string LastName { get; set; }
-        public int CustomerTypeId { get; set; }
-        public int HMOId { get; set; }
-        public int PaymentOptionsId { get; set; }
-        public int SubscriptionTypeId { get; set; }
-        public bool IsActive { get; set; }
+       
 
         [Column(TypeName = "nvarchar(10)")]
         public string Tel { get; set; }
 
         [Column(TypeName = "nvarchar(50)")]
-        public string Adress { get; set; }
+        public string Address { get; set; }
+        [Column(TypeName = "nvarchar(50)")]
+        public string Email { get; set; }
+        public bool IsActive { get; set; }
 
-        //relationShip
-        //public CustomerType CustomerType { get; set; }
-        //public HMO HMO { get; set; }
-        //public PaymentOptions PaymentOptions { get; set; }
-        //public SubscriptionType SubscriptionType { get; set; }
-    }   
+
+        [ForeignKey("CustomerTypes")]
+        public int CustomerTypeId { get; set; }
+        public virtual CustomerType CustomerType { get; set; }
+       
+        [ForeignKey("HMOs")]
+        public int HMOId { get; set; }
+        public virtual HMO HMO { get; set; }
+        
+        [ForeignKey("PatmentOptions")]
+        public int PaymentOptionId { get; set; }
+        public virtual PaymentOption PaymentOption { get; set; }
+        
+        [ForeignKey("SubscriptionTypes")]
+        public int SubscriptionTypeId { get; set; }
+        public virtual SubscriptionType SubscriptionType { get; set; }
+    }
+
+   
+       
+        
+       
 }
