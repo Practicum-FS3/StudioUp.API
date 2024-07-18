@@ -9,6 +9,7 @@ namespace StudioUp.API.Mappings
         public MappingProfile()
         {
             CreateMap<ContentType, ContentTypeDTO>().ReverseMap();
+            CreateMap<ContentSection, ContentSectionDTO>().ReverseMap();
         }
     }
 }

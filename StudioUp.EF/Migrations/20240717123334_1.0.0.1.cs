@@ -36,12 +36,12 @@ namespace StudioUp.Models.Migrations
             //    table: "T_TrainingCustomerTypes",
             //    newName: "IX_T_TrainingCustomerTypes_CustomerTypeID");
 
-            migrationBuilder.AddColumn<string>(
-                name: "Email",
-                table: "T_Customers",
-                type: "nvarchar(50)",
-                nullable: false,
-                defaultValue: "");
+            //migrationBuilder.AddColumn<string>(
+            //    name: "Email",
+            //    table: "T_Customers",
+            //    type: "nvarchar(50)",
+            //    nullable: false,
+            //    defaultValue: "");
 
             //migrationBuilder.AddPrimaryKey(
             //    name: "PK_T_TrainingCustomerTypes",
@@ -80,9 +80,9 @@ namespace StudioUp.Models.Migrations
             //    name: "PK_T_TrainingCustomerTypes",
             //    table: "T_TrainingCustomerTypes");
 
-            migrationBuilder.DropColumn(
-                name: "Email",
-                table: "T_Customers");
+            //migrationBuilder.DropColumn(
+            //    name: "Email",
+            //    table: "T_Customers");
 
             //migrationBuilder.RenameTable(
             //    name: "T_TrainingCustomerTypes",
