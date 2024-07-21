@@ -41,5 +41,13 @@ namespace StudioUp.Repo
             _context.ContentSections.Remove(contentSection);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<ContentSection>> GetByContentTypeAsync(int contentTypeId)
+        {
+            return await _context.ContentSections
+                .Include(cs => cs.ContentType)
+                .Where(cs => cs.ContentTypeID == contentTypeId)
+                .ToListAsync();
+        }
     }
 }
