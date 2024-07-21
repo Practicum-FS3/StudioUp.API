@@ -43,6 +43,14 @@ namespace StudioUp.API.Controllers
             return Ok(contentSectionDTO);
         }
 
+        [HttpGet("byContentType/{contentTypeId}")]
+        public async Task<ActionResult<IEnumerable<ContentSectionDTO>>> GetContentSectionsByContentType(int contentTypeId)
+        {
+            var contentSections = await _repository.GetByContentTypeAsync(contentTypeId);
+            var contentSectionDTOs = _mapper.Map<IEnumerable<ContentSectionDTO>>(contentSections);
+            return Ok(contentSectionDTOs);
+        }
+
         [HttpPost]
         public async Task<ActionResult<ContentSectionDTO>> CreateContentSection(ContentSectionDTO contentSectionDTO)
         {

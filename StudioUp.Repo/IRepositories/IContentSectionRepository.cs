@@ -11,5 +11,6 @@ namespace StudioUp.Repo
         Task AddAsync(ContentSection contentSection);
         Task UpdateAsync(ContentSection contentSection);
         Task DeleteAsync(ContentSection contentSection);
+        Task<IEnumerable<ContentSection>> GetByContentTypeAsync(int contentTypeId); // הוספת פונקציה חדשה
     }
 }
