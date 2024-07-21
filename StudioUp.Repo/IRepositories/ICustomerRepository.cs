@@ -10,10 +10,11 @@ namespace StudioUp.Repo.IRepositories
 {
     public interface ICustomerRepository
     {
-        Task<List<CastomerDTO>> GetAllAsync();
-        Task<CastomerDTO> GetByIdAsync(int id);
-        Task<bool> UpdateAsync(CastomerDTO entity);
-        Task<int> AddAsync(CastomerDTO entity);
+        Task<List<CustomerDTO>> GetAllAsync();
+        Task<CustomerDTO> GetByIdAsync(int id);
+        Task<bool> UpdateAsync(CustomerDTO entity);
+
+        Task<CustomerDTO> AddAsync(CustomerDTO entity);
         Task<bool> DeleteAsync(int id);
     }
 }

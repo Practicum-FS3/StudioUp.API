@@ -6,7 +6,7 @@ namespace StudioUp.Models
     [Table("T_Trainings")]
     public class Training
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        
         public int ID { get; set; }
 
         [ForeignKey("TrainingType")]

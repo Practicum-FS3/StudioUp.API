@@ -23,18 +23,21 @@ namespace StudioUp.Repo.Repositories
             this.mapper = mapper;
             
         }
-        public async Task<int> AddAsync(CastomerDTO entity)
+
+        public async Task<DTO.CustomerDTO> AddAsync(CustomerDTO entity)
+
         {
             try
             {
                 var mapCast = mapper.Map<Models.Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);
                 await context.SaveChangesAsync();
-                return newCustomer.Entity.Id;
+                entity.Id = newCustomer.Entity.Id;
+                return entity;
             }
             catch (Exception ex)
             {
-                return 0;
+                throw ex;
             }
         }
 
@@ -43,6 +46,10 @@ namespace StudioUp.Repo.Repositories
             try
             {
                 var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
+                if (c == null)
+                {
+                    return false;
+                }
                 var mapC = mapper.Map<Customer>(c);
                 context.Customers.Remove(mapC);
                 await context.SaveChangesAsync();
@@ -50,42 +57,44 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
+
             }
         }
 
-        public async Task<List<CastomerDTO>> GetAllAsync()
+        public async Task<List<CustomerDTO>> GetAllAsync()
         {
             try
             {
                 var l = await context.Customers.ToListAsync();
 
-                return mapper.Map<List<CastomerDTO>>(l);
+                return mapper.Map<List<CustomerDTO>>(l);
                 
             }
             catch (Exception ex)
             {
-                return new List<CastomerDTO>();
+                throw ex;
+
             }
 
         }
 
-        public async Task<CastomerDTO> GetByIdAsync(int id)
+        public async Task<CustomerDTO> GetByIdAsync(int id)
         {
             try
             {
                 var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
-                var mapCust = mapper.Map<CastomerDTO>(c);
+                var mapCust = mapper.Map<CustomerDTO>(c);
                 return mapCust;
 
             }
             catch (Exception ex)
             {
-                return new CastomerDTO();
+                throw ex;
             }
         }
 
-        public async Task<bool> UpdateAsync(CastomerDTO entity)
+        public async Task<bool> UpdateAsync(CustomerDTO entity)
         {
             try
             {
@@ -96,15 +105,17 @@ namespace StudioUp.Repo.Repositories
                     return false;
                 }
 
-                customerToUpdate.Adress = entity.Adress;
+                customerToUpdate.Address = entity.Address;
                 customerToUpdate.LastName = entity.LastName;
                 customerToUpdate.FirstName = entity.FirstName;
-                customerToUpdate.PaymentOptionsId = entity.PaymentOptionsId;
+                customerToUpdate.PaymentOptionId = entity.PaymentOptionId;
                 customerToUpdate.HMOId = entity.HMOId;
                 customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
+
                 customerToUpdate.IsActive = entity.IsActive;
                 customerToUpdate.SubscriptionTypeId = entity.SubscriptionTypeId;
                 customerToUpdate.Tel = entity.Tel;
+                customerToUpdate.Email = entity.Email;
                 context.Customers.Update(mapper.Map<Customer>(customerToUpdate));
 
                 await context.SaveChangesAsync();
@@ -113,7 +124,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
     }

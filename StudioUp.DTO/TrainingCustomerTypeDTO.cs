@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudioUp.Models
+namespace StudioUp.DTO
 {
-    [Table("T_HMOs")]
-    public class HMO
+    public class TrainingCustomerTypeDTO
     {
         public int ID { get; set; }
-        [MaxLength(50)]
         public string Title { get; set; }
+        public int CustomerTypeID { get; set; }
+        public int TrainingTypeID { get; set; }
         public bool IsActive { get; set; }
 
     }

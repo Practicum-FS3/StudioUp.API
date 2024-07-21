@@ -40,6 +40,7 @@ namespace StudioUp.Repo.Repositories
             var availableTraining = _mapper.Map<Models.AvailableTraining>(availableTrainingDTO);
             availableTraining.Id = 0;
             var newavailableTraining = await _context.AvailableTraining.AddAsync(availableTraining);
+ 
             await _context.SaveChangesAsync();
             availableTrainingDTO.Id = newavailableTraining.Entity.Id;
             return availableTrainingDTO;

@@ -15,7 +15,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<DTO.CastomerDTO>> GetAllCustomer()
+        public async Task<List<DTO.CustomerDTO>> GetAllCustomer()
         {
             try
             {
@@ -23,14 +23,13 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return new List<DTO.CastomerDTO>();
+                throw ex;
             }
         }
 
-        [HttpGet]
-        [Route("/byId")]
+        [HttpGet("byId/{id}")]
 
-        public async Task<DTO.CastomerDTO> GetCustomerById(int id)
+        public async Task<DTO.CustomerDTO> GetCustomerById(int id)
         {
             try
             {
@@ -38,13 +37,13 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return new DTO.CastomerDTO();
+                throw ex;
             }
         }
 
         [HttpPost]
-
-        public async Task<int> AddCustomer(DTO.CastomerDTO customer)
+        [Route("addCustomer")]
+        public async Task<DTO.CustomerDTO> AddCustomer(DTO.CustomerDTO customer)
         {
             try
             {
@@ -52,13 +51,13 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return -1;
+                throw ex;
             }
         }
 
         [HttpPut]
 
-        public async Task<bool> UpdateCustomer(DTO.CastomerDTO customer)
+        public async Task<bool> UpdateCustomer(DTO.CustomerDTO customer)
         {
             try
             {
@@ -66,11 +65,11 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<bool> DeleteCustomer(int id)
         {
             try
@@ -79,7 +78,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
 
