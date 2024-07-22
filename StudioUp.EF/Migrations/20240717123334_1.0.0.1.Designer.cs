@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240716190148_1.0.0.0")]
-    partial class _1000
+    [Migration("20240717123334_1.0.0.1")]
+    partial class _1001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,6 +63,10 @@ namespace StudioUp.Models.Migrations
 
                     b.Property<int>("CustomerTypeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -310,7 +314,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("TrainingTypeId");
 
-                    b.ToTable("T_TrainingCustomersTypes");
+                    b.ToTable("T_TrainingCustomerTypes");
                 });
 
             modelBuilder.Entity("StudioUp.Models.TrainingType", b =>

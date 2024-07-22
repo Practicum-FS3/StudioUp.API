@@ -17,49 +17,99 @@ namespace StudioUp.API.Controllers
             _availableTrainingRepository = availableTrainingRepository;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<AvailableTrainingDTO>>> GetAvailableTrainings()
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<IEnumerable<AvailableTrainingDTO>>> GetAllAvailableTrainings()
         {
-            var availableTrainingsDTO = await _availableTrainingRepository.GetAllAvailableTrainingsAsync();
-            return Ok(availableTrainingsDTO);
+            try
+            {
+                var availableTrainingsDTO = await _availableTrainingRepository.GetAllAvailableTrainingsAsync();
+                return Ok(availableTrainingsDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AvailableTrainingDTO>> GetAvailableTraining(int id)
+        //[HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
+        public async Task<ActionResult<AvailableTrainingDTO>> GetByIdAvailableTraining(int id)
         {
-            var availableTrainingDTO = await _availableTrainingRepository.GetAvailableTrainingByIdAsync(id);
+            try
+            {
+                var availableTrainingDTO = await _availableTrainingRepository.GetAvailableTrainingByIdAsync(id);
 
+                if (availableTrainingDTO == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                return Ok(availableTrainingDTO);
+            }catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message} ");
+            }
+        }
+        [HttpPost("Add")]
+        public async Task<ActionResult<AvailableTrainingDTO>> CreateAvailableTraining([FromBody] AvailableTrainingDTO availableTrainingDTO)
+        {
             if (availableTrainingDTO == null)
             {
-                return NotFound();
+                return BadRequest("The availableTrainingDTO field is required.");
             }
-
-            return Ok(availableTrainingDTO);
+            try
+            {
+                await _availableTrainingRepository.AddAvailableTrainingAsync(availableTrainingDTO);
+                return CreatedAtAction(nameof(GetByIdAvailableTraining), new { id = availableTrainingDTO.Id }, availableTrainingDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message} | {ex.InnerException?.Message}");
+            }
         }
-        [HttpPost]
-        public async Task<ActionResult<AvailableTrainingDTO>> CreateAvailableTraining(AvailableTrainingDTO availableTrainingDTO)
-        {
-            await _availableTrainingRepository.AddAvailableTrainingAsync(availableTrainingDTO);
-            return CreatedAtAction(nameof(GetAvailableTraining), new { id = availableTrainingDTO.Id }, availableTrainingDTO);
-        }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAvailableTraining(int id, AvailableTrainingDTO availableTrainingDTO)
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> UpdateAvailableTraining(int id, [FromBody] AvailableTrainingDTO availableTrainingDTO)
         {
             if (id != availableTrainingDTO.Id)
             {
-                return BadRequest();
+                return BadRequest("ID mismatch.");
             }
-
-            await _availableTrainingRepository.UpdateAvailableTrainingAsync(availableTrainingDTO);
-
-            return NoContent();
+            try
+            {
+                await _availableTrainingRepository.UpdateAvailableTrainingAsync(id,availableTrainingDTO);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteAvailableTraining(int id)
         {
-            await _availableTrainingRepository.DeleteAvailableTrainingAsync(id);
-            return NoContent();
+            try
+            {
+                var deleted = await _availableTrainingRepository.DeleteAvailableTrainingAsync(id);
+                if (!deleted)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+            //try
+            //{
+            //    await _availableTrainingRepository.DeleteAvailableTrainingAsync(id);
+            //    return NoContent();
+            //}
+            //catch (Exception ex)
+            //{
+            //    return StatusCode(500, $"Internal server error: {ex.Message}");
+            //}
         }
 
     }
