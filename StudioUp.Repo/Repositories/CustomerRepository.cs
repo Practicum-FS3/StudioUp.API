@@ -41,6 +41,28 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
+        public async Task<CustomerDTO> GetCustomerByEmailAndPassword(string email, string password)
+        {
+            var login = await context.Login.FirstOrDefaultAsync(l => l.Email == email && l.Password == password);
+            if (login is not null)
+            {
+                try
+                {
+                    var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+                    var mapCust = mapper.Map<CustomerDTO>(cust);
+                    return mapCust;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                return null;
+            }          
+        }
+
         public async Task<bool> DeleteAsync(int id)
         {
             try

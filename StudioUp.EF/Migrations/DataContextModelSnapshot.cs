@@ -185,6 +185,27 @@ namespace StudioUp.Models.Migrations
                     b.ToTable("T_HMOs");
                 });
 
+            modelBuilder.Entity("StudioUp.Models.LoginModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Login");
+                });
+
             modelBuilder.Entity("StudioUp.Models.PaymentOption", b =>
                 {
                     b.Property<int>("ID")

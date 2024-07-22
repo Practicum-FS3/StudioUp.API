@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudioUp.DTO;
+using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 
 namespace StudioUp.API.Controllers
@@ -41,6 +43,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
+
         [HttpPost]
         [Route("addCustomer")]
         public async Task<DTO.CustomerDTO> AddCustomer(DTO.CustomerDTO customer)
@@ -55,6 +58,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
+
+       
         [HttpPut]
 
         public async Task<bool> UpdateCustomer(DTO.CustomerDTO customer)
