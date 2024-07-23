@@ -16,7 +16,21 @@ namespace StudioUp.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  policy =>
+                                  {
+                                      policy.WithOrigins("http://localhost:3000")
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader()
+                                      .WithExposedHeaders("Content-Disposition")
+                                      .WithExposedHeaders("Access-Control-Allow-Origin");
+                                  });
+
+            });
             // Configuration
             builder.Configuration.AddJsonFile("appsettings.json", optional: false);
 

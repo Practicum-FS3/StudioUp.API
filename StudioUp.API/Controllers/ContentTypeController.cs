@@ -34,8 +34,12 @@ namespace StudioUp.API.Controllers
             ContentType contentTypes = await _repository.GetByIdWithContentSection(id);
             return Ok(_mapper.Map<ContentTypeDTO>(contentTypes));
         }
-
-
+         [HttpGet("GetByIdWithContentSectionHPOnly/{id}")]
+        public async Task<ActionResult<ContentTypeDTO>> GetByIdWithContentSectionHPOnly(int id)
+        {
+            ContentType contentTypes = await _repository.GetByIdWithContentSectionHPOnly(id);
+            return Ok(_mapper.Map<ContentTypeDTO>(contentTypes));
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<ContentTypeDTO>> GetById(int id)
         {
