@@ -16,7 +16,7 @@ namespace StudioUp.Models
         public string Title { get; set; }
         public bool IsActive { get; set; }
         public int TotalTraining { get; set; }
-        public int PriceForTraining { get; set; }
+        public float PriceForTraining { get; set; }
         public int NumberOfTrainingPerWeek { get; set; }
         public string Description { get; set; }
 

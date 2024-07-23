@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudioUp.Models;
 
@@ -11,9 +12,11 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240722183140_UpdateHMOFields-final")]
+    partial class UpdateHMOFieldsfinal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -280,8 +283,8 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("NumberOfTrainingPerWeek")
                         .HasColumnType("int");
 
-                    b.Property<float>("PriceForTraining")
-                        .HasColumnType("real");
+                    b.Property<int>("PriceForTraining")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -459,7 +462,7 @@ namespace StudioUp.Models.Migrations
             modelBuilder.Entity("StudioUp.Models.ContentSection", b =>
                 {
                     b.HasOne("StudioUp.Models.ContentType", "ContentType")
-                        .WithMany("ContentSections")
+                        .WithMany()
                         .HasForeignKey("ContentTypeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -557,11 +560,6 @@ namespace StudioUp.Models.Migrations
                     b.Navigation("CustomerType");
 
                     b.Navigation("TrainingType");
-                });
-
-            modelBuilder.Entity("StudioUp.Models.ContentType", b =>
-                {
-                    b.Navigation("ContentSections");
                 });
 #pragma warning restore 612, 618
         }
