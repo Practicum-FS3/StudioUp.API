@@ -459,7 +459,7 @@ namespace StudioUp.Models.Migrations
             modelBuilder.Entity("StudioUp.Models.ContentSection", b =>
                 {
                     b.HasOne("StudioUp.Models.ContentType", "ContentType")
-                        .WithMany()
+                        .WithMany("ContentSections")
                         .HasForeignKey("ContentTypeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -557,6 +557,11 @@ namespace StudioUp.Models.Migrations
                     b.Navigation("CustomerType");
 
                     b.Navigation("TrainingType");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.ContentType", b =>
+                {
+                    b.Navigation("ContentSections");
                 });
 #pragma warning restore 612, 618
         }
