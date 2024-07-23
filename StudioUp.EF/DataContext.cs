@@ -30,15 +30,13 @@ namespace StudioUp.Models
         public DbSet<Training> Trainings { get; set; }
         public DbSet<AvailableTraining> AvailableTraining { get; set; }
         public DbSet<TrainingCustomer> TrainingCustomers { get; set; }
-        //public DbSet<TrainingType> TrainingTypes { get; set; }
         public DbSet<ContentType> ContentTypes { get; set; }
         public DbSet<TrainingCustomerType> TrainingCustomersTypes { get;set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public DbSet<ContentSection> ContentSections { get; set; }
+         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
         }
-
 
     }
 }
