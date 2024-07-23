@@ -41,6 +41,28 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
+        public async Task<CustomerDTO> GetCustomerByEmailAndPassword(string email, string password)
+        {
+            var login = await context.Login.FirstOrDefaultAsync(l => l.Email == email && l.Password == password);
+            if (login is not null)
+            {
+                try
+                {
+                    var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+                    var mapCust = mapper.Map<CustomerDTO>(cust);
+                    return mapCust;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                return null;
+            }          
+        }
+
         public async Task<bool> DeleteAsync(int id)
         {
             try
@@ -127,6 +149,46 @@ namespace StudioUp.Repo.Repositories
                 throw ex;
             }
         }
+        public async Task<List<CustomerDTO>> FilterAsync(CustomerFilterDTO filter)
+        {
+            var query = context.Customers.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter.FirstName) || !string.IsNullOrEmpty(filter.LastName))
+            {
+                var firstName = filter.FirstName?.Trim().Replace(" ", "").ToLower();
+                var lastName = filter.LastName?.Trim().Replace(" ", "").ToLower();
+
+                query = query.Where(c =>
+                    (string.IsNullOrEmpty(firstName) || c.FirstName.ToLower().Replace(" ", "").Contains(firstName)) &&
+                    (string.IsNullOrEmpty(lastName) || c.LastName.ToLower().Replace(" ", "").Contains(lastName)));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Email))
+            {
+                var email = filter.Email.Trim().Replace(" ", "").ToLower();
+                query = query.Where(c => c.Email.ToLower().Replace(" ", "").Contains(email));
+            }
+
+            return await query.Select(c => new CustomerDTO
+            {
+                Id = c.Id,
+                FirstName = c.FirstName,
+                LastName = c.LastName,
+                Address = c.Address,
+                Email = c.Email,
+                Tel = c.Tel,
+                PaymentOptionId = c.PaymentOptionId,
+                HMOId = c.HMOId,
+                CustomerTypeId = c.CustomerTypeId,
+                SubscriptionTypeId = c.SubscriptionTypeId,
+                IsActive = c.IsActive
+            }).ToListAsync();
+        }
+
+
+
+
     }
 }
+
 
