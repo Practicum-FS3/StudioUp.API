@@ -208,17 +208,58 @@ namespace StudioUp.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<string>("ArrangementName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<double>("MaximumAge")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MinimumAge")
+                        .HasColumnType("float");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("TrainingDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("TrainingPrice")
+                        .HasColumnType("float");
+
+                    b.Property<int>("TrainingsPerMonth")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
                     b.ToTable("T_HMOs");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.LoginModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Login");
                 });
 
             modelBuilder.Entity("StudioUp.Models.PaymentOption", b =>
@@ -260,8 +301,8 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("NumberOfTrainingPerWeek")
                         .HasColumnType("int");
 
-                    b.Property<int>("PriceForTraining")
-                        .HasColumnType("int");
+                    b.Property<float>("PriceForTraining")
+                        .HasColumnType("real");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -439,7 +480,7 @@ namespace StudioUp.Models.Migrations
             modelBuilder.Entity("StudioUp.Models.ContentSection", b =>
                 {
                     b.HasOne("StudioUp.Models.ContentType", "ContentType")
-                        .WithMany()
+                        .WithMany("ContentSections")
                         .HasForeignKey("ContentTypeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -537,6 +578,11 @@ namespace StudioUp.Models.Migrations
                     b.Navigation("CustomerType");
 
                     b.Navigation("TrainingType");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.ContentType", b =>
+                {
+                    b.Navigation("ContentSections");
                 });
 #pragma warning restore 612, 618
         }

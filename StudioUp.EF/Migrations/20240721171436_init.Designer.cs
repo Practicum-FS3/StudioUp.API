@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240718110946_Try")]
-    partial class Try
+    [Migration("20240721171436_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,42 @@ namespace StudioUp.Models.Migrations
                     b.HasIndex("TrainingId");
 
                     b.ToTable("T_AvailableTrainings");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.ContentSection", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ContentTypeID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Section1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Section2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Section3")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ViewInHP")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ContentTypeID");
+
+                    b.ToTable("ContentSections");
                 });
 
             modelBuilder.Entity("StudioUp.Models.ContentType", b =>
@@ -403,6 +439,17 @@ namespace StudioUp.Models.Migrations
                     b.Navigation("Training");
                 });
 
+            modelBuilder.Entity("StudioUp.Models.ContentSection", b =>
+                {
+                    b.HasOne("StudioUp.Models.ContentType", "ContentType")
+                        .WithMany("ContentSections")
+                        .HasForeignKey("ContentTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContentType");
+                });
+
             modelBuilder.Entity("StudioUp.Models.Customer", b =>
                 {
                     b.HasOne("StudioUp.Models.CustomerType", "CustomerType")
@@ -493,6 +540,11 @@ namespace StudioUp.Models.Migrations
                     b.Navigation("CustomerType");
 
                     b.Navigation("TrainingType");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.ContentType", b =>
+                {
+                    b.Navigation("ContentSections");
                 });
 #pragma warning restore 612, 618
         }
