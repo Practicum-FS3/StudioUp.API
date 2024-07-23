@@ -15,6 +15,7 @@ namespace StudioUp.Repo.IRepositories
         Task<bool> UpdateAsync(CustomerDTO entity);
         Task<CustomerDTO> AddAsync(CustomerDTO entity);
         Task<bool> DeleteAsync(int id);
+        Task<List<CustomerDTO>> FilterAsync(CustomerFilterDTO filter); // פונקציה חדשה
     }
 }
 
