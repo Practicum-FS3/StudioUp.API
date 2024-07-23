@@ -7,30 +7,29 @@ namespace StudioUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HMOControllers : ControllerBase
+    public class HMOController : ControllerBase
     {
         readonly IHMORepository HMOService;
 
-        public HMOControllers(IHMORepository HMOService)
+        public HMOController(IHMORepository HMOService)
         {
             this.HMOService = HMOService;
         }
 
-        [HttpGet]
-        [Route ("/getAll")]
+        [HttpGet("GetAll")]
         public async Task<List<DTO.HMODTO>> GetAll()
         {
             try
             {
                 return await HMOService.GetAllAsync();
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
                 throw ex;
             }
         }
 
         [HttpPost]
-        [Route ("/add")]
+        [Route("Add")]
         public async Task<HMODTO> add(DTO.HMODTO hmo)
         {
             try
@@ -41,11 +40,10 @@ namespace StudioUp.API.Controllers
             {
                 throw ex;
             }
-            
+
         }
 
-        [HttpDelete]
-        [Route("/delete/{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<bool> delete(int id)
         {
             try
@@ -58,8 +56,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpGet]
-        [Route ("/getById/{id}")]
+        [HttpGet("GetById/{id}")]
         public async Task<DTO.HMODTO> getById(int id)
         {
             try
@@ -72,13 +69,12 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut]
-        [Route ("/update")]
-        public async Task<bool> update(DTO.HMODTO hmo)
+        [HttpPut("Update/{id}")]
+        public async Task<bool> update(int id , DTO.HMODTO hmo)
         {
             try
             {
-                return await HMOService.UpdateAsync(hmo);
+                return await HMOService.UpdateAsync(id ,hmo);
             }
             catch(Exception ex) {
                 throw ex;
