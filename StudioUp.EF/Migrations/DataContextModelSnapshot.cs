@@ -280,8 +280,8 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("NumberOfTrainingPerWeek")
                         .HasColumnType("int");
 
-                    b.Property<int>("PriceForTraining")
-                        .HasColumnType("int");
+                    b.Property<float>("PriceForTraining")
+                        .HasColumnType("real");
 
                     b.Property<string>("Title")
                         .IsRequired()
