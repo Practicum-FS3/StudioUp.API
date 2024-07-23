@@ -36,6 +36,7 @@ namespace StudioUp.API
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+            builder.Services.AddScoped<IContactRepository, ContactRepository>();
             builder.Services.AddScoped<IHMORepository, HMORepository>();
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
             builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
