@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240718140333_Try2")]
-    partial class Try2
+    [Migration("20240723095929_p")]
+    partial class p
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -263,8 +263,8 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("NumberOfTrainingPerWeek")
                         .HasColumnType("int");
 
-                    b.Property<int>("PriceForTraining")
-                        .HasColumnType("int");
+                    b.Property<float>("PriceForTraining")
+                        .HasColumnType("real");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -343,14 +343,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("TrainerID")
                         .HasColumnType("int");
 
-                    b.Property<int>("TrainingTypeID")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
 
                     b.HasIndex("TrainerID");
-
-                    b.HasIndex("TrainingTypeID");
 
                     b.ToTable("T_Trainings");
                 });
@@ -493,15 +488,7 @@ namespace StudioUp.Models.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudioUp.Models.TrainingType", "TrainingType")
-                        .WithMany()
-                        .HasForeignKey("TrainingTypeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Trainer");
-
-                    b.Navigation("TrainingType");
                 });
 
             modelBuilder.Entity("StudioUp.Models.TrainingCustomer", b =>

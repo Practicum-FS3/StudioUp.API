@@ -340,14 +340,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("TrainerID")
                         .HasColumnType("int");
 
-                    b.Property<int>("TrainingTypeID")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
 
                     b.HasIndex("TrainerID");
-
-                    b.HasIndex("TrainingTypeID");
 
                     b.ToTable("T_Trainings");
                 });
@@ -490,15 +485,7 @@ namespace StudioUp.Models.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudioUp.Models.TrainingType", "TrainingType")
-                        .WithMany()
-                        .HasForeignKey("TrainingTypeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Trainer");
-
-                    b.Navigation("TrainingType");
                 });
 
             modelBuilder.Entity("StudioUp.Models.TrainingCustomer", b =>
