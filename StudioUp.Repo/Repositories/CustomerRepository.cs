@@ -23,7 +23,9 @@ namespace StudioUp.Repo.Repositories
             this.mapper = mapper;
             
         }
+
         public async Task<DTO.CustomerDTO> AddAsync(CustomerDTO entity)
+
         {
             try
             {
@@ -39,7 +41,27 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-
+        public async Task<CustomerDTO> GetCustomerByEmailAndPassword(string email, string password)
+        {
+            var login = await context.Login.FirstOrDefaultAsync(l => l.Email == email && l.Password == password);
+            if (login is not null)
+            {
+                try
+                {
+                    var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+                    var mapCust = mapper.Map<CustomerDTO>(cust);
+                    return mapCust;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                return null;
+            }          
+        }
 
         public async Task<bool> DeleteAsync(int id)
         {
@@ -84,7 +106,6 @@ namespace StudioUp.Repo.Repositories
             try
             {
                 var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
-
                 var mapCust = mapper.Map<CustomerDTO>(c);
                 return mapCust;
 
@@ -112,6 +133,7 @@ namespace StudioUp.Repo.Repositories
                 customerToUpdate.PaymentOptionId = entity.PaymentOptionId;
                 customerToUpdate.HMOId = entity.HMOId;
                 customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
+
                 customerToUpdate.IsActive = entity.IsActive;
                 customerToUpdate.SubscriptionTypeId = entity.SubscriptionTypeId;
                 customerToUpdate.Tel = entity.Tel;
