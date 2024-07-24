@@ -18,6 +18,14 @@ namespace StudioUp.Repo
         {
             return await _context.ContentTypes.ToListAsync();
         }
+        public async Task<ContentType> GetByIdWithContentSection(int id)
+        {
+            return await _context.ContentTypes.Include(x=>x.ContentSections).FirstOrDefaultAsync(x=>x.ID==id);
+        }
+        public async Task<ContentType> GetByIdWithContentSectionHPOnly(int id)
+        {
+            return await _context.ContentTypes.Include(x => x.ContentSections.Where(x=>x.ViewInHP==true)).FirstOrDefaultAsync(x => x.ID == id);
+        }
 
         public async Task<ContentType> GetById(int id)
         {

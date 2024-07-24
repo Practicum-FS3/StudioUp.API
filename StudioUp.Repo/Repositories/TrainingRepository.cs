@@ -22,7 +22,7 @@ namespace StudioUp.Repo.Repositories
         public async Task<IEnumerable<TrainingDTO>> GetAllTrainings()
         {
             List<Training> lst = await _context.Trainings
-                //.Include(t => t.TrainingCustomerType)
+                .Include(t => t.TrainingCustomerType)
                 .Include(t => t.Trainer)
                 .ToListAsync();
             return _mapper.Map<IEnumerable<TrainingDTO>>(lst);
@@ -41,7 +41,7 @@ namespace StudioUp.Repo.Repositories
         public async Task<TrainingDTO> GetTrainingById(int id)
         {
             Training training= await _context.Trainings
-                //.Include(t => t.TrainingCustomerType)
+                .Include(t => t.TrainingCustomerType)
                 .Include(t => t.Trainer)
                 .FirstOrDefaultAsync(t => t.ID == id);
             return _mapper.Map<TrainingDTO>(training);
