@@ -83,16 +83,13 @@ namespace StudioUp.API.Controllers
             }
         }
         [HttpGet("filter")]
-        public async Task<List<CustomerDTO>> FilterCustomers([FromQuery] string? firstName, [FromQuery] string? lastName, [FromQuery] string? email)
+        public async Task<List<CustomerDTO>> FilterCustomers(DTO.CustomerFilterDTO filter)
         {
             try
             {
-                var filter = new CustomerFilterDTO
-                {
-                    FirstName = firstName?.Trim(),
-                    LastName = lastName?.Trim(),
-                    Email = email?.Trim()
-                };
+                filter.FirstName = filter.FirstName?.Trim();
+                filter.LastName = filter.LastName?.Trim();
+                filter.Email = filter.Email?.Trim();
 
                 return await CustomerService.FilterAsync(filter);
             }
@@ -101,6 +98,7 @@ namespace StudioUp.API.Controllers
                 throw ex;
             }
         }
+
 
 
 
