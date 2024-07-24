@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240718140333_Try2")]
-    partial class Try2
+    [Migration("20240722182049_update-HMOS-fields")]
+    partial class updateHMOSfields
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
