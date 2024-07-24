@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Models
 {
-    [Table("T_HMOS")]
+    [Table("T_HMOs")]
     public class HMO
     {
         public int ID { get; set; }
         [MaxLength(50)]
         public string Title { get; set; }
-        //public bool IsActive { get; set; }
+        public bool IsActive { get; set; }
 
     }
 }

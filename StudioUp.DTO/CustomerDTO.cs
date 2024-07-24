@@ -13,10 +13,11 @@ namespace StudioUp.DTO
         public string LastName { get; set; }
         public int CustomerTypeId { get; set; }
         public int HMOId { get; set; }
-        public int PaymentOptionsId { get; set; }
+        public int PaymentOptionId { get; set; }
         public int SubscriptionTypeId { get; set; }
-        //public bool IsActive { get; set; }
+        public bool IsActive { get; set; }
         public string Tel { get; set; }
-        public string Adress { get; set; }
+        public string Address { get; set; }
+        public string Email { get; set; }
     }
 }
