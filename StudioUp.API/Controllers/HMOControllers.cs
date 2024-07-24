@@ -16,7 +16,7 @@ namespace StudioUp.API.Controllers
             this.HMOService = HMOService;
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         [Route ("/getAll")]
         public async Task<List<DTO.HMODTO>> GetAll()
         {
@@ -29,7 +29,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("Add")]
         [Route ("/add")]
         public async Task<HMODTO> add(DTO.HMODTO hmo)
         {
@@ -44,7 +44,7 @@ namespace StudioUp.API.Controllers
             
         }
 
-        [HttpDelete]
+        [HttpDelete("Delete/{id}")]
         [Route("/delete/{id}")]
         public async Task<bool> delete(int id)
         {
@@ -58,7 +58,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("GetById/{id}")]
         [Route ("/getById/{id}")]
         public async Task<DTO.HMODTO> getById(int id)
         {
@@ -72,7 +72,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("Update/{id}")]
         [Route ("/update")]
         public async Task<bool> update(DTO.HMODTO hmo)
         {
