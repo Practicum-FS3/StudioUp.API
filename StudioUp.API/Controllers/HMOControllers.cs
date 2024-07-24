@@ -17,7 +17,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet]
-        [Route ("/getAll")]
+       // [Route ("/getAll")]
         public async Task<List<DTO.HMODTO>> GetAll()
         {
             try
@@ -30,7 +30,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost]
-        [Route ("/add")]
+      //  [Route ("/add")]
         public async Task<HMODTO> add(DTO.HMODTO hmo)
         {
             try
@@ -45,7 +45,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpDelete]
-        [Route("/delete/{id}")]
+     //   [Route("/delete/{id}")]
         public async Task<bool> delete(int id)
         {
             try
@@ -59,7 +59,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet]
-        [Route ("/getById/{id}")]
+    //    [Route ("/getById/{id}")]
         public async Task<DTO.HMODTO> getById(int id)
         {
             try
@@ -73,7 +73,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPut]
-        [Route ("/update")]
+      //  [Route ("/update")]
         public async Task<bool> update(DTO.HMODTO hmo)
         {
             try
