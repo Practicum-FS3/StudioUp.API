@@ -34,6 +34,15 @@ namespace StudioUp.API
             builder.Services.AddScoped<IRepository<SubscriptionType>, SubscriptionTypeRepository>();
             builder.Services.AddScoped<IRepository<PaymentOption>, PaymentOptionRepository>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
+
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -51,6 +60,10 @@ namespace StudioUp.API
             }
 
             app.UseHttpsRedirection();
+
+            // Use CORS middleware
+            app.UseCors("AllowSpecificOrigin");
+
             app.UseAuthorization();
             app.MapControllers();
 
