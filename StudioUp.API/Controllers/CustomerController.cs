@@ -48,7 +48,7 @@ namespace StudioUp.API.Controllers
         [Route("addCustomer")]
         public async Task<DTO.CustomerDTO> AddCustomer(DTO.CustomerDTO customer)
         {
-            try
+             try
             {
                 return await CustomerService.AddAsync(customer);
             }
