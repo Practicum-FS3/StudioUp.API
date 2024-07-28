@@ -58,7 +58,7 @@ namespace StudioUp.API
             builder.Services.AddAutoMapper(typeof(MappingProfile)); 
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            //Learn more about configuring Swagger / OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
             builder.Services.AddScoped<IHMORepository, HMORepository>();
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
@@ -102,7 +102,7 @@ namespace StudioUp.API
 
             var app = builder.Build();
 
-            // Middleware setup
+             //Middleware setup
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
