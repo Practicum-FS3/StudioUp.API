@@ -51,13 +51,23 @@ namespace StudioUp.API.Controllers
             return Ok(contentSectionDTOs);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ContentSectionDTO>> CreateContentSection(ContentSectionDTO contentSectionDTO)
+        [HttpPost("upload")]
+        public async Task<ActionResult<ContentSectionDTO>> CreateContentSection([FromForm] ContentSectionDTO contentSectionDTO, IFormFile? file)
         {
+
+            using (var memoryStream = new MemoryStream())
+            {
+                if (file != null && file.Length != 0)
+                {
+                    await file.CopyToAsync(memoryStream);
+                    contentSectionDTO.ImageData = memoryStream.ToArray();
+                }
+                
             var contentSection = _mapper.Map<ContentSection>(contentSectionDTO);
             await _repository.AddAsync(contentSection);
             contentSectionDTO.ID = contentSection.ID;
             return CreatedAtAction(nameof(GetContentSection), new { id = contentSectionDTO.ID }, contentSectionDTO);
+            }
         }
 
         [HttpPut("{id}")]
