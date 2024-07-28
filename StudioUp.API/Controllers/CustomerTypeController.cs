@@ -56,8 +56,23 @@ namespace StudioUp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomerType(int id)
         {
-            await _repository.DeleteAsync(id);
-            return NoContent();
+            try
+            {
+                var customerType = await _repository.GetByIdAsync(id);
+                if (customerType == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                customerType.IsActive = false;
+                await _repository.UpdateAsync(customerType);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }
