@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
-using StudioUp.Models;
+//using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 
 namespace StudioUp.API.Controllers
@@ -86,6 +86,27 @@ namespace StudioUp.API.Controllers
                 throw ex;
             }
         }
+        [HttpGet("filter")]
+        public async Task<List<CustomerDTO>> FilterCustomers([FromQuery] string? firstName, [FromQuery] string? lastName, [FromQuery] string? email)
+        {
+            try
+            {
+                var filter = new CustomerFilterDTO
+                {
+                    FirstName = firstName?.Trim(),
+                    LastName = lastName?.Trim(),
+                    Email = email?.Trim()
+                };
+
+                return await CustomerService.FilterAsync(filter);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
 
     }
 }
