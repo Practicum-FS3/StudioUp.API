@@ -83,6 +83,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<IRepository<SubscriptionType>, SubscriptionTypeRepository>();
             builder.Services.AddScoped<IRepository<PaymentOption>, PaymentOptionRepository>();
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
+            builder.Services.AddScoped<IRepository<TrainingType>, TrainigTypeRepository>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>

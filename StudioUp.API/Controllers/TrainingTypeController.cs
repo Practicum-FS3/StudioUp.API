@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudioUp.Models;
 using StudioUp.Repo;
+using Microsoft.AspNetCore.Http;
+
 
 namespace StudioUp.API.Controllers
 {
@@ -20,8 +22,8 @@ namespace StudioUp.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TrainingType>>> GetTrainingTypes()
         {
-            var TrainingTypes = await _repository.GetAllAsync();
-            return Ok(TrainingTypes);
+            var trainingTypes = await _repository.GetAllAsync();
+            return Ok(trainingTypes);
         }
 
         [HttpGet("{id}")]

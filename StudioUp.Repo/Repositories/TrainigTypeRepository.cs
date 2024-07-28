@@ -7,16 +7,14 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 namespace StudioUp.Repo.Repositories
 {
-    public class TrainingTypeRepository: IRepository<TrainingType>
+    public class TrainigTypeRepository: IRepository<TrainingType>
     {
 
 
 
-
-       
             private readonly DataContext _context;
 
-            public TrainingTypeRepository(DataContext context)
+            public TrainigTypeRepository(DataContext context)
             {
                 _context = context;
             }
