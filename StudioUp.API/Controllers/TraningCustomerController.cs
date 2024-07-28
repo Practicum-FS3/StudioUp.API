@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -98,16 +99,20 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var result = await _trainingCustomerRepository.DeleteTraningCustomer(id);
-                if (result)
+                var trainingCustomer = await _trainingCustomerRepository.GetTraningCustomerById(id);
+                if (trainingCustomer == null)
                 {
-                    return NoContent();
+                    return NotFound($"Training with ID {id} not found.");
                 }
-                return NotFound();
+
+                trainingCustomer.IsActive = false;
+                await _trainingCustomerRepository.UpdateTrainingCustomers(trainingCustomer);
+
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }

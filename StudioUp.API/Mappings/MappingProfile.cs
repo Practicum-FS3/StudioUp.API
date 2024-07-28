@@ -10,6 +10,12 @@ namespace StudioUp.API.Mappings
         {
             CreateMap<ContentType, ContentTypeDTO>().ReverseMap();
             CreateMap<ContentSection, ContentSectionDTO>().ReverseMap();
+            CreateMap<Training, TrainingDTO>().ReverseMap();
+
+
+
+
+
         }
     }
 }

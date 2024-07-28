@@ -2,6 +2,7 @@
 using StudioUp.DTO;
 //using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -75,15 +76,24 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteCustomer(int id)
+        public async Task<IActionResult> DeleteCustomer(int id)
         {
             try
             {
-                return await CustomerService.DeleteAsync(id);
+                var customer = await CustomerService.GetByIdAsync(id);
+                if (customer == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                customer.IsActive = false;
+                await CustomerService.UpdateAsync(customer);
+
+                return NoContent();
             }
             catch (Exception ex)
             {
-                throw ex;
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
         [HttpGet("filter")]
