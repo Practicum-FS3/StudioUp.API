@@ -17,6 +17,7 @@ namespace StudioUp.Models
         {
             modelBuilder.Entity<LoginModel>()
                 .HasKey(l => l.Id); // הוסף הגדרה של מפתח ראשי
+           
         }
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<PaymentOption> PaymentOptions { get; set; }
@@ -35,7 +36,7 @@ namespace StudioUp.Models
         public DbSet<ContentSection> ContentSections { get; set; }
          protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
+            //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
         }
 
     }

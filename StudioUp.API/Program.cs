@@ -115,6 +115,15 @@ namespace StudioUp.API
             // AutoMapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader());
+            });
+
+
             var app = builder.Build();
 
             // Middleware setup
@@ -123,6 +132,11 @@ namespace StudioUp.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            //cors
+            app.UseCors("AllowOrigin");
+
+
 
             app.UseHttpsRedirection();
             app.UseAuthentication();

@@ -33,7 +33,7 @@ namespace StudioUp.Models
         [ForeignKey("CustomerTypes")]
         public int CustomerTypeId { get; set; }
         public virtual CustomerType CustomerType { get; set; }
-       
+
         [ForeignKey("HMOs")]
         public int HMOId { get; set; }
         public virtual HMO HMO { get; set; }

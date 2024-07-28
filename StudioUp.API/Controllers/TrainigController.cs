@@ -26,6 +26,14 @@ namespace StudioUp.API.Controllers
             var trainings = await _trainingRepository.GetAllTrainings();
             return Ok(trainings);
         }
+        // GET: api/Training/forCalander
+
+        [HttpGet("forCalander")]
+        public async Task<ActionResult<IEnumerable<TrainingDTO>>> GetTrainingsCalender()
+        {
+            var trainings = await _trainingRepository.GetAllTrainingsCalender();
+            return Ok(trainings);
+        }
 
         // GET: api/Training/5
         [HttpGet("{id}")]

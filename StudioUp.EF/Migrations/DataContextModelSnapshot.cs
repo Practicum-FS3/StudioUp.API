@@ -33,6 +33,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ParticipantsCount")
                         .HasColumnType("int");
 
@@ -381,14 +384,14 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("TrainerID")
                         .HasColumnType("int");
 
-                    b.Property<int>("TrainingTypeID")
+                    b.Property<int>("TrainingCustomerTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("TrainerID");
 
-                    b.HasIndex("TrainingTypeID");
+                    b.HasIndex("TrainingCustomerTypeId");
 
                     b.ToTable("T_Trainings");
                 });
@@ -416,8 +419,6 @@ namespace StudioUp.Models.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("CustomerID");
-
-                    b.HasIndex("TrainingID");
 
                     b.ToTable("T_TrainingsCustomers");
                 });
@@ -531,15 +532,15 @@ namespace StudioUp.Models.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudioUp.Models.TrainingType", "TrainingType")
+                    b.HasOne("StudioUp.Models.TrainingCustomerType", "TrainingCustomerType")
                         .WithMany()
-                        .HasForeignKey("TrainingTypeID")
+                        .HasForeignKey("TrainingCustomerTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Trainer");
 
-                    b.Navigation("TrainingType");
+                    b.Navigation("TrainingCustomerType");
                 });
 
             modelBuilder.Entity("StudioUp.Models.TrainingCustomer", b =>
@@ -550,15 +551,7 @@ namespace StudioUp.Models.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudioUp.Models.AvailableTraining", "Training")
-                        .WithMany()
-                        .HasForeignKey("TrainingID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Customer");
-
-                    b.Navigation("Training");
                 });
 
             modelBuilder.Entity("StudioUp.Models.TrainingCustomerType", b =>
