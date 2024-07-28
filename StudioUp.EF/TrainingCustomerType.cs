@@ -18,5 +18,6 @@ namespace StudioUp.Models
         [ForeignKey("TrainingTypes")]
         public int TrainingTypeId { get; set; }
         public virtual TrainingType TrainingType { get; set; }
+        public bool IsActive { get; set; }
     }
 }
