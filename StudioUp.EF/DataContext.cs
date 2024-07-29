@@ -34,7 +34,9 @@ namespace StudioUp.Models
         public DbSet<ContentType> ContentTypes { get; set; }
         public DbSet<TrainingCustomerType> TrainingCustomersTypes { get;set; }
         public DbSet<ContentSection> ContentSections { get; set; }
-         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public DbSet<FileUpload> Files { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
         }

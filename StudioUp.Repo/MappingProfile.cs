@@ -26,6 +26,8 @@ namespace StudioUp.Repo
             CreateMap<TrainingCustomer, TrainingCustomerDTO>().ReverseMap();
             CreateMap<Training, TrainingDTO>().ReverseMap();
             CreateMap<TrainingType, TrainingTypeDTO>().ReverseMap();
+            CreateMap<FileUpload, FileUploadDTO>().ReverseMap();
+            CreateMap<FileUpload, FileDownloadDTO>().ReverseMap();
             //CreateMap<Training>
             //CreateMap<SubscriptionRoutes, SubscriptionRoutesDTO>().ReverseMap();
 
