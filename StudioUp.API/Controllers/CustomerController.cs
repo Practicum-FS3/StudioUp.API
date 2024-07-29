@@ -2,6 +2,7 @@
 using StudioUp.DTO;
 //using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -48,7 +49,7 @@ namespace StudioUp.API.Controllers
         [Route("addCustomer")]
         public async Task<DTO.CustomerDTO> AddCustomer(DTO.CustomerDTO customer)
         {
-            try
+             try
             {
                 return await CustomerService.AddAsync(customer);
             }
@@ -75,28 +76,34 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteCustomer(int id)
+        public async Task<IActionResult> DeleteCustomer(int id)
         {
             try
             {
-                return await CustomerService.DeleteAsync(id);
+                var customer = await CustomerService.GetByIdAsync(id);
+                if (customer == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                customer.IsActive = false;
+                await CustomerService.UpdateAsync(customer);
+
+                return NoContent();
             }
             catch (Exception ex)
             {
-                throw ex;
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
         [HttpGet("filter")]
-        public async Task<List<CustomerDTO>> FilterCustomers([FromQuery] string? firstName, [FromQuery] string? lastName, [FromQuery] string? email)
+        public async Task<List<CustomerDTO>> FilterCustomers(DTO.CustomerFilterDTO filter)
         {
             try
             {
-                var filter = new CustomerFilterDTO
-                {
-                    FirstName = firstName?.Trim(),
-                    LastName = lastName?.Trim(),
-                    Email = email?.Trim()
-                };
+                filter.FirstName = filter.FirstName?.Trim();
+                filter.LastName = filter.LastName?.Trim();
+                filter.Email = filter.Email?.Trim();
 
                 return await CustomerService.FilterAsync(filter);
             }
@@ -105,6 +112,7 @@ namespace StudioUp.API.Controllers
                 throw ex;
             }
         }
+
 
 
 

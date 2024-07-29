@@ -11,11 +11,12 @@ namespace StudioUp.DTO
     {
         public int ID { get; set; }
         public int TrainerID { get; set; }
-        public string  TrainerName { get; set; }
+        public string TrainerName { get; set; }
+        public string CustomerTypeName { get; set; }
+        public string TrainingTypeName { get; set; }
         public int DayOfWeek { get; set; }
         public string Hour { get; set; }
-        //public string Minutes { get; set; }
         public bool IsActive { get; set; }
-        //ID,hour,description,trainerName
+
     }
 }
