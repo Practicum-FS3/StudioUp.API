@@ -85,6 +85,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<IRepository<PaymentOption>, PaymentOptionRepository>();
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
             builder.Services.AddScoped<IRepository<TrainingType>, TrainigTypeRepository>();
+            builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
@@ -117,6 +118,15 @@ namespace StudioUp.API
             // AutoMapper
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader());
+            });
+
+
             var app = builder.Build();
 
             // Middleware setup
@@ -125,6 +135,11 @@ namespace StudioUp.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            //cors
+            app.UseCors("AllowOrigin");
+
+
 
             app.UseHttpsRedirection();
             app.UseAuthentication();

@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240724074539_1.0.0.0")]
-    partial class _1000
+    [Migration("20240725102712_imageFile")]
+    partial class imageFile
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,10 @@ namespace StudioUp.Models.Migrations
 
                     b.Property<int>("ContentTypeID")
                         .HasColumnType("int");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");

@@ -28,7 +28,16 @@ namespace StudioUp.Repo
 
             CreateMap<Training, TrainingDTO>().ReverseMap();
             CreateMap<TrainingType, TrainingTypeDTO>().ReverseMap();
+            CreateMap<FileUpload, FileUploadDTO>().ReverseMap();
+            CreateMap<FileUpload, FileDownloadDTO>().ReverseMap();
+            //CreateMap<Training>
             //CreateMap<SubscriptionRoutes, SubscriptionRoutesDTO>().ReverseMap();
+
+            CreateMap<Training, CalanderTrainingDTO>()
+                  .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Trainer.FirstName + " " + src.Trainer.LastName))
+                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour.ToString()))
+                  .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title))
+                  .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.CustomerType.Title));
 
 
         }
