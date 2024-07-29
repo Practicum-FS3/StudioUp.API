@@ -32,7 +32,8 @@ namespace StudioUp.Repo.Repositories
         public async Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalender()
         {
             List<Training> lst = await _context.Trainings
-                //.Include(t => t.Trainer.FirstName + " " + t.Trainer.LastName)
+                .Include(t => t.TrainingCustomerType.CustomerType)
+                .Include(t => t.TrainingCustomerType.TrainingType)
                 .Include(t => t.Trainer)
                 .ToListAsync();
             return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
