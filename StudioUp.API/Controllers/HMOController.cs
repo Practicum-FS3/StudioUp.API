@@ -2,6 +2,7 @@
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -44,15 +45,24 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpDelete("Delete/{id}")]
-        public async Task<bool> delete(int id)
+        public async Task<IActionResult> delete(int id)
         {
             try
             {
-                return await HMOService.DeleteAsync(id);
+                var HMO = await HMOService.GetByIdAsync(id);
+                if (HMO == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                HMO.IsActive = false;
+                await HMOService.UpdateAsync(id, HMO);
+
+                return NoContent();
             }
             catch (Exception ex)
             {
-                throw ex;
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 

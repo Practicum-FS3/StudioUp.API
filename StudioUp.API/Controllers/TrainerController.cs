@@ -2,6 +2,7 @@
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -47,15 +48,24 @@ namespace StudioUp.API.Controllers
 
         [HttpDelete]
         [Route("/deleteTrainer/{id}")]
-        public async Task<bool> deleteTrainer(int id)
+        public async Task<IActionResult> deleteTrainer(int id)
         {
             try
             {
-                return await trainerRepository.DeleteTrainer(id);
+                var trainer = await trainerRepository.GetTrainerById(id);
+                if (trainer == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                trainer.IsActive = false;
+                await trainerRepository.UpdateTrainer(trainer);
+
+                return NoContent();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
