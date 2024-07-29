@@ -64,11 +64,24 @@ namespace StudioUp.Repo.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateTraining(TrainingDTO trainingDto, int id)
+        public async Task UpdateTraining(trainingPostDTO trainingPostDto, int id)
         {
-            Training training=_context.Trainings.FirstOrDefault(t => t.ID == id);
-            _mapper.Map(trainingDto, training);
-            _context.Trainings.Update(training);
+            //Training training=_context.Trainings.FirstOrDefault(t => t.ID == id);
+            //_mapper.Map(trainingPostDto, training);
+            //_context.Trainings.Update(training);
+            //await _context.SaveChangesAsync();
+            var training = await _context.Trainings.FindAsync(id);
+
+            // אם לא נמצא אובייקט מתאים, החזר שגיאה
+            if (training == null)
+            {
+                throw new Exception("Training not found"); // או טיפול שגיאות אחר
+            }
+
+            // מיפוי ההשינויים מה-DTO למודל
+            _mapper.Map(trainingPostDto, training);
+
+            // Save changes
             await _context.SaveChangesAsync();
         }
 

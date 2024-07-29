@@ -28,10 +28,21 @@ namespace StudioUp.API.Mappings
                  .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.Time != null ? new TrainingTime { Hour = src.Time.Hour, Minute = src.Time.Minute } : null))
                  .ForMember(dest => dest.TrainingCustomerTypeId, opt => opt.MapFrom(src => src.TrainingCustomerTypeId))
                  .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.ParticipantsCount))
-                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                 .ForMember(dest => dest.Time, opt => opt.MapFrom(src => new TrainingTime
+                 {
+                     Hour = src.Time.Hour,
+                     Minute = src.Time.Minute
+                 }))
+            .ForMember(dest => dest.TrainingCustomerTypeId, opt => opt.MapFrom(src => src.TrainingCustomerTypeId))
+            .ForMember(dest => dest.TrainerID, opt => opt.MapFrom(src => src.TrainerID))
+            .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.DayOfWeek))
+            .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.ParticipantsCount))
+            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
 
-            //CreateMap<TrainingDTO, Training>()
-            //    .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.Time));
+
+
+            CreateMap<TrainingDTO, trainingPostDTO>().ReverseMap();
         }
     }
 }

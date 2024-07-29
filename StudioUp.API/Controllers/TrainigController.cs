@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using StudioUp.DTO;
@@ -15,10 +16,13 @@ namespace StudioUp.API.Controllers
     public class TrainingController : ControllerBase
     {
         private readonly ITrainingRepository _trainingRepository;
+        private readonly IMapper _mapper;
 
-        public TrainingController(ITrainingRepository trainingRepository)
+
+        public TrainingController(ITrainingRepository trainingRepository, IMapper mapper)
         {
             _trainingRepository = trainingRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Training
@@ -66,7 +70,7 @@ namespace StudioUp.API.Controllers
 
         // PUT: api/Training/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] TrainingDTO trainingDto)
+        public async Task<ActionResult> Put(int id, [FromBody] trainingPostDTO trainingPostDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -76,7 +80,7 @@ namespace StudioUp.API.Controllers
             if (training == null)
                 return NotFound();
 
-            await _trainingRepository.UpdateTraining(trainingDto,id);
+            await _trainingRepository.UpdateTraining(trainingPostDto, id);
             return NoContent();
         }
 
@@ -93,7 +97,8 @@ namespace StudioUp.API.Controllers
                 }
 
                 training.IsActive = false;
-                await _trainingRepository.UpdateTraining(training,id);
+                var trainingPostDto = _mapper.Map<trainingPostDTO>(training);
+                await _trainingRepository.UpdateTraining(trainingPostDto, id);
 
                 return NoContent();
             }
