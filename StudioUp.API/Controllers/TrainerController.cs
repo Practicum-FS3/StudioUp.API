@@ -18,7 +18,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("/getAllTrainers")]
+        [Route("getAllTrainers")]
         public async Task<List<DTO.TrainerDTO>> getAllTrainers()
         {
             try
@@ -32,7 +32,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost]
-        [Route("/addTrainer")]
+        [Route("addTrainer")]
         public async Task<TrainerDTO> addTrainer(DTO.TrainerDTO trainer)
         {
             try
@@ -47,6 +47,8 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpDelete]
+        [Route("deleteTrainer/{id}")]
+        public async Task<bool> deleteTrainer(int id)
         [Route("/deleteTrainer/{id}")]
         public async Task<IActionResult> deleteTrainer(int id)
         {
@@ -70,7 +72,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("/getTrainerById/{id}")]
+        [Route("getTrainerById/{id}")]
         public async Task<DTO.TrainerDTO> getTrainerById(int id)
         {
             try
@@ -84,7 +86,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPut]
-        [Route("/updateTrainer")]
+        [Route("updateTrainer")]
         public async Task<bool> updateTrainer(DTO.TrainerDTO trainer)
         {
             try
