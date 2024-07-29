@@ -22,6 +22,25 @@ namespace StudioUp.Models.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("StudioUp.DTO.TrainingTime", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Hour")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Minute")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TrainingTime");
+                });
+
             modelBuilder.Entity("StudioUp.Models.AvailableTraining", b =>
                 {
                     b.Property<int>("Id")
@@ -403,13 +422,13 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("DayOfWeek")
                         .HasColumnType("int");
 
-                    b.Property<TimeOnly>("Hour")
-                        .HasColumnType("time");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<int>("ParticipantsCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeId")
                         .HasColumnType("int");
 
                     b.Property<int>("TrainerID")
@@ -419,6 +438,8 @@ namespace StudioUp.Models.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("TimeId");
 
                     b.HasIndex("TrainerID");
 
@@ -557,6 +578,12 @@ namespace StudioUp.Models.Migrations
 
             modelBuilder.Entity("StudioUp.Models.Training", b =>
                 {
+                    b.HasOne("StudioUp.DTO.TrainingTime", "Time")
+                        .WithMany()
+                        .HasForeignKey("TimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StudioUp.Models.Trainer", "Trainer")
                         .WithMany()
                         .HasForeignKey("TrainerID")
@@ -568,6 +595,8 @@ namespace StudioUp.Models.Migrations
                         .HasForeignKey("TrainingCustomerTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Time");
 
                     b.Navigation("Trainer");
 

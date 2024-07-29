@@ -4,6 +4,7 @@ using Microsoft.Identity.Client;
 using StudioUp.DTO;
 using StudioUp.Repo.IRepositories;
 using StudioUp.Repo.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -50,12 +51,17 @@ namespace StudioUp.API.Controllers
 
         // POST: api/Training
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] TrainingDTO trainingDTO)
+        public async Task<ActionResult> Post([FromBody] trainingPostDTO trainingPostDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            await _trainingRepository.AddTraining(trainingDTO);
-            return CreatedAtAction(nameof(Get), new { id = trainingDTO.ID }, trainingDTO);
+            await _trainingRepository.AddTraining(trainingPostDto);
+            //return CreatedAtAction(nameof(Get), new { id = trainingDTO.ID }, trainingDTO);
+            return CreatedAtAction(nameof(Get), new { id = 0 }, trainingPostDto);
+
+
+
+
         }
 
         // PUT: api/Training/5
