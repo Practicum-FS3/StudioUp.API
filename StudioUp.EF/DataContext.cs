@@ -49,7 +49,7 @@ namespace StudioUp.Models
         public DbSet<LeumitCommimentTypes> LeumitCommimentTypes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
+           
         }
 
     }
