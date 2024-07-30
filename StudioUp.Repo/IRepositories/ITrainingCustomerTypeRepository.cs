@@ -10,7 +10,7 @@ namespace StudioUp.Repo.IRepositories
     public interface ITrainingCustomerTypeRepository
     {
         Task<List<TrainingCustomerTypeDTO>> GetAllTrainingCustomerTypes();
-        Task<List<DTO.TrainingCustomerTypeDTO>> GetActiveTrainingCustomerTypes();
+        //Task<List<DTO.TrainingCustomerTypeDTO>> GetActiveTrainingCustomerTypes();
 
         Task<TrainingCustomerTypeDTO> GetTrainingCustomerTypeById(int id);
         Task<TrainingCustomerTypeDTO> UpdateTrainingCustomerType(int id, DTO.TrainingCustomerTypeDTO trainingCustomerTypedto);

@@ -25,13 +25,14 @@ namespace StudioUp.API.Controllers
             return Ok(trainingCustomerType);
         }
 
-        //אבל רק את אלו שבפעילות TrainingCusromerType פונקציה שמביאה את המערך של
-        [HttpGet("TCTInActivity")]
-        public async Task<ActionResult<IEnumerable<TrainingCustomerType>>> GetTrainingCustomerTypeInActivity()
-        {
-            var trainingCustomerType = await _repository.GetActiveTrainingCustomerTypes();
-            return Ok(trainingCustomerType);
-        }
+        ////אבל רק את אלו שבפעילות TrainingCusromerType פונקציה שמביאה את המערך של
+        //[HttpGet("TCTInActivity")]
+        //public async Task<ActionResult<IEnumerable<TrainingCustomerType>>> GetTrainingCustomerTypeInActivity()
+        //{
+        //    var trainingCustomerType = await _repository.GetActiveTrainingCustomerTypes();
+        //    return Ok(trainingCustomerType);
+        //}
+       
         [HttpGet("{id}")]
         public async Task<ActionResult<TrainingCustomerType>> GetTrainingCustomerType(int id)
         {
