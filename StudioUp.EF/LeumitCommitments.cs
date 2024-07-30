@@ -26,6 +26,6 @@ namespace StudioUp.Models
         [ForeignKey("FileUpload")]
         public int FileUploadId { get; set; }
         public virtual FileUpload FileUpload { get; set; }
-
+      
     }
 }
