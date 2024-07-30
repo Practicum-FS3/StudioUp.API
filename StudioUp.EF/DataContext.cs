@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StudioUp.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,17 @@ namespace StudioUp.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LoginModel>()
-                .HasKey(l => l.Id); // הוסף הגדרה של מפתח ראשי
-           
+                .HasKey(l => l.Id); 
+            modelBuilder.Entity<Training>()
+           .HasOne(t => t.Time)
+           .WithOne()
+           .HasForeignKey<Training>(t => t.TimeId);
+            modelBuilder.Entity<Training>()
+           .HasOne(t => t.TrainingCustomerType)
+           .WithMany()
+           .HasForeignKey(t => t.TrainingCustomerTypeId);
         }
+    
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<PaymentOption> PaymentOptions { get; set; }
 
@@ -39,7 +48,7 @@ namespace StudioUp.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
+            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
         }
 
     }
