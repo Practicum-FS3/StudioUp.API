@@ -12,7 +12,6 @@ namespace StudioUp.Models
         public int ID { get; set; }
         [MaxLength(50)]
         public string Title { get; set; }
-        
         public bool IsActive { get; set; }
 
     }
