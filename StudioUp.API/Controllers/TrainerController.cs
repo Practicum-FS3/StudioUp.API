@@ -48,7 +48,7 @@ namespace StudioUp.API.Controllers
 
         [HttpDelete]
         [Route("deleteTrainer/{id}")]
-        public async Task<bool> deleteTrainer(int id)
+        //public async Task<bool> deleteTrainer(int id)
         [Route("/deleteTrainer/{id}")]
         public async Task<IActionResult> deleteTrainer(int id)
         {

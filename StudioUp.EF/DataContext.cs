@@ -35,6 +35,7 @@ namespace StudioUp.Models
         public DbSet<TrainingCustomerType> TrainingCustomersTypes { get;set; }
         public DbSet<ContentSection> ContentSections { get; set; }
         public DbSet<FileUpload> Files { get; set; }
+        public DbSet<CustomerHMOS> CustomerHMOS { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
