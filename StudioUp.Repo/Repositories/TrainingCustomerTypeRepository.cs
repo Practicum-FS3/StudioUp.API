@@ -38,12 +38,20 @@ namespace StudioUp.Repo.Repositories
             //בדיקות בשביל לראות האם אפשר להוסיף כזה סוג אימון
             if (trainingCustomerType != null && trainingCustomerType.TrainingType != null && trainingCustomerType.CustomerType != null)
             {
-               // בדיקה האם סוג האימון קיים
+               // בדיקה האם סוג האימון בפעילות
                 if (trainingCustomerType.TrainingType.IsActive)
                 {
                     //האם יש אפשרות לכזה לקוח
                     if (trainingCustomerType.CustomerType.IsActive)
                     {
+                        var allTrainingCustomerType = await GetAllTrainingCustomerTypes();
+                        foreach (var item in allTrainingCustomerType)
+                        {
+                            if(item.TrainingTypeID== trainingCustomerType.TrainingTypeId&& item.CustomerTypeID == trainingCustomerType.CustomerTypeID)
+                            {
+                                throw new Exception("כבר קיים כזה סוג אימון!!");
+                            }
+                        }
                         var TrainingCustomerType1 = await this.context.TrainingCustomersTypes.AddAsync(mapper.Map<Models.TrainingCustomerType>(trainingCustomerType));
                         await this.context.SaveChangesAsync();
                         return trainingCustomerTypedto;
@@ -59,19 +67,14 @@ namespace StudioUp.Repo.Repositories
         public async Task<TrainingCustomerTypeDTO> DeleteTrainingCustomerType(int id)
         {
             var thisTCT = await context.TrainingCustomersTypes.FindAsync(id);
-
             if (thisTCT == null)
                 return null;
-            //var TCT = thisTCT;
-            //TCT.IsActive=false;
             thisTCT.IsActive = false;
-            //mapper.Map(TCT,thisTCT );
             context.Entry(thisTCT).State = EntityState.Modified;
             await context.SaveChangesAsync();
-
             return mapper.Map<TrainingCustomerTypeDTO>(thisTCT);
         }
- public async Task<TrainingCustomerTypeDTO> UpdateTrainingCustomerType(int id, DTO.TrainingCustomerTypeDTO trainingCustomerTypedto)
+        public async Task<TrainingCustomerTypeDTO> UpdateTrainingCustomerType(int id, DTO.TrainingCustomerTypeDTO trainingCustomerTypedto)
         {
             var trainingCustomerType = await context.TrainingCustomersTypes.FindAsync(id);
             if (trainingCustomerType == null)
@@ -80,7 +83,6 @@ namespace StudioUp.Repo.Repositories
             mapper.Map(trainingCustomerTypedto, trainingCustomerType);
             context.Entry(trainingCustomerType).State = EntityState.Modified;
             await context.SaveChangesAsync();
-
             return mapper.Map<TrainingCustomerTypeDTO>(trainingCustomerType);
         }
         public async Task<List<DTO.TrainingCustomerTypeDTO>> GetAllTrainingCustomerTypes()
@@ -91,12 +93,12 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public async Task<List<DTO.TrainingCustomerTypeDTO>> GetActiveTrainingCustomerTypes()
-        {
-            var TrainingCustomerTypes = await context.TrainingCustomersTypes.Where(t => t.IsActive == true).ToListAsync();
+        //public async Task<List<DTO.TrainingCustomerTypeDTO>> GetActiveTrainingCustomerTypes()
+        //{
+        //    var TrainingCustomerTypes = await context.TrainingCustomersTypes.Where(t => t.IsActive == true).ToListAsync();
 
-            return mapper.Map<List<DTO.TrainingCustomerTypeDTO>>(TrainingCustomerTypes);
-        }
+        //    return mapper.Map<List<DTO.TrainingCustomerTypeDTO>>(TrainingCustomerTypes);
+        //}
 
         public async Task<DTO.TrainingCustomerTypeDTO> GetTrainingCustomerTypeById(int id)
         {
