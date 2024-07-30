@@ -45,7 +45,8 @@ namespace StudioUp.Models
         public DbSet<ContentSection> ContentSections { get; set; }
         public DbSet<FileUpload> Files { get; set; }
         public DbSet<CustomerHMOS> CustomerHMOS { get; set; }
-
+        public DbSet<LeumitCommitments> LeumitCommitments { get; set; }
+        public DbSet<LeumitCommimentTypes> LeumitCommimentTypes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
