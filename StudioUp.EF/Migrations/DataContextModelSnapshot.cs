@@ -322,6 +322,57 @@ namespace StudioUp.Models.Migrations
                     b.ToTable("T_HMOs");
                 });
 
+            modelBuilder.Entity("StudioUp.Models.LeumitCommimentTypes", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("T_LeumitCommimentTypes");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.LeumitCommitments", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
+                    b.Property<DateOnly>("BirthDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("CommitmentTypeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("CommitmentTz")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FileUploadId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommitmentTypeId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("FileUploadId");
+
+                    b.ToTable("T_LeumitCommitments");
+                });
+
             modelBuilder.Entity("StudioUp.Models.LoginModel", b =>
                 {
                     b.Property<int>("Id")
@@ -467,7 +518,8 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("TimeId");
+                    b.HasIndex("TimeId")
+                        .IsUnique();
 
                     b.HasIndex("TrainerID");
 
@@ -618,11 +670,38 @@ namespace StudioUp.Models.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("StudioUp.Models.LeumitCommitments", b =>
+                {
+                    b.HasOne("StudioUp.Models.LeumitCommimentTypes", "LeumitCommimentTypes")
+                        .WithMany()
+                        .HasForeignKey("CommitmentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudioUp.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudioUp.Models.FileUpload", "FileUpload")
+                        .WithMany()
+                        .HasForeignKey("FileUploadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("FileUpload");
+
+                    b.Navigation("LeumitCommimentTypes");
+                });
+
             modelBuilder.Entity("StudioUp.Models.Training", b =>
                 {
                     b.HasOne("StudioUp.DTO.TrainingTime", "Time")
-                        .WithMany()
-                        .HasForeignKey("TimeId")
+                        .WithOne()
+                        .HasForeignKey("StudioUp.Models.Training", "TimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
