@@ -2,6 +2,7 @@
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -17,7 +18,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet]
-        [Route("/getAllTrainers")]
+        [Route("getAllTrainers")]
         public async Task<List<DTO.TrainerDTO>> getAllTrainers()
         {
             try
@@ -31,7 +32,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost]
-        [Route("/addTrainer")]
+        [Route("addTrainer")]
         public async Task<TrainerDTO> addTrainer(DTO.TrainerDTO trainer)
         {
             try
@@ -46,21 +47,32 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpDelete]
+        [Route("deleteTrainer/{id}")]
+        //public async Task<bool> deleteTrainer(int id)
         [Route("/deleteTrainer/{id}")]
-        public async Task<bool> deleteTrainer(int id)
+        public async Task<IActionResult> deleteTrainer(int id)
         {
             try
             {
-                return await trainerRepository.DeleteTrainer(id);
+                var trainer = await trainerRepository.GetTrainerById(id);
+                if (trainer == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                trainer.IsActive = false;
+                await trainerRepository.UpdateTrainer(trainer);
+
+                return NoContent();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
         [HttpGet]
-        [Route("/getTrainerById/{id}")]
+        [Route("getTrainerById/{id}")]
         public async Task<DTO.TrainerDTO> getTrainerById(int id)
         {
             try
@@ -74,7 +86,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPut]
-        [Route("/updateTrainer")]
+        [Route("updateTrainer")]
         public async Task<bool> updateTrainer(DTO.TrainerDTO trainer)
         {
             try

@@ -56,8 +56,23 @@ namespace StudioUp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePaymentOption(int id)
         {
-            await _repository.DeleteAsync(id);
-            return NoContent();
+            try
+            {
+                var paymentOption = await _repository.GetByIdAsync(id);
+                if (paymentOption == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                paymentOption.IsActive = false;
+                await _repository.UpdateAsync(paymentOption);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

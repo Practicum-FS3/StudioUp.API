@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using StudioUp.DTO;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -77,11 +78,23 @@ namespace StudioUp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var training = await _trainingRepository.GetTrainingById(id);
-            if (training == null)
-                return NotFound();
-            await _trainingRepository.DeleteTraining(id);
-            return NoContent();
+            try
+            {
+                var training = await _trainingRepository.GetTrainingById(id);
+                if (training == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                training.IsActive = false;
+                await _trainingRepository.UpdateTraining(training,id);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

@@ -9,10 +9,10 @@ namespace StudioUp.DTO
     public class TrainingCustomerTypeDTO
     {
         public int ID { get; set; }
-        public string Title { get; set; }
         public int CustomerTypeID { get; set; }
         public int TrainingTypeID { get; set; }
         public bool IsActive { get; set; }
+
 
     }
 }
