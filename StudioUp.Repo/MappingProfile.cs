@@ -32,7 +32,8 @@ namespace StudioUp.Repo
             CreateMap<FileUpload, FileDownloadDTO>().ReverseMap();
             //CreateMap<Training>
             //CreateMap<SubscriptionRoutes, SubscriptionRoutesDTO>().ReverseMap();
-
+            CreateMap<LeumitCommitments, LeumitCommitmentsDTO>().ReverseMap();
+            CreateMap<LeumitCommimentTypes, LeumitCommimentTypesDTO>().ReverseMap();
             CreateMap<Training, CalanderTrainingDTO>()
                   .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Trainer.FirstName + " " + src.Trainer.LastName))
                   .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Time.ToString()))
