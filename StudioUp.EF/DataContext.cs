@@ -47,6 +47,7 @@ namespace StudioUp.Models
         public DbSet<CustomerHMOS> CustomerHMOS { get; set; }
         public DbSet<LeumitCommitments> LeumitCommitments { get; set; }
         public DbSet<LeumitCommimentTypes> LeumitCommimentTypes { get; set; }
+        public DbSet<CustomerSubscription> CustomerSubscriptions { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
            
