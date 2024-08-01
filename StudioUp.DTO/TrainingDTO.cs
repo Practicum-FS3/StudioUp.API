@@ -9,12 +9,9 @@ namespace StudioUp.DTO
     public class TrainingDTO
     {
         public int ID { get; set; }
-
-
-
         //public int TrainingTypeID { get; set; }
         //public int CustomerTypeID { get; set; }
-        public int TrainingCustomerTypeID {  get; set; }
+       // public int TrainingCustomerTypeID {  get; set; }
         public int TrainerID { get; set; }
         public int DayOfWeek { get; set; }
         public TrainingTimeDTO Time { get; set; }

@@ -44,7 +44,28 @@ namespace StudioUp.API.Controllers
                 }
 
                 return Ok(availableTrainingDTO);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message} ");
+            }
+        }
+
+        [HttpGet("GetByTrainingId/{id}")]
+        public async Task<ActionResult<AvailableTrainingDTO>> GetByTrainingIdAvailableTraining(int id)
+        {
+            try
+            {
+                var availableTrainingDTO = await _availableTrainingRepository.GetAvailableTrainingByTrainingIdAsync(id);
+
+                if (availableTrainingDTO == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                return Ok(availableTrainingDTO);
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message} ");
             }

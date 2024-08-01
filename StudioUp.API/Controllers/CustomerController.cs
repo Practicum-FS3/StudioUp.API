@@ -97,7 +97,7 @@ namespace StudioUp.API.Controllers
             }
         }
         [HttpGet("filter")]
-        public async Task<List<CustomerDTO>> FilterCustomers(DTO.CustomerFilterDTO filter)
+        public async Task<List<CustomerDTO>> FilterCustomers([FromQuery] DTO.CustomerFilterDTO filter)
         {
             try
             {
