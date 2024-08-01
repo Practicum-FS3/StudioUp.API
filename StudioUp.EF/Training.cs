@@ -9,9 +9,9 @@ namespace StudioUp.Models
         
         public int ID { get; set; }
 
-        //[ForeignKey("TrainingType")]
-        //public int TrainingTypeID { get; set; }
-        //public virtual TrainingType TrainingType { get; set; }
+        [ForeignKey("TrainingType")]
+        public int TrainingTypeID { get; set; }
+        public virtual TrainingType TrainingType { get; set; }
 
         [ForeignKey("TrainingCustomerType")]
         public int TrainingCustomerTypeId { get; set; }

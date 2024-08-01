@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo;
+using StudioUp.Repo.IRepositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -9,9 +11,9 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class SubscriptionTypeController : ControllerBase
     {
-        private readonly IRepository<SubscriptionType> _repository;
+        private readonly ISubscriptionTypeRepository _repository;
 
-        public SubscriptionTypeController(IRepository<SubscriptionType> repsitory)
+        public SubscriptionTypeController(ISubscriptionTypeRepository repsitory)
         {
             _repository = repsitory;
         }
@@ -19,14 +21,14 @@ namespace StudioUp.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubscriptionType>>> GetSubscriptionTypes()
         {
-            var subscriptionTypes = await _repository.GetAllAsync();
+            var subscriptionTypes = await _repository.GetAllSubscriptions();
             return Ok(subscriptionTypes);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<object>> GetSubscriptionType(int id)
+        public async Task<ActionResult<SubscriptionTypeDTO>> GetSubscriptionType(int id)
         {
-            var subscriptionType = await _repository.GetByIdAsync(id);
+            var subscriptionType = await _repository.GetSubscriptionById(id);
             if (subscriptionType == null)
             {
                 return NotFound();
@@ -35,29 +37,35 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubscriptionType(int id, SubscriptionType subscriptionType)
+        public async Task<ActionResult<SubscriptionTypeDTO>> PutSubscriptionType(int id, SubscriptionTypeDTO subscriptionTypeDto)
         {
-            if (id != subscriptionType.ID)
-            {
-                return BadRequest();
-            }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var sub = await _repository.GetSubscriptionById(id);
+            if (sub == null)
+                return NotFound();
+            SubscriptionTypeDTO subscription = await _repository.UpdateSubscription(subscriptionTypeDto,id);
+            return Ok(subscription);
 
-            await _repository.UpdateAsync(subscriptionType);
-            return NoContent();
         }
 
         [HttpPost]
-        public async Task<ActionResult<object>> PostSubscriptionType(SubscriptionType subscriptionType)
+        public async Task<ActionResult<SubscriptionTypeDTO>> PostSubscriptionType(SubscriptionTypeDTO subscriptionTypeDto)
         {
-            await _repository.AddAsync(subscriptionType);
-            return CreatedAtAction(nameof(GetSubscriptionType), new { id = subscriptionType.ID }, subscriptionType);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            await _repository.AddSubscription(subscriptionTypeDto);
+            return CreatedAtAction(nameof(GetSubscriptionType), new { id = subscriptionTypeDto.ID }, subscriptionTypeDto);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubscriptionType(int id)
         {
-            await _repository.DeleteAsync(id);
-            return NoContent();
+            var sub= await _repository.GetSubscriptionById(id);
+            if (sub == null)
+                return NotFound();  
+            var subToDelete=await _repository.DeleteSubscription(id);
+            return Ok(subToDelete);
         }
     }
 }

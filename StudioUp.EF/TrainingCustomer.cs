@@ -15,8 +15,8 @@ namespace StudioUp.Models
         public int ID { get; set; }
        
         public int TrainingID { get; set; }
-        //public virtual AvailableTraining Training { get; set; }
-     
+        public virtual AvailableTraining Training { get; set; }
+
         public int CustomerID { get; set; }
         public virtual Customer Customer { get; set; }
         public bool Attended { get; set; }

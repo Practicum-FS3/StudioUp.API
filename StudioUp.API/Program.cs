@@ -80,7 +80,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
             builder.Services.AddScoped<IRepository<CustomerType>, CustomerTypeRepository>();
-            builder.Services.AddScoped<IRepository<SubscriptionType>, SubscriptionTypeRepository>();
+            builder.Services.AddScoped<ISubscriptionTypeRepository, SubscriptionTypeRepository>();
             builder.Services.AddScoped<IRepository<PaymentOption>, PaymentOptionRepository>();
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
 
