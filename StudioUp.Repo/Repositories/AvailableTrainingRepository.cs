@@ -29,6 +29,17 @@ namespace StudioUp.Repo.Repositories
             var availableTrainings = await _context.AvailableTraining.ToListAsync();
             return _mapper.Map<IEnumerable<AvailableTrainingDTO>>(availableTrainings);
         }
+        public async Task<IEnumerable<CalanderAvailableTrainingDTO>> GetAllAvailableTrainingsAsyncForCalander()
+        {
+            var availableTrainings = await _context.AvailableTraining
+                 .Include(t => t.Training)
+                .Include(t => t.Training.Trainer)
+                .Include(t => t.Training.TrainingCustomerType.TrainingType)
+                .Include(t => t.Training.TrainingCustomerType.CustomerType)
+
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<CalanderAvailableTrainingDTO>>(availableTrainings);
+        }
 
         public async Task<AvailableTrainingDTO> GetAvailableTrainingByIdAsync(int id)
         {

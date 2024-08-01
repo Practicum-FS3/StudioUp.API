@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
 using StudioUp.Models;
@@ -30,6 +31,16 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        // GET: api/AvailableTraining/forCalander
+
+        [HttpGet("forCalander")]
+        public async Task<ActionResult<IEnumerable<AvailableTrainingDTO>>> GetAvailableTrainingsCalender()
+        {
+            var availableTrainingsDTO = await _availableTrainingRepository.GetAllAvailableTrainingsAsyncForCalander();
+            return Ok(availableTrainingsDTO);
+        }
+
         //[HttpGet("{id}")]
         [HttpGet("GetById/{id}")]
         public async Task<ActionResult<AvailableTrainingDTO>> GetByIdAvailableTraining(int id)
