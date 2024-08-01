@@ -30,13 +30,13 @@ namespace StudioUp.Repo.Repositories
                 var trainer1 = await this.context.Trainers.AddAsync(mapper.Map<Trainer>(trainer));
                 await this.context.SaveChangesAsync();
                 return trainer;
+
             }
             catch (Exception e)
             {
                 throw new Exception("Failed to add a trainer");
             }
         }
-
 
         public async Task<bool> DeleteTrainer(int id)
         {
