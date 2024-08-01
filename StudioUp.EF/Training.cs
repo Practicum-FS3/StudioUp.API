@@ -1,17 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using StudioUp.DTO;
 
 namespace StudioUp.Models
 {
     [Table("T_Trainings")]
     public class Training
     {
-        
         public int ID { get; set; }
-
-        //[ForeignKey("TrainingType")]
-        //public int TrainingTypeID { get; set; }
-        //public virtual TrainingType TrainingType { get; set; }
 
         [ForeignKey("TrainingCustomerType")]
         public int TrainingCustomerTypeId { get; set; }
@@ -20,7 +16,9 @@ namespace StudioUp.Models
         public int TrainerID { get; set; }
         public virtual Trainer Trainer { get; set; }
         public int DayOfWeek { get; set; }
-        public TimeOnly Hour { get; set; }
+        [ForeignKey("TrainingTime")]
+        public int TimeId { get; set; }
+        public virtual TrainingTime Time { get; set; }
         public int ParticipantsCount { get; set; }
         public bool IsActive { get; set; }
 

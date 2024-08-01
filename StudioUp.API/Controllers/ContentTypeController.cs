@@ -78,8 +78,23 @@ namespace StudioUp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _repository.Delete(id);
-            return NoContent();
+            try
+            {
+                var contentType = await _repository.GetById(id);
+                if (contentType == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                contentType.IsActive = false;
+                await _repository.Update(contentType);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

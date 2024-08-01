@@ -56,8 +56,23 @@ namespace StudioUp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubscriptionType(int id)
         {
-            await _repository.DeleteAsync(id);
-            return NoContent();
+            try
+            {
+                var subscription = await _repository.GetByIdAsync(id);
+                if (subscription == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                subscription.IsActive = false;
+                await _repository.UpdateAsync(subscription);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

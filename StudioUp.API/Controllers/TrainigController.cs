@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using StudioUp.DTO;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,10 +16,13 @@ namespace StudioUp.API.Controllers
     public class TrainingController : ControllerBase
     {
         private readonly ITrainingRepository _trainingRepository;
+        private readonly IMapper _mapper;
 
-        public TrainingController(ITrainingRepository trainingRepository)
+
+        public TrainingController(ITrainingRepository trainingRepository, IMapper mapper)
         {
             _trainingRepository = trainingRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Training
@@ -49,17 +55,22 @@ namespace StudioUp.API.Controllers
 
         // POST: api/Training
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] TrainingDTO trainingDTO)
+        public async Task<ActionResult> Post([FromBody] trainingPostDTO trainingPostDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            await _trainingRepository.AddTraining(trainingDTO);
-            return CreatedAtAction(nameof(Get), new { id = trainingDTO.ID }, trainingDTO);
+            await _trainingRepository.AddTraining(trainingPostDto);
+            //return CreatedAtAction(nameof(Get), new { id = trainingDTO.ID }, trainingDTO);
+            return CreatedAtAction(nameof(Get), new { id = 0 }, trainingPostDto);
+
+
+
+
         }
 
         // PUT: api/Training/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] TrainingDTO trainingDto)
+        public async Task<ActionResult> Put(int id, [FromBody] trainingPostDTO trainingPostDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -69,7 +80,7 @@ namespace StudioUp.API.Controllers
             if (training == null)
                 return NotFound();
 
-            await _trainingRepository.UpdateTraining(trainingDto,id);
+            await _trainingRepository.UpdateTraining(trainingPostDto, id);
             return NoContent();
         }
 
@@ -77,11 +88,24 @@ namespace StudioUp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var training = await _trainingRepository.GetTrainingById(id);
-            if (training == null)
-                return NotFound();
-            await _trainingRepository.DeleteTraining(id);
-            return NoContent();
+            try
+            {
+                var training = await _trainingRepository.GetTrainingById(id);
+                if (training == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                training.IsActive = false;
+                var trainingPostDto = _mapper.Map<trainingPostDTO>(training);
+                await _trainingRepository.UpdateTraining(trainingPostDto, id);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

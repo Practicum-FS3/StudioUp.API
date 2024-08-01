@@ -48,3 +48,4 @@ public class TimeOnlyConverter : JsonConverter<TimeOnly>
         writer.WriteEndObject();
     }
 }
+
