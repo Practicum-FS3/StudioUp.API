@@ -20,7 +20,7 @@ namespace StudioUp.Models
         public int CustomerID { get; set; }
         public virtual Customer Customer { get; set; }
         public bool Attended { get; set; }
-        //public bool IsActive { get; set; }
+        public bool IsActive { get; set; }
 
 
     }

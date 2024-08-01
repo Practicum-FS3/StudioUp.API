@@ -14,7 +14,7 @@ namespace StudioUp.DTO
         public int DayOfWeek { get; set; }
         public TimeOnly Hour { get; set; }
         public int ParticipantsCount { get; set; }
-        //public bool IsActive { get; set; }
+        public bool IsActive { get; set; }
 
     }
 }

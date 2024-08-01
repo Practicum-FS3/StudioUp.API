@@ -96,10 +96,10 @@ namespace StudioUp.Repo.Repositories
                     return false;
                 }
 
-                customerToUpdate.Adress = entity.Adress;
+                customerToUpdate.Address = entity.Address;
                 customerToUpdate.LastName = entity.LastName;
                 customerToUpdate.FirstName = entity.FirstName;
-                customerToUpdate.PaymentOptionsId = entity.PaymentOptionsId;
+                customerToUpdate.PaymentOptionId = entity.PaymentOptionId;
                 customerToUpdate.HMOId = entity.HMOId;
                 customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
                 //customerToUpdate.IsActive = entity.IsActive;

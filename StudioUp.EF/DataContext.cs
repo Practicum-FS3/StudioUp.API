@@ -14,16 +14,19 @@ namespace StudioUp.Models
            
         }
 
-        public DbSet<Customer> Customers { get; set; }
+        
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<PaymentOption> PaymentOptions { get; set; }
         public DbSet<SubscriptionType> SubscriptionTypes { get; set; }
-        public DbSet<Trainer> Trainers { get; set; }
-        public DbSet<Training> Trainings { get; set; }
-        public DbSet<TrainingCustomer> TrainingCustomers { get; set; }
         public DbSet<TrainingType> TrainingTypes { get; set; }
         public DbSet<HMO> HMOs { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Trainer> Trainers { get; set; }
+        public DbSet<Training> Trainings { get; set; }
         public DbSet<AvailableTraining> AvailableTraining { get; set; }
+        public DbSet<TrainingCustomer> TrainingCustomers { get; set; }
+        public DbSet<TrainingCustomerType> TrainingCustomersTypes { get;set; }
+       
 
 
     }
