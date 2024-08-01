@@ -69,6 +69,20 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
+        public async Task<List<TrainingCustomerDTO>> GetTraningCustomerByCustomerId(int id)
+        {
+            try
+            {
+                var trainingCustomers = await _context.TrainingCustomers.Where(tc => tc.CustomerID == id).ToListAsync();
+                return _mapper.Map<List<TrainingCustomerDTO>>(trainingCustomers);
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public async Task<TrainingCustomerDTO> AddTraningCustomer(TrainingCustomerDTO trainingCustomer)
         {
             try

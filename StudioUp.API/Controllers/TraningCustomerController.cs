@@ -51,6 +51,18 @@ namespace StudioUp.API.Controllers
             return Ok(trainingsCustomer);
         }
 
+        // GET api/TraningCustomer/byCustomerId/5
+        [HttpGet("byCustomerId/{id}")]
+        public async Task<ActionResult<IEnumerable<TrainingCustomerDTO>>> GetByCustomer(int id)
+        {
+            var trainingsCustomer = await _trainingCustomerRepository.GetTraningCustomerByCustomerId(id);
+            if (trainingsCustomer == null || !trainingsCustomer.Any())
+            {
+                return NotFound();
+            }
+            return Ok(trainingsCustomer);
+        }
+
         // POST api/TraningCustomer/AddTrainingCustomer
         [HttpPost("AddTrainingCustomer")]
         public async Task<ActionResult<TrainingCustomerDTO>> Post(TrainingCustomerDTO trainingCustomer)

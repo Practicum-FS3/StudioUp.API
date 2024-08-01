@@ -35,6 +35,21 @@ namespace StudioUp.Repo.Repositories
             var availableTraining = await _context.AvailableTraining.FindAsync(id);
             return _mapper.Map<AvailableTrainingDTO>(availableTraining);
         }
+
+        public async Task<AvailableTrainingDTO> GetAvailableTrainingByTrainingIdAsync(int id)
+        {
+            var availableTraining = await _context.AvailableTraining
+                .FirstOrDefaultAsync(a => a.TrainingId == id);
+
+            if (availableTraining == null)
+            {
+                throw new Exception($"No available training found with TrainingId {id}");
+            }
+
+            return _mapper.Map<AvailableTrainingDTO>(availableTraining);
+        }
+
+
         public async Task<AvailableTrainingDTO> AddAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO)
         {
             var availableTraining = _mapper.Map<Models.AvailableTraining>(availableTrainingDTO);
@@ -65,5 +80,7 @@ namespace StudioUp.Repo.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        
     }
 }

@@ -98,6 +98,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
             builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
             builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
+            builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
