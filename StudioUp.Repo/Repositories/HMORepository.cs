@@ -23,15 +23,15 @@ namespace StudioUp.Repo.Repository
             this.mapper = mapper;
         }
 
-        public async Task<int> AddAsync(HMODTO hmo)
+        public async Task<HMODTO> AddAsync(HMODTO hmo)
         {
             try{
                 var newHMO = await this._context.HMOs.AddAsync(mapper.Map<HMO>(hmo));
                 await this._context.SaveChangesAsync();
-                return newHMO.Entity.ID;
+                return hmo;
             }
-            catch (Exception ex) { 
-                return 0;
+            catch (Exception ex) {
+                throw new Exception("Failed to add HMO");
             }
         }
 
@@ -50,7 +50,7 @@ namespace StudioUp.Repo.Repository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception("Failed to delete HMO");
             }
         }
 
@@ -62,7 +62,7 @@ namespace StudioUp.Repo.Repository
             }
             catch (Exception ex)
             {
-                return new List<HMODTO>();
+                throw new Exception("Failed to fetch any HMOS");
             }
         }
 
@@ -75,27 +75,28 @@ namespace StudioUp.Repo.Repository
             }
             catch (Exception ex)
             {
-                return new HMODTO();
+                throw new Exception("HMO return failed");
             }
         }
 
-        public async Task<bool> UpdateAsync(HMODTO hmo)
+        public async Task<bool> UpdateAsync(int id , HMODTO hmo)
         {
             try
             {
-                var h = await this._context.HMOs.FirstOrDefaultAsync(h => h.ID == hmo.ID);
+                var h = await this._context.HMOs.FirstOrDefaultAsync(h => h.ID == id);
                 if (h == null) { 
                     return false;
                 }
                 h.Title = hmo.Title;
-               // h.IsActive = hmo.IsActive;
+
+                h.IsActive = hmo.IsActive;
                 _context.HMOs.Update(mapper.Map<HMO>(h));
                 await this._context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception("Update to HMO failed");
             }
         }
     }

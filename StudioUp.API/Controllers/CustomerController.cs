@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudioUp.DTO;
+//using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -23,12 +26,11 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return new List<DTO.CustomerDTO>();
+                throw ex;
             }
         }
 
-        [HttpGet]
-        [Route("/byId")]
+        [HttpGet("byId/{id}")]
 
         public async Task<DTO.CustomerDTO> GetCustomerById(int id)
         {
@@ -38,24 +40,27 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return new DTO.CustomerDTO();
+                throw ex;
             }
         }
 
+
         [HttpPost]
-        [Route("/addCustomer")]
-        public async Task<int> AddCustomer(DTO.CustomerDTO customer)
+        [Route("addCustomer")]
+        public async Task<DTO.CustomerDTO> AddCustomer(DTO.CustomerDTO customer)
         {
-            try
+             try
             {
                 return await CustomerService.AddAsync(customer);
             }
             catch (Exception ex)
             {
-                return -1;
+                throw ex;
             }
         }
 
+
+       
         [HttpPut]
 
         public async Task<bool> UpdateCustomer(DTO.CustomerDTO customer)
@@ -66,22 +71,50 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
 
-        [HttpDelete]
-        public async Task<bool> DeleteCustomer(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCustomer(int id)
         {
             try
             {
-                return await CustomerService.DeleteAsync(id);
+                var customer = await CustomerService.GetByIdAsync(id);
+                if (customer == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                customer.IsActive = false;
+                await CustomerService.UpdateAsync(customer);
+
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return false;
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("filter")]
+        public async Task<List<CustomerDTO>> FilterCustomers([FromQuery] DTO.CustomerFilterDTO filter)
+        {
+            try
+            {
+                filter.FirstName = filter.FirstName?.Trim();
+                filter.LastName = filter.LastName?.Trim();
+                filter.Email = filter.Email?.Trim();
+
+                return await CustomerService.FilterAsync(filter);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
 
     }
 }

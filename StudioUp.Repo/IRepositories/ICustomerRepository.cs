@@ -12,9 +12,13 @@ namespace StudioUp.Repo.IRepositories
     {
         Task<List<CustomerDTO>> GetAllAsync();
         Task<CustomerDTO> GetByIdAsync(int id);
+        Task<CustomerDTO> GetCustomerByEmailAndPassword(string email, string password);
+
         Task<bool> UpdateAsync(CustomerDTO entity);
-        Task<int> AddAsync(CustomerDTO entity);
+
+        Task<CustomerDTO> AddAsync(CustomerDTO entity);
         Task<bool> DeleteAsync(int id);
+        Task<List<CustomerDTO>> FilterAsync(CustomerFilterDTO filter); // פונקציה חדשה
     }
 }
 

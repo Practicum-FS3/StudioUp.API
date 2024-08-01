@@ -23,19 +23,44 @@ namespace StudioUp.Repo.Repositories
             this.mapper = mapper;
             
         }
-        public async Task<int> AddAsync(CustomerDTO entity)
+
+        public async Task<DTO.CustomerDTO> AddAsync(CustomerDTO entity)
+
         {
             try
             {
                 var mapCast = mapper.Map<Models.Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);
                 await context.SaveChangesAsync();
-                return newCustomer.Entity.Id;
+                entity.Id = newCustomer.Entity.Id;
+                return entity;
             }
             catch (Exception ex)
             {
-                return 0;
+                throw ex;
             }
+        }
+
+        public async Task<CustomerDTO> GetCustomerByEmailAndPassword(string email, string password)
+        {
+            var login = await context.Login.FirstOrDefaultAsync(l => l.Email == email && l.Password == password);
+            if (login is not null)
+            {
+                try
+                {
+                    var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+                    var mapCust = mapper.Map<CustomerDTO>(cust);
+                    return mapCust;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                return null;
+            }          
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -43,6 +68,10 @@ namespace StudioUp.Repo.Repositories
             try
             {
                 var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
+                if (c == null)
+                {
+                    return false;
+                }
                 var mapC = mapper.Map<Customer>(c);
                 context.Customers.Remove(mapC);
                 await context.SaveChangesAsync();
@@ -50,7 +79,8 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
+
             }
         }
 
@@ -65,7 +95,8 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return new List<CustomerDTO>();
+                throw ex;
+
             }
 
         }
@@ -81,7 +112,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return new CustomerDTO();
+                throw ex;
             }
         }
 
@@ -102,9 +133,11 @@ namespace StudioUp.Repo.Repositories
                 customerToUpdate.PaymentOptionId = entity.PaymentOptionId;
                 customerToUpdate.HMOId = entity.HMOId;
                 customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
-                //customerToUpdate.IsActive = entity.IsActive;
+
+                customerToUpdate.IsActive = entity.IsActive;
                 customerToUpdate.SubscriptionTypeId = entity.SubscriptionTypeId;
                 customerToUpdate.Tel = entity.Tel;
+                customerToUpdate.Email = entity.Email;
                 context.Customers.Update(mapper.Map<Customer>(customerToUpdate));
 
                 await context.SaveChangesAsync();
@@ -113,9 +146,49 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
+        public async Task<List<CustomerDTO>> FilterAsync(CustomerFilterDTO filter)
+        {
+            var query = context.Customers.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter.FirstName) || !string.IsNullOrEmpty(filter.LastName))
+            {
+                var firstName = filter.FirstName?.Trim().Replace(" ", "").ToLower();
+                var lastName = filter.LastName?.Trim().Replace(" ", "").ToLower();
+
+                query = query.Where(c =>
+                    (string.IsNullOrEmpty(firstName) || c.FirstName.ToLower().Replace(" ", "").Contains(firstName)) &&
+                    (string.IsNullOrEmpty(lastName) || c.LastName.ToLower().Replace(" ", "").Contains(lastName)));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Email))
+            {
+                var email = filter.Email.Trim().Replace(" ", "").ToLower();
+                query = query.Where(c => c.Email.ToLower().Replace(" ", "").Contains(email));
+            }
+
+            return await query.Select(c => new CustomerDTO
+            {
+                Id = c.Id,
+                FirstName = c.FirstName,
+                LastName = c.LastName,
+                Address = c.Address,
+                Email = c.Email,
+                Tel = c.Tel,
+                PaymentOptionId = c.PaymentOptionId,
+                HMOId = c.HMOId,
+                CustomerTypeId = c.CustomerTypeId,
+                SubscriptionTypeId = c.SubscriptionTypeId,
+                IsActive = c.IsActive
+            }).ToListAsync();
+        }
+
+
+
+
     }
 }
+
 
