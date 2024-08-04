@@ -177,10 +177,10 @@ namespace StudioUp.Repo.Repositories
                 Address = c.Address,
                 Email = c.Email,
                 Tel = c.Tel,
-                PaymentOptionId = c.PaymentOptionId,
-                HMOId = c.HMOId,
-                CustomerTypeId = c.CustomerTypeId,
-                SubscriptionTypeId = c.SubscriptionTypeId,
+                PaymentOptionId = c.PaymentOptionId.Value,
+                HMOId = c.HMOId.Value,
+                CustomerTypeId = c.CustomerTypeId.Value,
+                SubscriptionTypeId = c.SubscriptionTypeId.Value,
                 IsActive = c.IsActive
             }).ToListAsync();
         }

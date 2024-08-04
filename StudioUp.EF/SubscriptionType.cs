@@ -13,18 +13,18 @@ namespace StudioUp.Models
     public class SubscriptionType
     {
         public int ID { get; set; }
-        [AllowNull]
+        
         [MaxLength(50)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
         public bool IsActive { get; set; }
-        [AllowNull]
-        public int TotalTraining { get; set; }
-        [AllowNull]
-        public float PriceForTraining { get; set; }
-        [AllowNull]
-        public int NumberOfTrainingPerWeek { get; set; }
-        [AllowNull]
-        public string Description { get; set; }
+        
+        public int? TotalTraining { get; set; }
+        
+        public float? PriceForTraining { get; set; }
+        
+        public int? NumberOfTrainingPerWeek { get; set; }
+        
+        public string? Description { get; set; }
 
     }
 }

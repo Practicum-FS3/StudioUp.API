@@ -16,17 +16,17 @@ namespace StudioUp.Models
         [MaxLength(50)]
         public string Title { get; set; }
         public bool IsActive { get; set; }
-        [AllowNull]
-        public string ArrangementName { get; set; }
-        [AllowNull]
-        public int TrainingsPerMonth { get; set; }
-        [AllowNull]
-        public double TrainingPrice { get; set; }
-        [AllowNull]
-        public double MinimumAge { get; set; }
-        [AllowNull]
-        public double MaximumAge { get; set; }
-        [AllowNull]
-        public string TrainingDescription { get; set; }
+        
+        public string? ArrangementName { get; set; }
+        
+        public int? TrainingsPerMonth { get; set; }
+        
+        public double? TrainingPrice { get; set; }
+        
+        public double? MinimumAge { get; set; }
+        
+        public double? MaximumAge { get; set; }
+        
+        public string? TrainingDescription { get; set; }
     }
 }

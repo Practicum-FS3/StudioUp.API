@@ -11,16 +11,16 @@ namespace StudioUp.Models
         [Key]
         public int ID { get; set; }
 
-        [AllowNull]
+        
         [ForeignKey("Customer")]
         public int CustomerID { get; set; }
 
-        [AllowNull]
+        
         [ForeignKey("SubscriptionType")]
-        public int SubscriptionTypeId { get; set; }
+        public int? SubscriptionTypeId { get; set; }
 
-        [AllowNull]
-        public DateTime StartDate { get; set; }
+        
+        public DateTime? StartDate { get; set; }
 
         // קשרי גומלין אופציונליים עם טבלאות אחרות
         public virtual Customer Customer { get; set; }

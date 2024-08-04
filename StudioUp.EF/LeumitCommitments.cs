@@ -15,22 +15,22 @@ namespace StudioUp.Models
         [StringLength(9)]
         public string Id { get; set; }
 
-        [AllowNull]
+        
         [ForeignKey("LeumitCommimentTypes")]
-        public int CommitmentTypeId { get; set; }
+        public int? CommitmentTypeId { get; set; }
         public virtual LeumitCommimentTypes LeumitCommimentTypes { get; set; }
 
-        [AllowNull]
+        
         [ForeignKey("Customer")]
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
      
         [StringLength(9)]
         public string CommitmentTz { get; set; }
         public DateOnly BirthDate { get; set; }
-        [AllowNull]
+        
         [ForeignKey("FileUpload")]
-        public int FileUploadId { get; set; }
+        public int? FileUploadId { get; set; }
         public virtual FileUpload FileUpload { get; set; }
         public DateOnly Validity { get; set; }
 

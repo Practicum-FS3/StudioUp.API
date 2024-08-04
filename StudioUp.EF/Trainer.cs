@@ -23,9 +23,9 @@ namespace StudioUp.Models
         [StringLength(20)]
         public string Tel { get; set; }
 
-        [AllowNull]
+        
         [StringLength(50)]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
     }
 }

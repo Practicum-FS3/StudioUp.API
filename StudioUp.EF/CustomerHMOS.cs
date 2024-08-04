@@ -12,18 +12,18 @@ namespace StudioUp.Models
     public class CustomerHMOS
     {
         public int ID { get; set; }
-        [AllowNull]
+        
         [ForeignKey("customer")]
-        public int CustomerID { get; set; }
+        public int? CustomerID { get; set; }
         public virtual Customer Customer { get; set; }
-        [AllowNull]
+        
         [ForeignKey("HMOs")]
-        public int HMOID { get; set; }
+        public int? HMOID { get; set; }
         public virtual HMO HMOs { get; set; }
         [Column(TypeName = "nvarchar(15)")]
-        [AllowNull]
-        public string FreeFitId { get; set; }
-        public int FiledId { get; set; }
+        
+        public string? FreeFitId { get; set; }
+        public int? FiledId { get; set; }
         public bool IsActive { get; set; }
 
     }
