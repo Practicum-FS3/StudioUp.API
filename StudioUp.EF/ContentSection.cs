@@ -12,7 +12,9 @@ namespace StudioUp.Models
         public string? Section2 { get; set; }
         
         public string? Section3 { get; set; }
-        
+
+        public string? Section4 { get; set; }
+
         public byte[]? ImageData { get; set; }
         public bool IsActive { get; set; }
         public bool ViewInHP { get; set; }
