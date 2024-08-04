@@ -101,8 +101,7 @@ namespace StudioUp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubscriptionType(int id)
         {
-           
-            try
+             try
             {
                 await _repository.DeleteAsync(id);
                 return NoContent();

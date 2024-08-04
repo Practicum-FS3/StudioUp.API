@@ -10,7 +10,10 @@ namespace StudioUp.Repo.IRepositories
     public interface IAvailableTrainingRepository
     {
         Task<IEnumerable<AvailableTrainingDTO>> GetAllAvailableTrainingsAsync();
+        Task<IEnumerable<CalanderAvailableTrainingDTO>> GetAllAvailableTrainingsAsyncForCalander();
         Task<AvailableTrainingDTO> GetAvailableTrainingByIdAsync(int id);
+        Task<AvailableTrainingDTO> GetAvailableTrainingByTrainingIdAsync(int id);
+
         Task<AvailableTrainingDTO> AddAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO);
         Task UpdateAvailableTrainingAsync(int id, AvailableTrainingDTO availableTrainingDTO);
         Task DeleteAvailableTrainingAsync(int id);

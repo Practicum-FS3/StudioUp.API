@@ -45,20 +45,21 @@ namespace StudioUp.Repo.Repositories
 
         public async Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalender()
         {
+
             try
             {
-                List<Training> lst = await _context.Trainings
-                                //.Include(t => t.Trainer.FirstName + " " + t.Trainer.LastName)
-                                .Include(t => t.Trainer)
-                                .ToListAsync();
-                return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
+               List<Training> lst = await _context.Trainings
+                .Include(t => t.TrainingCustomerType.CustomerType)
+                .Include(t => t.TrainingCustomerType.TrainingType)
+                .Include(t => t.Trainer)
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "- this error in the func GetAllTrainingsCalender-Repo");
                 throw;
             }
-
         }
 
         public async Task<TrainingDTO> GetTrainingById(int id)
@@ -93,10 +94,9 @@ namespace StudioUp.Repo.Repositories
                 _logger.LogError(ex, "- this error in the func AddTraining-Repo");
                 throw;
             }
-
         }
 
-        public async Task UpdateTraining(TrainingDTO trainingDto, int id)
+        public async Task UpdateTraining(TrainingPostDTO trainingPostDto, int id)
         {
             try
             {

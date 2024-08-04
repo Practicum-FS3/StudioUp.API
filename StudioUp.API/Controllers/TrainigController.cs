@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -21,6 +24,7 @@ namespace StudioUp.API.Controllers
         {
             _trainingRepository = trainingRepository;
             _logger = logger;
+
         }
 
         // GET: api/Training
@@ -125,7 +129,6 @@ namespace StudioUp.API.Controllers
                 _logger.LogError(ex, " this error in TrainingController/Put");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
         }
 
         // DELETE: api/Training/5
@@ -135,7 +138,6 @@ namespace StudioUp.API.Controllers
             try
             {
                 var training = await _trainingRepository.GetTrainingById(id);
-                await _trainingRepository.DeleteTraining(id);
                 return NoContent();
             }
             catch (Exception ex)

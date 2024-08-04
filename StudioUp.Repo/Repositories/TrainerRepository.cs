@@ -40,6 +40,7 @@ namespace StudioUp.Repo.Repositories
                 throw;
             }
         }
+
         public async Task<TrainerDTO> GetTrainerById(int id)
         {
             try

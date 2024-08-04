@@ -2,6 +2,7 @@
 using StudioUp.DTO;
 //using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -59,7 +60,7 @@ namespace StudioUp.API.Controllers
         [Route("addCustomer")]
         public async Task<ActionResult<CustomerDTO>> AddCustomer(CustomerDTO customer)
         {
-            try
+             try
             {
                 var c = await _customerService.AddAsync(customer);
                 if (c == null)
@@ -113,12 +114,9 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var filter = new CustomerFilterDTO
-                {
-                    FirstName = firstName?.Trim(),
-                    LastName = lastName?.Trim(),
-                    Email = email?.Trim()
-                };
+                filter.FirstName = filter.FirstName?.Trim();
+                filter.LastName = filter.LastName?.Trim();
+                filter.Email = filter.Email?.Trim();
 
                 return Ok(await _customerService.FilterAsync(filter));
             }
@@ -128,6 +126,7 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
 
 

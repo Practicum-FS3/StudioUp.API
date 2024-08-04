@@ -77,6 +77,7 @@ namespace StudioUp.API.Controllers
         [HttpPut]
         [Route("/updateTrainer")]
         public async Task<IActionResult> updateTrainer(DTO.TrainerDTO t)
+
         {
             if (t == null)
             {
@@ -93,7 +94,6 @@ namespace StudioUp.API.Controllers
                 _logger.LogError(ex, " this error in TrainerControllers/updateTrainer");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
         }
         [HttpDelete]
         [Route("/deleteTrainer/{id}")]

@@ -42,6 +42,17 @@ namespace StudioUp.Repo.Repositories
             }
 
         }
+        public async Task<IEnumerable<CalanderAvailableTrainingDTO>> GetAllAvailableTrainingsAsyncForCalander()
+        {
+            var availableTrainings = await _context.AvailableTraining
+                 .Include(t => t.Training)
+                .Include(t => t.Training.Trainer)
+                .Include(t => t.Training.TrainingCustomerType.TrainingType)
+                .Include(t => t.Training.TrainingCustomerType.CustomerType)
+
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<CalanderAvailableTrainingDTO>>(availableTrainings);
+        }
 
         public async Task<AvailableTrainingDTO> GetAvailableTrainingByIdAsync(int id)
         {
@@ -57,6 +68,21 @@ namespace StudioUp.Repo.Repositories
             }
 
         }
+
+        public async Task<AvailableTrainingDTO> GetAvailableTrainingByTrainingIdAsync(int id)
+        {
+            var availableTraining = await _context.AvailableTraining
+                .FirstOrDefaultAsync(a => a.TrainingId == id);
+
+            if (availableTraining == null)
+            {
+                throw new Exception($"No available training found with TrainingId {id}");
+            }
+
+            return _mapper.Map<AvailableTrainingDTO>(availableTraining);
+        }
+
+
         public async Task<AvailableTrainingDTO> AddAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO)
         {
             try
@@ -113,5 +139,7 @@ namespace StudioUp.Repo.Repositories
             }
 
         }
+
+        
     }
 }

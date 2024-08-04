@@ -79,8 +79,8 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ContentSectionDTO>> CreateContentSection(ContentSectionDTO contentSectionDTO)
+        [HttpPost("upload")]
+        public async Task<ActionResult<ContentSectionDTO>> CreateContentSection([FromForm] ContentSectionDTO contentSectionDTO, IFormFile? file)
         {
             if (contentSectionDTO == null)
             {
@@ -96,7 +96,6 @@ namespace StudioUp.API.Controllers
                 _logger.LogError(ex, " this error in ContentSectionController/CreateContentSection");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
         }
 
         [HttpPut("{id}")]

@@ -61,11 +61,13 @@ namespace StudioUp.API.Controllers
         {
             try
             {
+
                 await HMOService.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
+
                 _logger.LogError(ex, " this error in HMOController/delete");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }

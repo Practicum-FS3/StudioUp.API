@@ -112,7 +112,6 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-
                 _logger.LogError(ex, " this error in CustomerTypeController/DeleteCustomerType");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
