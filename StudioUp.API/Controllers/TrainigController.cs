@@ -55,7 +55,7 @@ namespace StudioUp.API.Controllers
 
         // POST: api/Training
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] trainingPostDTO trainingPostDto)
+        public async Task<ActionResult> Post([FromBody] TrainingPostDTO trainingPostDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -70,7 +70,7 @@ namespace StudioUp.API.Controllers
 
         // PUT: api/Training/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] trainingPostDTO trainingPostDto)
+        public async Task<ActionResult> Put(int id, [FromBody] TrainingPostDTO trainingPostDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -97,7 +97,7 @@ namespace StudioUp.API.Controllers
                 }
 
                 training.IsActive = false;
-                var trainingPostDto = _mapper.Map<trainingPostDTO>(training);
+                var trainingPostDto = _mapper.Map<TrainingPostDTO>(training);
                 await _trainingRepository.UpdateTraining(trainingPostDto, id);
 
                 return NoContent();

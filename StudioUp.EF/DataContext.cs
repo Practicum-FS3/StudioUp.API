@@ -18,10 +18,7 @@ namespace StudioUp.Models
         {
             modelBuilder.Entity<LoginModel>()
                 .HasKey(l => l.Id); 
-            modelBuilder.Entity<Training>()
-           .HasOne(t => t.Time)
-           .WithOne()
-           .HasForeignKey<Training>(t => t.TimeId);
+          
             modelBuilder.Entity<Training>()
            .HasOne(t => t.TrainingCustomerType)
            .WithMany()

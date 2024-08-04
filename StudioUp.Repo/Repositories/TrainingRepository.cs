@@ -24,7 +24,6 @@ namespace StudioUp.Repo.Repositories
             List<Training> lst = await _context.Trainings
                     .Include(t => t.TrainingCustomerType)
                     .Include(t => t.Trainer)
-                    .Include(t => t.Time)
                     .ToListAsync();
             return _mapper.Map<IEnumerable<TrainingDTO>>(lst);
 
@@ -37,7 +36,6 @@ namespace StudioUp.Repo.Repositories
                 .Include(t => t.TrainingCustomerType.CustomerType)
                 .Include(t => t.TrainingCustomerType.TrainingType)
                 .Include(t => t.Trainer)
-                .Include(t => t.Time)
                 .ToListAsync();
             return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
         }
@@ -47,24 +45,19 @@ namespace StudioUp.Repo.Repositories
             Training training= await _context.Trainings
                 .Include(t => t.TrainingCustomerType)
                 .Include(t => t.Trainer)
-                .Include(t => t.Time)
                 .FirstOrDefaultAsync(t => t.ID == id);
             return _mapper.Map<TrainingDTO>(training);
         }
 
-        public async Task AddTraining(trainingPostDTO trainingPostDto)
+        public async Task AddTraining(TrainingPostDTO trainingPostDto)
         {        
             Training training = _mapper.Map<Training>(trainingPostDto);
-            training.Time = new TrainingTime
-            {
-                Hour = trainingPostDto.Time.Hour,
-                Minute = trainingPostDto.Time.Minute,
-            };
+           
             _context.Trainings.Add(training);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateTraining(trainingPostDTO trainingPostDto, int id)
+        public async Task UpdateTraining(TrainingPostDTO trainingPostDto, int id)
         {
             //Training training=_context.Trainings.FirstOrDefault(t => t.ID == id);
             //_mapper.Map(trainingPostDto, training);
