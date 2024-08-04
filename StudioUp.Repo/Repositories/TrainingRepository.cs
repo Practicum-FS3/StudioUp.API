@@ -79,13 +79,14 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public async Task AddTraining(TrainingDTO trainingDto)
+        public async Task<TrainingDTO> AddTraining(TrainingDTO trainingDto)
         {
             try
             {
                 Training training = _mapper.Map<Training>(trainingDto);
                 _context.Trainings.Add(training);
                 await _context.SaveChangesAsync();
+                return trainingDto;
             }
             catch (Exception ex)
             {
