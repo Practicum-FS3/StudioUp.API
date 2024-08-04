@@ -362,6 +362,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<int>("FileUploadId")
                         .HasColumnType("int");
 
+                    b.Property<DateOnly>("Validity")
+                        .HasColumnType("date");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CommitmentTypeId");

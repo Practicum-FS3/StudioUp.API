@@ -23,7 +23,7 @@ namespace StudioUp.Repo.Repositories
         public async Task<FileDownloadDTO> GetFileAsync(int id)
         {
             var file = await _context.Files.FindAsync(id);
-            if (!file.IsActive) 
+            if (file == null || !file.IsActive)
                 return null;           
             return _mapper.Map<FileDownloadDTO>(file);
         }

@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /StudioUp.API/Properties/launchSettings.json
 /.gitignore
+/StudioUp.EF/Migrations
