@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
 using StudioUp.Models;
-using StudioUp.Repo.IRepositories;
+using StudioUp.Repo.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,58 +12,99 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class SubscriptionTypeRepository : ISubscriptionTypeRepository
+    public class SubscriptionTypeRepository : IRepository<SubscriptionTypeDTO>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<SubscriptionTypeRepository> _logger;
 
-        public SubscriptionTypeRepository(DataContext context,IMapper mapper)
+
+        public SubscriptionTypeRepository(DataContext context, IMapper mapper, ILogger<SubscriptionTypeRepository> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
-        public async Task<IEnumerable<SubscriptionTypeDTO>> GetAllSubscriptions()
+        public async Task<List<SubscriptionTypeDTO>> GetAllAsync()
         {
-            List<SubscriptionType>lst = await _context.SubscriptionTypes.Where(x=> x.IsActive==true).ToListAsync();
-            return _mapper.Map<List<SubscriptionTypeDTO>>(lst);
+            try
+            {
+                var s = await _context.SubscriptionTypes.ToListAsync();
+                return _mapper.Map<List<SubscriptionTypeDTO>>(s);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
+                throw;
+            }
+
         }
 
-        public async Task<SubscriptionTypeDTO> GetSubscriptionById(int id)
+        public async Task<SubscriptionTypeDTO> GetByIdAsync(int id)
         {
-            SubscriptionType s= await _context.SubscriptionTypes.FindAsync(id);
-            return _mapper.Map<SubscriptionTypeDTO>(s);
+            try
+            {
+                var s = await _context.SubscriptionTypes.FindAsync(id);
+                return _mapper.Map<SubscriptionTypeDTO>(s);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
+                throw;
+            }
+
         }
 
-        public async Task<SubscriptionTypeDTO> AddSubscription(SubscriptionTypeDTO subscriptionTypeDto)
+        public async Task<SubscriptionTypeDTO> AddAsync(SubscriptionTypeDTO subscriptionType)
         {
-            SubscriptionType sub=_mapper.Map<SubscriptionType>(subscriptionTypeDto);
-            await _context.SubscriptionTypes.AddAsync(sub);
-            await _context.SaveChangesAsync();
-            return subscriptionTypeDto;
+            try
+            {
+                var s = await _context.SubscriptionTypes.AddAsync(_mapper.Map<SubscriptionType>(subscriptionType));
+                await _context.SaveChangesAsync();
+                return subscriptionType;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
+                throw;
+            }
+
         }
 
-        public async Task<SubscriptionTypeDTO> UpdateSubscription(SubscriptionTypeDTO subscriptionTypeDto, int id)
+        public async Task UpdateAsync(SubscriptionTypeDTO subscriptionType)
         {
-            var subscriptionType = await _context.SubscriptionTypes.FindAsync(id);
-            if (subscriptionType == null)
-                return null; // או throw new NotFoundException(); 
-            _mapper.Map(subscriptionTypeDto, subscriptionType);
-            _context.SubscriptionTypes.Update(subscriptionType);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<SubscriptionTypeDTO>(subscriptionType);
+            try
+            {
+                _context.SubscriptionTypes.Update(_mapper.Map<SubscriptionType>(subscriptionType));
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
+                throw;
+            }
+
         }
 
         public async Task<SubscriptionTypeDTO> DeleteSubscription(int id)
         {
-            var subscriptionType = await _context.SubscriptionTypes.FindAsync(id);
-            if (subscriptionType != null)
+            try
             {
-                subscriptionType.IsActive = false;
-                _context.SubscriptionTypes.Update(subscriptionType);
-                await _context.SaveChangesAsync();
+                var subscriptionType = await _context.SubscriptionTypes.FindAsync(id);
+                if (subscriptionType == null)
+                {
+                    throw new Exception($"cant find subscription by ID {id}"); 
+                }
+                _context.SubscriptionTypes.Remove(subscriptionType);
+                    await _context.SaveChangesAsync();
             }
-              return _mapper.Map<SubscriptionTypeDTO>(subscriptionType); ;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
+                throw;
+            }
+           
         }
     }
 }
