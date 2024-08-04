@@ -11,7 +11,6 @@ using System.Text;
 using NLog;
 using NLog.Web;
 using StudioUp.DTO;
-
 namespace StudioUp.API
 {
     public class Program
@@ -23,15 +22,11 @@ namespace StudioUp.API
             logger.Debug("init main");
             try
             {
-
                 var builder = WebApplication.CreateBuilder(args);
                 builder.Services.AddControllersWithViews();
                 builder.Logging.ClearProviders();
                 builder.Host.UseNLog();
-
-
                 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
                 builder.Services.AddControllers();
                 builder.Services.AddCors(options =>
                 {
@@ -40,8 +35,6 @@ namespace StudioUp.API
                                           .AllowAnyMethod()
                                           .AllowAnyHeader());
                 });
-
-
                 //builder.Services.AddCors(options =>
                 //{
                 //    options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -53,23 +46,18 @@ namespace StudioUp.API
                 //                          .WithExposedHeaders("Content-Disposition")
                 //                          .WithExposedHeaders("Access-Control-Allow-Origin");
                 //                      });
-
                 //});
                 // Configuration
                 builder.Configuration.AddJsonFile("appsettings.json", optional: false);
-
                 // Database context
                 builder.Services.AddDbContext<DataContext>(options =>
                     options.UseSqlServer(builder.Configuration.GetConnectionString("StudioUp")));
-
                 // Repositories
                 builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
-
                 builder.Services.AddControllers().AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
                 });
-
                 builder.Services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -88,16 +76,12 @@ namespace StudioUp.API
                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
                   };
               });
-
-
                 // Add services to the container
                 builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
                 builder.Services.AddScoped<IContentTypeRepository, ContentTypeRepository>();
               //  builder.Services.AddAutoMapper(typeof(MappingProfile));
-
                // builder.Services.AddControllers();
                 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
                 builder.Services.AddScoped<IHMORepository, HMORepository>();
                 builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
                 builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
@@ -107,7 +91,6 @@ namespace StudioUp.API
                 builder.Services.AddScoped<IRepository<SubscriptionTypeDTO>, SubscriptionTypeRepository>();
                 builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
                 builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
-
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen(options =>
                 {
@@ -134,10 +117,8 @@ namespace StudioUp.API
         }
     });
                 });
-
                 // AutoMapper
                 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
                 //builder.Services.AddCors(options =>
                 //{
                 //    options.AddPolicy("AllowOrigin",
@@ -145,8 +126,6 @@ namespace StudioUp.API
                 //                          .AllowAnyMethod()
                 //                          .AllowAnyHeader());
                 //});
-
-
                 var app = builder.Build();
                 if (!app.Environment.IsDevelopment())
                 {
@@ -154,21 +133,15 @@ namespace StudioUp.API
                     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                     app.UseHsts();
                 }
-
                 // Middleware setup
                 if (app.Environment.IsDevelopment())
                 {
                     app.UseSwagger();
                     app.UseSwaggerUI();
                 }
-
                 //cors
                 app.UseCors("AllowOrigin");
-
-
-
                 app.MapControllers();
-
                 app.UseHttpsRedirection();
                 app.UseStaticFiles();
                 app.UseRouting();
@@ -178,9 +151,7 @@ namespace StudioUp.API
                 app.MapControllerRoute(
       name: "default",
       pattern: "{controller=ContentTypeController}/{action=Index}/{id?}");
-
                 app.Run();
-
             }
             catch (Exception exception)
             {
@@ -193,8 +164,6 @@ namespace StudioUp.API
                 // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
                 NLog.LogManager.Shutdown();
             }
-
-
         }
     }
 }
