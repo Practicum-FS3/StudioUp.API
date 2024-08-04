@@ -37,7 +37,7 @@ namespace StudioUp.Repo
             CreateMap<Training, CalanderTrainingDTO>()
                   .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Trainer.FirstName + " " + src.Trainer.LastName))
 
-                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour.ToString()));
+                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Time.ToString()));
             //.ForMember(dest => dest.Minutes, opt => opt.MapFrom(src => src.Hour.Minute.ToString()));
 
 
@@ -46,19 +46,14 @@ namespace StudioUp.Repo
             CreateMap<AvailableTraining, CalanderAvailableTrainingDTO>()
             .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Training.Trainer.FirstName + " " + src.Training.Trainer.LastName))
             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.DayOfWeek))
-            .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Training.Hour))
+            .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Training.Time))
             .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.Training.TrainingCustomerType.CustomerType.Title))
             .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.Training.TrainingCustomerType.TrainingType.Title));
 
 
-            // CreateMap for mapping collections
-            //CreateMap<IEnumerable<AvailableTraining>, IEnumerable<CalanderAvailableTrainingDTO>>(); // Add this line to map collections
+          
 
 
-
-                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Time.ToString()))
-                  .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title))
-                  .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.CustomerType.Title));
 
 
 
