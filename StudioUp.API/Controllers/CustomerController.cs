@@ -10,68 +10,88 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        readonly ICustomerRepository CustomerService;
+        readonly ICustomerRepository _customerService;
+        private readonly ILogger<CustomerController> _logger;
 
-        public CustomerController(ICustomerRepository customerService)
+
+        public CustomerController(ICustomerRepository customerService, ILogger<CustomerController> logger)
         {
-            this.CustomerService = customerService;
+            _customerService = customerService;
+            _logger = logger;
         }
 
         [HttpGet]
-        public async Task<List<DTO.CustomerDTO>> GetAllCustomer()
+        public async Task<ActionResult<List<CustomerDTO>>> GetAllCustomer()
         {
             try
             {
-                return await CustomerService.GetAllAsync();
+                var c = await _customerService.GetAllAsync();
+                return Ok(c);
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, " this error in CustomerController/GetAllCustomer");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
         [HttpGet("byId/{id}")]
 
-        public async Task<DTO.CustomerDTO> GetCustomerById(int id)
+        public async Task<ActionResult<CustomerDTO>> GetCustomerById(int id)
         {
             try
             {
-                return await CustomerService.GetByIdAsync(id);
+                var c = await _customerService.GetByIdAsync(id);
+                if (c == null)
+                {
+                    return NotFound("customer not found by ID");
+                }
+                return Ok(c);
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, " this error in CustomerController/GetCustomerById");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
 
         [HttpPost]
         [Route("addCustomer")]
-        public async Task<DTO.CustomerDTO> AddCustomer(DTO.CustomerDTO customer)
+        public async Task<ActionResult<CustomerDTO>> AddCustomer(CustomerDTO customer)
         {
              try
             {
-                return await CustomerService.AddAsync(customer);
+                var c = await _customerService.AddAsync(customer);
+                if (c == null)
+                {
+                    return BadRequest("customer field is null.");
+                }
+                return Ok(c);
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, " this error in CustomerController/AddCustomer");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-
-       
         [HttpPut]
-
-        public async Task<bool> UpdateCustomer(DTO.CustomerDTO customer)
+        public async Task<IActionResult> UpdateCustomer(CustomerDTO customer)
         {
+            if (customer == null)
+            {
+                return BadRequest("The content  field is null.");
+            }
             try
             {
-                return await CustomerService.UpdateAsync(customer);
+                 await _customerService.UpdateAsync(customer);
+                return NoContent();
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, " this error in CustomerController/UpdateCustomer");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
@@ -80,24 +100,17 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var customer = await CustomerService.GetByIdAsync(id);
-                if (customer == null)
-                {
-                    return NotFound($"Training with ID {id} not found.");
-                }
-
-                customer.IsActive = false;
-                await CustomerService.UpdateAsync(customer);
-
+                 await _customerService.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, " this error in CustomerController/DeleteCustomer");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
         [HttpGet("filter")]
-        public async Task<List<CustomerDTO>> FilterCustomers([FromQuery] DTO.CustomerFilterDTO filter)
+        public async Task<ActionResult<List<CustomerDTO>>> FilterCustomers([FromQuery] string? firstName, [FromQuery] string? lastName, [FromQuery] string? email)
         {
             try
             {
@@ -105,11 +118,12 @@ namespace StudioUp.API.Controllers
                 filter.LastName = filter.LastName?.Trim();
                 filter.Email = filter.Email?.Trim();
 
-                return await CustomerService.FilterAsync(filter);
+                return Ok(await _customerService.FilterAsync(filter));
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, " this error in CustomerController/FilterCustomers");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
