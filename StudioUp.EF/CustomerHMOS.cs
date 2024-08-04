@@ -23,7 +23,8 @@ namespace StudioUp.Models
         [Column(TypeName = "nvarchar(15)")]
         [AllowNull]
         public string FreeFitId { get; set; }
-
+        public int FiledId { get; set; }
         public bool IsActive { get; set; }
+
     }
 }
