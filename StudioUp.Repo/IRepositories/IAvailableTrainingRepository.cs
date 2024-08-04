@@ -12,7 +12,7 @@ namespace StudioUp.Repo.IRepositories
         Task<IEnumerable<AvailableTrainingDTO>> GetAllAvailableTrainingsAsync();
         Task<AvailableTrainingDTO> GetAvailableTrainingByIdAsync(int id);
         Task<AvailableTrainingDTO> AddAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO);
-        Task<AvailableTrainingDTO> UpdateAvailableTrainingAsync(int id, AvailableTrainingDTO availableTrainingDTO);
-        Task<bool> DeleteAvailableTrainingAsync(int id);
+        Task UpdateAvailableTrainingAsync(int id, AvailableTrainingDTO availableTrainingDTO);
+        Task DeleteAvailableTrainingAsync(int id);
     }
 }

@@ -8,6 +8,8 @@ using StudioUp.DTO;
 using Microsoft.EntityFrameworkCore;
 using StudioUp.Repo.IRepositories;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 
 
@@ -18,52 +20,98 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<ContentSectionRepository> _logger;
 
-        public AvailableTrainingRepository(DataContext context, IMapper mapper)
+        public AvailableTrainingRepository(DataContext context, IMapper mapper, ILogger<ContentSectionRepository> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
         public async Task<IEnumerable<AvailableTrainingDTO>> GetAllAvailableTrainingsAsync()
         {
-            var availableTrainings = await _context.AvailableTraining.ToListAsync();
-            return _mapper.Map<IEnumerable<AvailableTrainingDTO>>(availableTrainings);
+            try
+            {
+                var availableTrainings = await _context.AvailableTraining.ToListAsync();
+                return _mapper.Map<IEnumerable<AvailableTrainingDTO>>(availableTrainings);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetAllAvailableTrainingsAsync-Repo");
+                throw;
+            }
+
         }
 
         public async Task<AvailableTrainingDTO> GetAvailableTrainingByIdAsync(int id)
         {
-            var availableTraining = await _context.AvailableTraining.FindAsync(id);
-            return _mapper.Map<AvailableTrainingDTO>(availableTraining);
+            try
+            {
+                var availableTraining = await _context.AvailableTraining.FindAsync(id);
+                return _mapper.Map<AvailableTrainingDTO>(availableTraining);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetAvailableTrainingByIdAsync-Repo");
+                throw;
+            }
+
         }
         public async Task<AvailableTrainingDTO> AddAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO)
         {
-            var availableTraining = _mapper.Map<Models.AvailableTraining>(availableTrainingDTO);
-            availableTraining.Id = 0;
-            var newavailableTraining = await _context.AvailableTraining.AddAsync(availableTraining);
- 
-            await _context.SaveChangesAsync();
-            availableTrainingDTO.Id = newavailableTraining.Entity.Id;
-            return availableTrainingDTO;
+            try
+            {
+                var availableTraining = _mapper.Map<Models.AvailableTraining>(availableTrainingDTO);
+                availableTraining.Id = 0;
+                var newavailableTraining = await _context.AvailableTraining.AddAsync(availableTraining);
+
+                await _context.SaveChangesAsync();
+                availableTrainingDTO.Id = newavailableTraining.Entity.Id;
+                return availableTrainingDTO;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func AddAvailableTrainingAsync-Repo");
+                throw;
+            }
         }
-        public async Task<AvailableTrainingDTO> UpdateAvailableTrainingAsync(int id, AvailableTrainingDTO availableTrainingDTO)
+        public async Task UpdateAvailableTrainingAsync(int id, AvailableTrainingDTO availableTrainingDTO)
         {
-            var availableTraining = await _context.AvailableTraining.FindAsync(id);
-            if (availableTraining == null) return null;
-
-            _mapper.Map(availableTrainingDTO, availableTraining);
-            _context.Entry(availableTraining).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<AvailableTrainingDTO>(availableTraining);
+            try
+            {
+                var availableTraining = await _context.AvailableTraining.FindAsync(id);
+                if (availableTraining == null)
+                {
+                    throw new Exception($"cant find availableTraining by ID {id}");
+                }
+                _mapper.Map(availableTrainingDTO, availableTraining);
+                _context.Entry(availableTraining).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func UpdateAvailableTrainingAsync-Repo");
+                throw;
+            }
         }
-        public async Task<bool> DeleteAvailableTrainingAsync(int id)
+        public async Task DeleteAvailableTrainingAsync(int id)
         {
-            var availableTraining = await _context.AvailableTraining.FindAsync(id);
-            if (availableTraining == null) return false;
+            try
+            {
+                var availableTraining = await _context.AvailableTraining.FindAsync(id);
+                if (availableTraining == null)
+                {
+                    throw new Exception($"Training with ID {id} not found");
+                }
+                _context.AvailableTraining.Remove(availableTraining);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func DeleteAvailableTrainingAsync-Repo");
+                throw;
+            }
 
-            _context.AvailableTraining.Remove(availableTraining);
-            await _context.SaveChangesAsync();
-            return true;
         }
     }
 }

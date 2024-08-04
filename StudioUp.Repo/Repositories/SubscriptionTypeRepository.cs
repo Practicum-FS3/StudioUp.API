@@ -1,5 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using StudioUp.DTO;
 using StudioUp.Models;
+using StudioUp.Repo.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,45 +12,99 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class SubscriptionTypeRepository : IRepository<SubscriptionType>
+    public class SubscriptionTypeRepository : IRepository<SubscriptionTypeDTO>
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly ILogger<SubscriptionTypeRepository> _logger;
 
-        public SubscriptionTypeRepository(DataContext context)
+
+        public SubscriptionTypeRepository(DataContext context, IMapper mapper, ILogger<SubscriptionTypeRepository> logger)
         {
             _context = context;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public async Task<List<SubscriptionType>> GetAllAsync()
+        public async Task<List<SubscriptionTypeDTO>> GetAllAsync()
         {
-            return await _context.SubscriptionTypes.ToListAsync();
+            try
+            {
+                var s = await _context.SubscriptionTypes.ToListAsync();
+                return _mapper.Map<List<SubscriptionTypeDTO>>(s);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
+                throw;
+            }
+
         }
 
-        public async Task<SubscriptionType> GetByIdAsync(int id)
+        public async Task<SubscriptionTypeDTO> GetByIdAsync(int id)
         {
-            return await _context.SubscriptionTypes.FindAsync(id);
+            try
+            {
+                var s = await _context.SubscriptionTypes.FindAsync(id);
+                return _mapper.Map<SubscriptionTypeDTO>(s);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
+                throw;
+            }
+
         }
 
-        public async Task AddAsync(SubscriptionType subscriptionType)
+        public async Task<SubscriptionTypeDTO> AddAsync(SubscriptionTypeDTO subscriptionType)
         {
-            await _context.SubscriptionTypes.AddAsync(subscriptionType);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var s = await _context.SubscriptionTypes.AddAsync(_mapper.Map<SubscriptionType>(subscriptionType));
+                await _context.SaveChangesAsync();
+                return subscriptionType;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
+                throw;
+            }
+
         }
 
-        public async Task UpdateAsync(SubscriptionType subscriptionType)
+        public async Task UpdateAsync(SubscriptionTypeDTO subscriptionType)
         {
-            _context.SubscriptionTypes.Update(subscriptionType);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.SubscriptionTypes.Update(_mapper.Map<SubscriptionType>(subscriptionType));
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
+                throw;
+            }
+
         }
 
         public async Task DeleteAsync(int id)
         {
-            var subscriptionType = await _context.SubscriptionTypes.FindAsync(id);
-            if (subscriptionType != null)
+            try
             {
+                var subscriptionType = await _context.SubscriptionTypes.FindAsync(id);
+                if (subscriptionType == null)
+                {
+                    throw new Exception($"cant find subscription by ID {id}"); 
+                }
                 _context.SubscriptionTypes.Remove(subscriptionType);
-                await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
+                throw;
+            }
+           
         }
     }
 }

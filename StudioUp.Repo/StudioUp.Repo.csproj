@@ -18,5 +18,10 @@
     <ProjectReference Include="..\StudioUp.DTO\StudioUp.DTO.csproj" />
     <ProjectReference Include="..\StudioUp.EF\StudioUp.Models.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.11" />
+    <PackageReference Include="NLog" Version="5.*" />
+  </ItemGroup>
 
 </Project>

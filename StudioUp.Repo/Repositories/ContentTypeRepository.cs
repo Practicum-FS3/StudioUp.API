@@ -1,56 +1,123 @@
 ﻿using StudioUp.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using AutoMapper;
+using StudioUp.DTO;
 
 namespace StudioUp.Repo
 {
     public class ContentTypeRepository : IContentTypeRepository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public ContentTypeRepository(DataContext context)
+        private readonly ILogger<ContentTypeRepository> _logger;
+
+        public ContentTypeRepository(DataContext context, IMapper mapper, ILogger<ContentTypeRepository> logger)
         {
             _context = context;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public async Task<IEnumerable<ContentType>> GetAll()
+        public async Task<IEnumerable<ContentTypeDTO>> GetAll()
         {
-            return await _context.ContentTypes.ToListAsync();
+            try
+            {
+                var cT = await _context.ContentTypes.ToListAsync();
+                return _mapper.Map<IEnumerable<ContentTypeDTO>>(cT);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetAll-Repo");
+                throw;
+            }
         }
-        public async Task<ContentType> GetByIdWithContentSection(int id)
+        public async Task<ContentTypeDTO> GetByIdWithContentSection(int id)
         {
-            return await _context.ContentTypes.Include(x=>x.ContentSections).FirstOrDefaultAsync(x=>x.ID==id);
+            try
+            {
+                var cT = await _context.ContentTypes.Include(x => x.ContentSections).FirstOrDefaultAsync(x => x.ID == id);
+                return _mapper.Map<ContentTypeDTO>(cT);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetByIdWithContentSection-Repo");
+                throw;
+            }
+
         }
-        public async Task<ContentType> GetByIdWithContentSectionHPOnly(int id)
+        public async Task<ContentTypeDTO> GetByIdWithContentSectionHPOnly(int id)
         {
-            return await _context.ContentTypes.Include(x => x.ContentSections.Where(x=>x.ViewInHP==true)).FirstOrDefaultAsync(x => x.ID == id);
+            try
+            {
+                var cT = await _context.ContentTypes.Include(x => x.ContentSections.Where(x => x.ViewInHP == true)).FirstOrDefaultAsync(x => x.ID == id);
+                return _mapper.Map<ContentTypeDTO>(cT);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetByIdWithContentSectionHPOnly-Repo");
+                throw;
+            }
         }
 
-        public async Task<ContentType> GetById(int id)
+        public async Task<ContentTypeDTO> GetById(int id)
         {
-            return await _context.ContentTypes.FindAsync(id);
+            try
+            {
+                var cT = await _context.ContentTypes.FindAsync(id);
+                return _mapper.Map<ContentTypeDTO>(cT);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetById-Repo");
+                throw;
+            }
+        }
+        public async Task<ContentTypeDTO> Create(ContentTypeDTO contentType)
+        {
+            try
+            {
+                var ct = await _context.ContentTypes.AddAsync(_mapper.Map<ContentType>(contentType));
+                await _context.SaveChangesAsync();
+                return contentType;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func Create-Repo");
+                throw;
+            }
         }
 
-        public async Task<ContentType> Create(ContentType contentType)
+        public async Task Update(ContentTypeDTO contentType)
         {
-            _context.ContentTypes.Add(contentType);
-            await _context.SaveChangesAsync();
-            return contentType;
-        }
-
-        public async Task<ContentType> Update(ContentType contentType)
-        {
-            _context.Entry(contentType).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return contentType;
+            try
+            {
+                _context.ContentTypes.Update(_mapper.Map<ContentType>(contentType));
+                // _context.Entry(contentType).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func Update-Repo");
+                throw;
+            }
         }
 
         public async Task Delete(int id)
         {
-            var contentType = await _context.ContentTypes.FindAsync(id);
-            _context.ContentTypes.Remove(contentType);
-            await _context.SaveChangesAsync();
+            try
+            {
+                ContentType contentType = await _context.ContentTypes.FindAsync(id);
+                _context.ContentTypes.Remove(contentType);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func Delete-Repo");
+                throw;
+            }
+
         }
     }
 }

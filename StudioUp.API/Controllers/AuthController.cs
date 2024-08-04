@@ -18,11 +18,14 @@ namespace StudioUp.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly ICustomerRepository _iCustomerRepository;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IConfiguration configuration, ICustomerRepository iCustomerRepository)
+
+        public AuthController(IConfiguration configuration, ICustomerRepository iCustomerRepository, ILogger<AuthController> logger)
         {
-            _iCustomerRepository= iCustomerRepository;
+            _iCustomerRepository = iCustomerRepository;
             _configuration = configuration;
+            _logger = logger;
         }
 
         //[HttpPost]
