@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,5 +16,10 @@ namespace StudioUp.DTO
         public int Id { get; set; }
         public int Hour { get; set; }
         public int Minute { get; set; }
+
+        public override string ToString()
+        {
+            return "NotImplemnted";
+        }
     }
 }
