@@ -67,15 +67,5 @@ namespace StudioUp.Repo.Repositories
         }
 
 
-        public Task<bool> GenerateAvailableTrainings(DateOnly date, int range)
-        {
-            try
-            {
-                
-            }
-            catch (Exception ex) {
-                throw new Exception("");
-            }
-        }
     }
 }
