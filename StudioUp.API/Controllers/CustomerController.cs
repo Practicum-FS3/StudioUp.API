@@ -110,7 +110,7 @@ namespace StudioUp.API.Controllers
             }
         }
         [HttpGet("filter")]
-        public async Task<ActionResult<List<CustomerDTO>>> FilterCustomers([FromQuery] string? firstName, [FromQuery] string? lastName, [FromQuery] string? email)
+        public async Task<ActionResult<List<CustomerDTO>>> FilterCustomers(DTO.CustomerFilterDTO filter)
         {
             try
             {

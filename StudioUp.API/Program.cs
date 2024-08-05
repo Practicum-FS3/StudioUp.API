@@ -56,7 +56,7 @@ namespace StudioUp.API
                 builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
                 builder.Services.AddControllers().AddJsonOptions(options =>
                 {
-                    options.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
+                   
                 });
                 builder.Services.AddAuthentication(options =>
                 {

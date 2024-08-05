@@ -50,6 +50,11 @@ namespace StudioUp.Repo.Repositories
                     await _context.SaveChangesAsync();
                 }
             }
+
+        Task<TrainingType> IRepository<TrainingType>.AddAsync(TrainingType t)
+        {
+            throw new NotImplementedException();
         }
+    }
     }
 
