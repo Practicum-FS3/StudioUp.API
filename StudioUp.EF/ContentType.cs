@@ -20,6 +20,9 @@ namespace StudioUp.Models
         public string? Title2 { get; set; }
         
         public string? Title3 { get; set; }
+
+        public string? Title4 { get; set; }
+
         public bool IsActive { get; set; }
 
         public virtual ICollection<ContentSection> ContentSections { get; set; }

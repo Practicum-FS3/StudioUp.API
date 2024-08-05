@@ -13,7 +13,6 @@ namespace StudioUp.Models
     public class SubscriptionType
     {
         public int ID { get; set; }
-        
         [MaxLength(50)]
         public string? Title { get; set; }
         public bool IsActive { get; set; }
