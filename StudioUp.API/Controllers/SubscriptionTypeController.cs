@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo;
+using StudioUp.Repo.IRepositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -10,67 +12,105 @@ namespace StudioUp.API.Controllers
     public class SubscriptionTypeController : ControllerBase
     {
         private readonly IRepository<SubscriptionType> _repository;
+        private readonly ILogger<SubscriptionTypeController> _logger;
 
-        public SubscriptionTypeController(IRepository<SubscriptionType> repsitory)
+
+        public SubscriptionTypeController(IRepository<SubscriptionType> repsitory, ILogger<SubscriptionTypeController> logger)
         {
             _repository = repsitory;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubscriptionType>>> GetSubscriptionTypes()
         {
-            var subscriptionTypes = await _repository.GetAllAsync();
-            return Ok(subscriptionTypes);
+            try
+            {
+                var subscriptionTypes = await _repository.GetAllAsync();
+                return Ok(subscriptionTypes);
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, " this error in SubscriptionTypeController/GetSubscriptionTypes");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
         }
 
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<object>> GetSubscriptionType(int id)
+        public async Task<ActionResult<SubscriptionType>> GetSubscriptionType(int id)
         {
-            var subscriptionType = await _repository.GetByIdAsync(id);
-            if (subscriptionType == null)
+            try
             {
-                return NotFound();
+                var subscriptionType = await _repository.GetByIdAsync(id);
+                if (subscriptionType == null)
+                {
+                    return NotFound("subscriptionType not found by ID");
+                }
+                return Ok(subscriptionType);
             }
-            return Ok(subscriptionType);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in SubscriptionTypeController/GetSubscriptionType");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubscriptionType(int id, SubscriptionType subscriptionType)
-        {
-            if (id != subscriptionType.ID)
-            {
-                return BadRequest();
-            }
-
-            await _repository.UpdateAsync(subscriptionType);
-            return NoContent();
-        }
+        //public async Task<ActionResult<SubscriptionTypeDTO>> PutSubscriptionType(int id, SubscriptionTypeDTO subscriptionTypeDto)
+        //{
+        //    if (subscriptionType == null)
+        //    {
+        //        return BadRequest("The subscriptionType field is null.");
+        //    }
+        //    if (id != subscriptionType.ID)
+        //    {
+        //        return BadRequest("ID in URL does not match ID in body");
+        //    }
+        //    try
+        //    {
+        //        await _repository.UpdateAsync(subscriptionType);
+        //        return NoContent();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, " this error in SubscriptionTypeController/PutSubscriptionType");
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
 
         [HttpPost]
-        public async Task<ActionResult<object>> PostSubscriptionType(SubscriptionType subscriptionType)
+        public async Task<ActionResult<SubscriptionType>> PostSubscriptionType(SubscriptionType subscriptionType)
         {
-            await _repository.AddAsync(subscriptionType);
-            return CreatedAtAction(nameof(GetSubscriptionType), new { id = subscriptionType.ID }, subscriptionType);
+            if (subscriptionType == null)
+            {
+                return BadRequest("The subscriptionType field is null.");
+            }
+            try
+            {
+               var s= await _repository.AddAsync(subscriptionType);
+                return Ok(s);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in SubscriptionTypeController/PostSubscriptionType");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubscriptionType(int id)
         {
-            try
+             try
             {
-                var subscription = await _repository.GetByIdAsync(id);
-                if (subscription == null)
-                {
-                    return NotFound($"Training with ID {id} not found.");
-                }
-
-                subscription.IsActive = false;
-                await _repository.UpdateAsync(subscription);
-
+                await _repository.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, " this error in SubscriptionTypeController/DeleteSubscriptionType");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

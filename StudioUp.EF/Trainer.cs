@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StudioUp.Models
 {
@@ -22,7 +23,9 @@ namespace StudioUp.Models
         [StringLength(20)]
         public string Tel { get; set; }
 
+        
         [StringLength(50)]
-        public string Address { get; set; }
+        public string? Address { get; set; }
+
     }
 }

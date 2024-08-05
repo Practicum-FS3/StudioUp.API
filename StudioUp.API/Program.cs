@@ -8,7 +8,11 @@ using StudioUp.Repo.IRepositories;
 using StudioUp.Repo.Repositories;
 using StudioUp.Repo.Repository;
 using System.Text;
-using System.Text.Json.Serialization;
+using NLog;
+using NLog.Web;
+using StudioUp.DTO;
+using StudioUp.Repo.Repository;
+using StudioUp.Repo;
 
 namespace StudioUp.API
 {
@@ -16,22 +20,54 @@ namespace StudioUp.API
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+            // Early init of NLog to allow startup and exception logging, before host is built
+            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+            logger.Debug("init main");
 
+            try
+            {
+                var builder = WebApplication.CreateBuilder(args);
+
+                // Configure services
+                ConfigureServices(builder);
+
+                var app = builder.Build();
+
+                // Configure middleware
+                ConfigureMiddleware(app);
+
+                app.Run();
+            }
+            catch (Exception exception)
+            {
+                // NLog: catch setup errors
+                logger.Error(exception, "Stopped program because of exception");
+                throw;
+            }
+            finally
+            {
+                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+                NLog.LogManager.Shutdown();
+            }
+        }
+
+        private static void ConfigureServices(WebApplicationBuilder builder)
+        {
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
+
+            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllers();
+
+            // Add CORS policy
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy(name: MyAllowSpecificOrigins,
-                                  policy =>
-                                  {
-                                      policy.WithOrigins("http://localhost:3000")
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader()
-                                      .WithExposedHeaders("Content-Disposition")
-                                      .WithExposedHeaders("Access-Control-Allow-Origin");
-                                  });
-
+                options.AddPolicy("AllowOrigin", policy =>
+                {
+                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
             });
+
             // Configuration
             builder.Configuration.AddJsonFile("appsettings.json", optional: false);
 
@@ -41,63 +77,41 @@ namespace StudioUp.API
 
             // Repositories
             builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
+            builder.Services.AddScoped<IContentTypeRepository, ContentTypeRepository>();
+            builder.Services.AddScoped<IHMORepository, HMORepository>();
+            builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
+            builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
+            builder.Services.AddScoped<IRepository<CustomerTypeDTO>, CustomerTypeRepository>();
+            builder.Services.AddScoped<IRepository<SubscriptionTypeDTO>, SubscriptionTypeRepository>();
+            builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
+            builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
+            builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
 
-            //builder.Services.AddControllers().AddJsonOptions(options =>
-            //{
-            //    options.JsonSerializerOptions.Converters.Add(new TimeOnlyConverter());
-            //});
-            builder.Services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                options.JsonSerializerOptions.WriteIndented = true;
-            });
+            // AutoMapper
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-
+            // Add JWT Authentication
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-          .AddJwtBearer(options =>
-          {
-              options.TokenValidationParameters = new TokenValidationParameters
-              {
-                  ValidateIssuer = true,
-                  ValidateAudience = true,
-                  ValidateLifetime = true,
-                  ValidateIssuerSigningKey = true,
-                  ValidIssuer = builder.Configuration["JWT:Issuer"],
-                  ValidAudience = builder.Configuration["JWT:Audience"],
-                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
-              };
-          });
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["JWT:Issuer"],
+                    ValidAudience = builder.Configuration["JWT:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                };
+            });
 
-
-            // Add services to the container
-            builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
-            builder.Services.AddScoped<IContentTypeRepository, ContentTypeRepository>();
-            builder.Services.AddAutoMapper(typeof(MappingProfile)); 
-
-
-            //builder.Services.AddControllers();
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
-            builder.Services.AddScoped<IHMORepository, HMORepository>();
-            builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
-            builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
-            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-            builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
-
-            builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
-            builder.Services.AddScoped<IRepository<CustomerType>, CustomerTypeRepository>();
-            builder.Services.AddScoped<IRepository<SubscriptionType>, SubscriptionTypeRepository>();
-            builder.Services.AddScoped<IRepository<PaymentOption>, PaymentOptionRepository>();
-            builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
-            builder.Services.AddScoped<IRepository<TrainingType>, TrainigTypeRepository>();
-            builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
-            builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
-            builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
+            // Add Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
@@ -111,53 +125,49 @@ namespace StudioUp.API
                     Type = SecuritySchemeType.Http
                 });
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
                 {
-                    Id = "Bearer",
-                    Type = ReferenceType.SecurityScheme
-                }
-            },
-            new List<string>()
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new List<string>()
+                    }
+                });
+            });
+
+            builder.Services.AddLogging();
         }
-    });
-            });
 
-            // AutoMapper
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-            builder.Services.AddCors(options =>
+        private static void ConfigureMiddleware(WebApplication app)
+        {
+            if (!app.Environment.IsDevelopment())
             {
-                options.AddPolicy("AllowOrigin",
-                    builder => builder.AllowAnyOrigin()
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader());
-            });
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
 
-
-            var app = builder.Build();
-
-            // Middleware setup
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            //cors
-            app.UseCors("AllowOrigin");
-
-
-
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseCors("AllowOrigin");
             app.UseAuthentication();
             app.UseAuthorization();
-            app.MapControllers();
 
-            app.Run();
+            app.MapControllers();
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=ContentTypeController}/{action=Index}/{id?}");
         }
     }
 }

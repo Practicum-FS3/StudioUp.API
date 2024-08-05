@@ -18,10 +18,7 @@ namespace StudioUp.Models
         {
             modelBuilder.Entity<LoginModel>()
                 .HasKey(l => l.Id); 
-            modelBuilder.Entity<Training>()
-           .HasOne(t => t.Time)
-           .WithOne()
-           .HasForeignKey<Training>(t => t.TimeId);
+          
             modelBuilder.Entity<Training>()
            .HasOne(t => t.TrainingCustomerType)
            .WithMany()
@@ -47,9 +44,10 @@ namespace StudioUp.Models
         public DbSet<CustomerHMOS> CustomerHMOS { get; set; }
         public DbSet<LeumitCommitments> LeumitCommitments { get; set; }
         public DbSet<LeumitCommimentTypes> LeumitCommimentTypes { get; set; }
+        public DbSet<CustomerSubscription> CustomerSubscriptions { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           
+            //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
         }
 
     }

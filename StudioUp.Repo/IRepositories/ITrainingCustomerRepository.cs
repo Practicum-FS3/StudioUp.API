@@ -12,6 +12,8 @@ namespace StudioUp.Repo.IRepositories
     {
         Task<List<TrainingCustomerDTO>> GetAllTrainingCustomers();
         Task<TrainingCustomerDTO> GetTraningCustomerById(int id);
+        Task<List<TrainingCustomerDTO>> GetTraningCustomerByCustomerId(int id);
+
         Task<List<TrainingCustomerDTO>> GetTraningCustomerByTraningId(int id);
         Task<TrainingCustomerDTO> AddTraningCustomer(TrainingCustomerDTO trainingCustomer);
         Task<bool> UpdateTrainingCustomers(TrainingCustomerDTO trainingCustomer);       
