@@ -87,7 +87,7 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public async Task<SubscriptionTypeDTO> DeleteSubscription(int id)
+        public async Task DeleteAsync(int id)
         {
             try
             {

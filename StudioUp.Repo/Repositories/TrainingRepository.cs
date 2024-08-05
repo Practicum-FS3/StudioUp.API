@@ -96,7 +96,7 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        public async Task UpdateTraining(TrainingPostDTO trainingPostDto, int id)
+        public async Task UpdateTraining(TrainingDTO trainingDto, int id)
         {
             try
             {
