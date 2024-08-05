@@ -78,6 +78,12 @@ namespace StudioUp.API
             // Repositories
             builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
             builder.Services.AddScoped<IContentTypeRepository, ContentTypeRepository>();
+            builder.Services.AddAutoMapper(typeof(MappingProfile)); 
+
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            builder.Services.AddScoped<IContactRepository, ContactRepository>();
             builder.Services.AddScoped<IHMORepository, HMORepository>();
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
             builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
