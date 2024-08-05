@@ -13,6 +13,7 @@ namespace StudioUp.DTO
         public int HMOID { get; set; }
         public string FreeFitId { get; set; }
         public int FiledId { get; set; }
+        public bool IsActive { get; set; }
 
     }
 }
