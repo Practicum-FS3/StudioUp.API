@@ -31,7 +31,7 @@ namespace StudioUp.Repo.Repositories
 
         public async Task<TrainingType> AddAsync(TrainingType TrainingType)
         {
-            await _context.TrainingTypes.AddAsync(TrainingType);
+            var t = await _context.TrainingTypes.AddAsync(TrainingType);
             await _context.SaveChangesAsync();
             return TrainingType;
         }

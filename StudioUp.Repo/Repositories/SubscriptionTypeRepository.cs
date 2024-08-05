@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
@@ -87,7 +89,7 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteSubscription(int id)
         {
             try
             {
@@ -98,6 +100,8 @@ namespace StudioUp.Repo.Repositories
                 }
                 _context.SubscriptionTypes.Remove(subscriptionType);
                     await _context.SaveChangesAsync();
+                return true;
+                
             }
             catch (Exception ex)
             {
@@ -105,6 +109,11 @@ namespace StudioUp.Repo.Repositories
                 throw;
             }
            
+        }
+
+        public Task DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

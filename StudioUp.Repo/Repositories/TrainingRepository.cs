@@ -96,7 +96,7 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        public async Task UpdateTraining(TrainingDTO trainingDto, int id)
+        public async Task<TrainingDTO> UpdateTraining(TrainingDTO trainingDto, int id)
         {
             try
             {
@@ -104,6 +104,7 @@ namespace StudioUp.Repo.Repositories
                 _mapper.Map(trainingDto, training);
                 _context.Trainings.Update(training);
                 await _context.SaveChangesAsync();
+                return trainingDto;
             }
             catch (Exception ex)
             {
@@ -132,5 +133,7 @@ namespace StudioUp.Repo.Repositories
             }
 
         }
+
+       
     }
 }
