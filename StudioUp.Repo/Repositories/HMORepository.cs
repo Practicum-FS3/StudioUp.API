@@ -87,7 +87,7 @@ namespace StudioUp.Repo.Repository
             }
         }
 
-        public async Task UpdateAsync(int id , HMODTO hmo)
+        public async Task<bool> UpdateAsync(int id , HMODTO hmo)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace StudioUp.Repo.Repository
                 h.MaximumAge = hmo.MaximumAge;
 
                 h.MinimumAge = hmo.MinimumAge;
-                _context.HMOs.Update(mapper.Map<HMO>(h));
+                _context.HMOs.Update(_mapper.Map<HMO>(h));
                 await this._context.SaveChangesAsync();
                 return true;
             }

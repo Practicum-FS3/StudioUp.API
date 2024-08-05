@@ -98,10 +98,9 @@ namespace StudioUp.API
             builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
             builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(options =>
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+           // builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Add JWT Authentication
             builder.Services.AddAuthentication(options =>
