@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
@@ -15,42 +17,45 @@ namespace StudioUp.Repo.Repository
     {
 
         private readonly DataContext _context;
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
+        private readonly ILogger<HMORepository> _logger;
 
-        public HMORepository(DataContext context, IMapper mapper)
+
+        public HMORepository(DataContext context, IMapper mapper,ILogger<HMORepository> logger)
         {
-            this._context = context;
-            this.mapper = mapper;
+            _context = context;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<HMODTO> AddAsync(HMODTO hmo)
         {
             try{
-                var newHMO = await this._context.HMOs.AddAsync(mapper.Map<HMO>(hmo));
-                await this._context.SaveChangesAsync();
+                var newHMO = await this._context.HMOs.AddAsync(_mapper.Map<HMO>(hmo));
+                await _context.SaveChangesAsync();
                 return hmo;
             }
             catch (Exception ex) {
-                throw new Exception("Failed to add HMO");
+                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
+                throw;
             }
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             try
             {
                 var hmo = await this._context.HMOs.FirstOrDefaultAsync(h => h.ID == id);
                 if (hmo != null)
                 {
-                    this._context.HMOs.Remove(hmo);
+                    _context.HMOs.Remove(hmo);
                     await this._context.SaveChangesAsync();
-                    return true;
                 }
-                return false;
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to delete HMO");
+                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
+                throw;
             }
         }
 
@@ -58,11 +63,12 @@ namespace StudioUp.Repo.Repository
         {
             try
             {
-                return mapper.Map<List<HMO>, List<HMODTO>>(await this._context.HMOs.ToListAsync());
+                return _mapper.Map<List<HMO>, List<HMODTO>>(await this._context.HMOs.ToListAsync());
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to fetch any HMOS");
+                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
+                throw;
             }
         }
 
@@ -70,33 +76,46 @@ namespace StudioUp.Repo.Repository
         {
             try
             {
-                var h = mapper.Map<HMO , HMODTO>(await _context.HMOs.FirstOrDefaultAsync(x => x.ID == id));
+                var h = _mapper.Map<HMO , HMODTO>(await _context.HMOs.FirstOrDefaultAsync(x => x.ID == id));
                 return h;
             }
             catch (Exception ex)
             {
-                throw new Exception("HMO return failed");
+
+                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
+                throw;
             }
         }
 
-        public async Task<bool> UpdateAsync(HMODTO hmo)
+        public async Task UpdateAsync(int id , HMODTO hmo)
         {
             try
             {
-                var h = await this._context.HMOs.FirstOrDefaultAsync(h => h.ID == hmo.ID);
+                var h = await this._context.HMOs.FirstOrDefaultAsync(h => h.ID == id);
                 if (h == null) { 
-                    return false;
+
                 }
                 h.Title = hmo.Title;
-
                 h.IsActive = hmo.IsActive;
+
+                h.ArrangementName = hmo.ArrangementName;
+
+                h.TrainingsPerMonth = hmo.TrainingsPerMonth;
+                h.TrainingPrice = hmo.TrainingPrice;
+
+                h.TrainingDescription = hmo.TrainingDescription;
+
+                h.MaximumAge = hmo.MaximumAge;
+
+                h.MinimumAge = hmo.MinimumAge;
                 _context.HMOs.Update(mapper.Map<HMO>(h));
                 await this._context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
             {
-                throw new Exception("Update to HMO failed");
+                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
+                throw;
             }
         }
     }

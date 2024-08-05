@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StudioUp.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,19 @@ namespace StudioUp.Models
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-           
-        }
 
-        
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<LoginModel>()
+                .HasKey(l => l.Id); 
+          
+            modelBuilder.Entity<Training>()
+           .HasOne(t => t.TrainingCustomerType)
+           .WithMany()
+           .HasForeignKey(t => t.TrainingCustomerTypeId);
+        }
+    
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<PaymentOption> PaymentOptions { get; set; }
         public DbSet<Contact> Contacts { get; set; }
@@ -22,6 +32,7 @@ namespace StudioUp.Models
         public DbSet<TrainingType> TrainingTypes { get; set; }
         public DbSet<HMO> HMOs { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<LoginModel> Login { get; set; }
         public DbSet<Trainer> Trainers { get; set; }
         public DbSet<Training> Trainings { get; set; }
         public DbSet<AvailableTraining> AvailableTraining { get; set; }
@@ -29,6 +40,15 @@ namespace StudioUp.Models
         public DbSet<ContentType> ContentTypes { get; set; }
         public DbSet<TrainingCustomerType> TrainingCustomersTypes { get;set; }
         public DbSet<ContentSection> ContentSections { get; set; }
+        public DbSet<FileUpload> Files { get; set; }
+        public DbSet<CustomerHMOS> CustomerHMOS { get; set; }
+        public DbSet<LeumitCommitments> LeumitCommitments { get; set; }
+        public DbSet<LeumitCommimentTypes> LeumitCommimentTypes { get; set; }
+        public DbSet<CustomerSubscription> CustomerSubscriptions { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
+        }
 
     }
 }

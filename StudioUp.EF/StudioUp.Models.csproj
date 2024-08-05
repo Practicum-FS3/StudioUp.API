@@ -15,4 +15,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StudioUp.DTO\StudioUp.DTO.csproj" />
+  </ItemGroup>
+
 </Project>

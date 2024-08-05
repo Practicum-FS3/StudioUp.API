@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudioUp.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace StudioUp.Repo
     {
         Task<List<T>> GetAllAsync();
         Task<T> GetByIdAsync(int id);
-        Task AddAsync(T t);
+        Task<T> AddAsync(T t);
         Task UpdateAsync(T t);
         Task DeleteAsync(int id);
     }
