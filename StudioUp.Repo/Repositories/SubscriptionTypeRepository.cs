@@ -111,6 +111,9 @@ namespace StudioUp.Repo.Repositories
            
         }
 
-      
+        public Task DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
