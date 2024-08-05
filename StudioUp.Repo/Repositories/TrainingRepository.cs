@@ -96,22 +96,23 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        //public async Task<TrainingDTO> UpdateTraining(TrainingPostDTO trainingPostDto, int id)
-        //{
-        //    try
-        //    {
-        //        Training training = await _context.Trainings.FirstOrDefaultAsync(t => t.ID == id);
-        //        _mapper.Map(trainingDto, training);
-        //        _context.Trainings.Update(training);
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "- this error in the func UpdateTraining-Repo");
-        //        throw;
-        //    }
+        public async Task<TrainingDTO> UpdateTraining(TrainingDTO trainingDto, int id)
+        {
+            try
+            {
+                Training training = await _context.Trainings.FirstOrDefaultAsync(t => t.ID == id);
+                _mapper.Map(trainingDto, training);
+                _context.Trainings.Update(training);
+                await _context.SaveChangesAsync();
+                return trainingDto;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func UpdateTraining-Repo");
+                throw;
+            }
 
-        //}
+        }
 
         public async Task DeleteTraining(int id)
         {
@@ -133,9 +134,6 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public Task<TrainingDTO> UpdateTraining(TrainingDTO trainingDto, int id)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

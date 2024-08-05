@@ -38,6 +38,7 @@ namespace StudioUp.API.Controllers
 
         }
 
+
         [HttpGet("{id}")]
         public async Task<ActionResult<SubscriptionType>> GetSubscriptionType(int id)
         {
