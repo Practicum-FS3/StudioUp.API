@@ -72,11 +72,11 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public async Task UpdateAsync(SubscriptionTypeDTO subscriptionType)
+        public async Task UpdateAsync(SubscriptionTypeDTO subscriptionTypeDto)
         {
             try
             {
-                _context.SubscriptionTypes.Update(_mapper.Map<SubscriptionType>(subscriptionType));
+                _context.SubscriptionTypes.Update(_mapper.Map<SubscriptionType>(subscriptionTypeDto));
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -87,7 +87,7 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public async Task<SubscriptionTypeDTO> DeleteSubscription(int id)
+        public async Task DeleteAsync(int id)
         {
             try
             {

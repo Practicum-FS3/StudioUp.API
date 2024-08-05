@@ -38,6 +38,7 @@ namespace StudioUp.API.Controllers
 
         }
 
+
         [HttpGet("{id}")]
         public async Task<ActionResult<SubscriptionType>> GetSubscriptionType(int id)
         {
@@ -58,27 +59,27 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<SubscriptionTypeDTO>> PutSubscriptionType(int id, SubscriptionTypeDTO subscriptionTypeDto)
-        {
-            if (subscriptionType == null)
-            {
-                return BadRequest("The subscriptionType field is null.");
-            }
-            if (id != subscriptionType.ID)
-            {
-                return BadRequest("ID in URL does not match ID in body");
-            }
-            try
-            {
-                await _repository.UpdateAsync(subscriptionType);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, " this error in SubscriptionTypeController/PutSubscriptionType");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+        //public async Task<ActionResult<SubscriptionTypeDTO>> PutSubscriptionType(int id, SubscriptionTypeDTO subscriptionTypeDto)
+        //{
+        //    if (subscriptionTypeDto == null)
+        //    {
+        //        return BadRequest("The subscriptionType field is null.");
+        //    }
+        //    if (id != subscriptionTypeDto.ID)
+        //    {
+        //        return BadRequest("ID in URL does not match ID in body");
+        //    }
+        //    try
+        //    {
+        //        await _repository.UpdateAsync(subscriptionTypeDto);
+        //        return NoContent();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, " this error in SubscriptionTypeController/PutSubscriptionType");
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
 
         [HttpPost]
         public async Task<ActionResult<SubscriptionType>> PostSubscriptionType(SubscriptionType subscriptionType)
