@@ -37,7 +37,10 @@ namespace StudioUp.Repo
             CreateMap<LeumitCommimentTypes, LeumitCommimentTypesDTO>().ReverseMap();
             CreateMap<Training, CalanderTrainingDTO>()
                   .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Trainer.FirstName + " " + src.Trainer.LastName))
-                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => string.Format("{0}:{1}",src.Hour,src.Minute)));
+                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Hour, src.Minute)))
+            .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.CustomerType.Title))
+            .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title));
+
 
 
 
