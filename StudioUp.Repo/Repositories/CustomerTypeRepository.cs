@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using StudioUp.DTO;
 using StudioUp.Models;
 using System;
 using System.Collections.Generic;
@@ -8,34 +11,41 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class CustomerTypeRepository : IRepository<CustomerType>
+    public class CustomerTypeRepository : IRepository<CustomerTypeDTO>
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly ILogger<CustomerTypeRepository> _logger;
 
-        public CustomerTypeRepository(DataContext context)
+
+        public CustomerTypeRepository(DataContext context, IMapper mapper, ILogger<CustomerTypeRepository> logger)
         {
             _context = context;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public async Task<List<CustomerType>> GetAllAsync()
+        public async Task<List<CustomerTypeDTO>> GetAllAsync()
         {
-            return await _context.CustomerTypes.ToListAsync();
+            return _mapper.Map<List<CustomerTypeDTO>>(await _context.CustomerTypes.ToListAsync());
         }
 
-        public async Task<CustomerType> GetByIdAsync(int id)
+        public async Task<CustomerTypeDTO> GetByIdAsync(int id)
         {
-            return await _context.CustomerTypes.FindAsync(id);
+            return _mapper.Map<CustomerTypeDTO>(await _context.CustomerTypes.FindAsync(id));
         }
 
-        public async Task AddAsync(CustomerType customerType)
+        public async Task<CustomerTypeDTO> AddAsync(CustomerTypeDTO customerType)
         {
-            await _context.CustomerTypes.AddAsync(customerType);
+            var cT = customerType;
+            await _context.CustomerTypes.AddAsync(_mapper.Map<CustomerType>(customerType));
             await _context.SaveChangesAsync();
+            return customerType;
         }
 
-        public async Task UpdateAsync(CustomerType customerType)
+        public async Task UpdateAsync(CustomerTypeDTO customerType)
         {
-            _context.CustomerTypes.Update(customerType);
+            _context.CustomerTypes.Update(_mapper.Map<CustomerType>(customerType));
             await _context.SaveChangesAsync();
         }
 
