@@ -65,5 +65,17 @@ namespace StudioUp.Repo.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+
+        public Task<bool> GenerateAvailableTrainings(DateOnly date, int range)
+        {
+            try
+            {
+                
+            }
+            catch (Exception ex) {
+                throw new Exception("");
+            }
+        }
     }
 }
