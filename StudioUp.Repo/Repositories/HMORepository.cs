@@ -97,8 +97,20 @@ namespace StudioUp.Repo.Repository
                 }
                 h.Title = hmo.Title;
                 h.IsActive = hmo.IsActive;
-                _context.HMOs.Update(_mapper.Map<HMO>(h));
-                await _context.SaveChangesAsync();
+
+                h.ArrangementName = hmo.ArrangementName;
+
+                h.TrainingsPerMonth = hmo.TrainingsPerMonth;
+                h.TrainingPrice = hmo.TrainingPrice;
+
+                h.TrainingDescription = hmo.TrainingDescription;
+
+                h.MaximumAge = hmo.MaximumAge;
+
+                h.MinimumAge = hmo.MinimumAge;
+                _context.HMOs.Update(mapper.Map<HMO>(h));
+                await this._context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
