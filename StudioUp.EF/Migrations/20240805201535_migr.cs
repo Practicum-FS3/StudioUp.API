@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudioUp.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class _1000 : Migration
+    public partial class migr : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,6 +24,7 @@ namespace StudioUp.Models.Migrations
                     Title1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title4 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -59,6 +60,23 @@ namespace StudioUp.Models.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Login", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "T_Contacts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsWatch = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_T_Contacts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,6 +200,7 @@ namespace StudioUp.Models.Migrations
                     Section1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Section2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Section3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Section4 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     ViewInHP = table.Column<bool>(type: "bit", nullable: false),
@@ -536,6 +555,9 @@ namespace StudioUp.Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "Login");
+
+            migrationBuilder.DropTable(
+                name: "T_Contacts");
 
             migrationBuilder.DropTable(
                 name: "T_CustomerHMOS");

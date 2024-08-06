@@ -11,7 +11,6 @@ namespace StudioUp.Repo.IRepositories
         Task AddCustomerSubscriptionAsync(CustomerSubscription subscription);
         Task UpdateCustomerSubscriptionAsync(CustomerSubscription subscription);
         Task DeleteCustomerSubscriptionAsync(int id);
-
         Task<IEnumerable<CustomerSubscription>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId);
     }
 

@@ -19,13 +19,17 @@ namespace StudioUp.Models
         public int? TrainerID { get; set; }
         public virtual Trainer Trainer { get; set; }
         public int DayOfWeek { get; set; }
-        [Range(0,24)]
+
+        [Range(0, 23)]
         public int Hour { get; set; }
-        [Range(0, 60)]
+
+        [Range(0, 59)]
         public int Minute { get; set; }
-        
+
         public int? ParticipantsCount { get; set; }
         public bool IsActive { get; set; }
+
+
 
     }
 }

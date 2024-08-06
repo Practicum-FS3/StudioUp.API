@@ -10,8 +10,8 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class TrainingTypeController : ControllerBase
     {
-       
-    
+
+
         private readonly IRepository<TrainingType> _repository;
 
         public TrainingTypeController(IRepository<TrainingType> repsitory)
