@@ -62,9 +62,15 @@ namespace StudioUp.API.Controllers
         {         
             try
             {
-                if (!await leumitCommimentsRepository.DeleteAsync(id))
-                    return Conflict();
+                var leumitCommiment = await leumitCommimentsRepository.GetByIdAsync(id);
+                if (leumitCommiment == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+                leumitCommiment.IsActive = false;
+                await leumitCommimentsRepository.UpdateAsync(leumitCommiment, id);
                 return NoContent();
+
             }
             catch (Exception ex)
             {

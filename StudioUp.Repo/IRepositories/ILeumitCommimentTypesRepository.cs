@@ -11,9 +11,9 @@ namespace StudioUp.Repo.IRepositories
     public interface ILeumitCommimentTypesRepository
     {
         Task<List<LeumitCommimentTypesDTO>> GetAllAsync();
-        Task<LeumitCommimentTypesDTO> GetByIdAsync(string id);
-        Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO,string id);
+        Task<LeumitCommimentTypesDTO> GetByIdAsync(int id);
+        Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO,int id);
         Task AddAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO);
-        Task<bool> DeleteAsync(string id);
+        Task<bool> DeleteAsync(int id);
     }
 }

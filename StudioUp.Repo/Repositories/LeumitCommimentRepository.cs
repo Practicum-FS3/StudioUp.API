@@ -85,18 +85,24 @@ namespace StudioUp.Repo.Repositories
         }
         
 
-        public async Task<LeumitCommitmentsDTO> UpdateAsync(LeumitCommitmentsDTO leumitCommitmentsDTO,string id)
+        public async Task<LeumitCommitmentsDTO> UpdateAsync(LeumitCommitmentsDTO leumitCommitmentsDTO, string id)
         {
-          
+
             try
             {
-                context.LeumitCommitments.Update(mapper.Map<LeumitCommitments>(leumitCommitmentsDTO));
+                var existingEntity = await context.LeumitCommitments.FindAsync(id);
+                if (existingEntity == null)
+                {
+                    throw new Exception("Entity not found");
+                }
+                mapper.Map(leumitCommitmentsDTO, existingEntity);
                 await context.SaveChangesAsync();
                 return leumitCommitmentsDTO;
             }
-            catch (Exception exeption)
+            catch (Exception exception)
             {
-                throw exeption;
+         
+                throw exception;
             }
 
         }
