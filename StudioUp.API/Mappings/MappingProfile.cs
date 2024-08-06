@@ -11,7 +11,7 @@ namespace StudioUp.API.Mappings
             CreateMap<ContentType, ContentTypeDTO>().ReverseMap();
             CreateMap<ContentSection, ContentSectionDTO>().ReverseMap();
 
-<<<<<<< HEAD
+
             CreateMap<TrainingDTO, Training>()
                  .ForMember(dest => dest.TrainerID, opt => opt.MapFrom(src => src.TrainerID))
                  .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.DayOfWeek))
@@ -23,13 +23,11 @@ namespace StudioUp.API.Mappings
             .ForMember(dest => dest.TrainerID, opt => opt.MapFrom(src => src.TrainerID))
             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.DayOfWeek))
             .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour))
-            .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => src.Minutes))
+            .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => src.Minute))
             .ForMember(dest => dest.TrainingCustomerTypeId, opt => opt.MapFrom(src => src.TrainingCustomerTypeId))
             .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.ParticipantsCount))
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
-=======
-         
->>>>>>> f3cfc56cc17eefcf57fbac36c02acf57c3bb8ded
+
         }
     }
 }
