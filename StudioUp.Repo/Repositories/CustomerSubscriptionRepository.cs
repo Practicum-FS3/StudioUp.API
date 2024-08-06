@@ -14,6 +14,12 @@ namespace StudioUp.Repo.Repositories
         {
             _context = context;
         }
+        public async Task<IEnumerable<CustomerSubscription>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId)
+        {
+            return await _context.CustomerSubscriptions
+                .Where(cs => cs.CustomerID == customerId)
+                .ToListAsync();
+        }
 
         public async Task<IEnumerable<CustomerSubscription>> GetAllCustomerSubscriptionsAsync()
         {
