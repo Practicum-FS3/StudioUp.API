@@ -23,7 +23,17 @@ namespace StudioUp.API.Controllers
         public async Task<ActionResult<IEnumerable<CustomerSubscriptionDTO>>> GetAllCustomerSubscriptions()
         {
             var subscriptions = await _repository.GetAllCustomerSubscriptionsAsync();
-            // המרה ל-DTO או הוספת אוטומאפר במקרה שזה קיים
+            return Ok(subscriptions);
+        }
+
+        [HttpGet("customer/{customerId}")]
+        public async Task<ActionResult<IEnumerable<CustomerSubscriptionDTO>>> GetCustomerSubscriptionsByCustomerId(int customerId)
+        {
+            var subscriptions = await _repository.GetCustomerSubscriptionsByCustomerIdAsync(customerId);
+            if (subscriptions == null || !subscriptions.Any())
+            {
+                return NotFound();
+            }
             return Ok(subscriptions);
         }
 
@@ -35,14 +45,12 @@ namespace StudioUp.API.Controllers
             {
                 return NotFound();
             }
-            // המרה ל-DTO במקרה הצורך
             return Ok(subscription);
         }
 
         [HttpPost]
         public async Task<ActionResult> AddCustomerSubscription(CustomerSubscriptionDTO subscriptionDTO)
         {
-            // המרת DTO לאובייקט המודל
             var subscription = new CustomerSubscription
             {
                 CustomerID = subscriptionDTO.CustomerID,

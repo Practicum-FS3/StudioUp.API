@@ -78,6 +78,12 @@ namespace StudioUp.API
             // Repositories
             builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
             builder.Services.AddScoped<IContentTypeRepository, ContentTypeRepository>();
+            builder.Services.AddAutoMapper(typeof(MappingProfile)); 
+
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            builder.Services.AddScoped<IContactRepository, ContactRepository>();
             builder.Services.AddScoped<IHMORepository, HMORepository>();
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
             builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
@@ -87,9 +93,14 @@ namespace StudioUp.API
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
             builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
 
+            builder.Services.AddScoped<ICustomerHMOSRepository, CustomerHMOSRepository>();
+            builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
+            builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
+            builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
+            builder.Services.AddEndpointsApiExplorer();
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+           // builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Add JWT Authentication
             builder.Services.AddAuthentication(options =>
@@ -115,29 +126,29 @@ namespace StudioUp.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
-                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Name = "Authorization",
-                    Description = "Bearer Authentication with JWT Token",
-                    Type = SecuritySchemeType.Http
-                });
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Id = "Bearer",
-                                Type = ReferenceType.SecurityScheme
-                            }
-                        },
-                        new List<string>()
-                    }
-                });
+                //options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                //{
+                //    Scheme = "Bearer",
+                //    BearerFormat = "JWT",
+                //    In = ParameterLocation.Header,
+                //    Name = "Authorization",
+                //    Description = "Bearer Authentication with JWT Token",
+                //    Type = SecuritySchemeType.Http
+                //});
+                //options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //{
+                //    {
+                //        new OpenApiSecurityScheme
+                //        {
+                //            Reference = new OpenApiReference
+                //            {
+                //                Id = "Bearer",
+                //                Type = ReferenceType.SecurityScheme
+                //            }
+                //        },
+                //        new List<string>()
+                //    }
+                //});
             });
 
             builder.Services.AddLogging();
