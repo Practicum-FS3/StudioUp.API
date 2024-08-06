@@ -88,6 +88,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
             builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
             builder.Services.AddScoped<IRepository<CustomerTypeDTO>, CustomerTypeRepository>();
+            builder.Services.AddScoped<IRepository<TrainingType>, TrainigTypeRepository>();
             builder.Services.AddScoped<IRepository<SubscriptionTypeDTO>, SubscriptionTypeRepository>();
             builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
@@ -97,6 +98,8 @@ namespace StudioUp.API
             builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
             builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
             builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
+            builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
+
             builder.Services.AddEndpointsApiExplorer();
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));

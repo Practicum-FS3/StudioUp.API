@@ -19,9 +19,10 @@ namespace StudioUp.API.Controllers
 
         //גם כאלו שהם לא בפעילות TrainingCusromerType פונקציה שמביאה את כל המערך של
         [HttpGet("allTCT")]
-        public async Task<ActionResult<IEnumerable<TrainingCustomerType>>> GetTrainingCustomerType()
+        public async Task<ActionResult<IEnumerable<TrainingCustomerTypeDTO>>> GetTrainingCustomerType()
         {
             var trainingCustomerType = await _repository.GetAllTrainingCustomerTypes();
+
             return Ok(trainingCustomerType);
         }
 
@@ -32,9 +33,9 @@ namespace StudioUp.API.Controllers
         //    var trainingCustomerType = await _repository.GetActiveTrainingCustomerTypes();
         //    return Ok(trainingCustomerType);
         //}
-       
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<TrainingCustomerType>> GetTrainingCustomerType(int id)
+        public async Task<ActionResult<TrainingCustomerTypeDTO>> GetTrainingCustomerType(int id)
         {
             var TrainingCustomerType = await _repository.GetTrainingCustomerTypeById(id);
             if (TrainingCustomerType == null)
@@ -54,23 +55,22 @@ namespace StudioUp.API.Controllers
 
         //עדכון רגיל של אימון
         [HttpPut("{id}")]
-        public async Task<ActionResult<TrainingCustomerTypeDTO>> UpdateTrainingCustomerType(int id, TrainingCustomerTypeDTO trainingCustomerTypedto)
+        public async Task<ActionResult<TrainingCustomerTypePostComand>> UpdateTrainingCustomerType(int id, TrainingCustomerTypePostComand trainingCustomerTypedto)
         {
             if (id != trainingCustomerTypedto.ID)
             {
                 return BadRequest();
             }
-            await _repository.UpdateTrainingCustomerType(id,trainingCustomerTypedto);
+            await _repository.UpdateTrainingCustomerType(id, trainingCustomerTypedto);
             return Ok(trainingCustomerTypedto);
         }
 
         [HttpPost]
-        public async Task<ActionResult<TrainingCustomerTypeDTO>> addTrainingCustomerType(TrainingCustomerTypeDTO trainingCustomerTypedto)
+        public async Task<ActionResult<TrainingCustomerTypePostComand>> addTrainingCustomerType(TrainingCustomerTypePostComand trainingCustomerTypedto)
         {
             await _repository.AddTrainingCustomerType(trainingCustomerTypedto);
             return CreatedAtAction(nameof(GetTrainingCustomerType), new { id = trainingCustomerTypedto.ID }, trainingCustomerTypedto);
         }
-
 
     }
 }

@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace StudioUp.DTO
 {
-    public class TrainingCustomerTypeDTO
+    public class TrainingCustomerTypePostComand//post put
     {
         public int ID { get; set; }
         public int CustomerTypeID { get; set; }
         public int TrainingTypeID { get; set; }
-        public string TrainingCustomerName { get; set; }
         public bool IsActive { get; set; }
 
 

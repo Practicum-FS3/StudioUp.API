@@ -29,7 +29,7 @@ namespace StudioUp.API.Controllers
 
         // GET: api/Training
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TrainingDTO>>> Get()
+        public async Task<ActionResult<List<TrainingDTO>>> Get()
         {
             try
             {
@@ -82,7 +82,7 @@ namespace StudioUp.API.Controllers
 
         // POST: api/Training
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] TrainingDTO trainingDTO)
+        public async Task<IActionResult> Post([FromBody] TrainingPostDTO trainingDTO)
         {
             if (trainingDTO == null)
             {
@@ -93,7 +93,7 @@ namespace StudioUp.API.Controllers
             try
             {
                 await _trainingRepository.AddTraining(trainingDTO);
-                return CreatedAtAction(nameof(Get), new { id = trainingDTO.ID }, trainingDTO);
+                return CreatedAtAction(nameof(Get), new { id = 0}, trainingDTO);
             }
             catch (Exception ex)
             {
@@ -105,17 +105,17 @@ namespace StudioUp.API.Controllers
 
         // PUT: api/Training/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] TrainingDTO trainingDto)
+        public async Task<IActionResult> Put(int id, [FromBody] TrainingPostDTO trainingDto)
         {
 
             if (trainingDto == null)
             {
                 return BadRequest("The trainingDto field is null.");
             }
-            if (id != trainingDto.ID)
-            {
-                return BadRequest("ID in URL does not match ID in body");
-            }
+            //if (id != trainingDto.ID)
+            //{
+            //    return BadRequest("ID in URL does not match ID in body");
+            //}
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             try

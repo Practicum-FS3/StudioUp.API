@@ -18,6 +18,7 @@ namespace StudioUp.DTO
         public int Hour { get; set; }
         public int Minute { get; set; }
         public int TrainingCustomerTypeId { get; set; }
+        public string TrainingCustomerTypeName { get; set; }
         public int ParticipantsCount { get; set; }
         public bool IsActive { get; set; }
 

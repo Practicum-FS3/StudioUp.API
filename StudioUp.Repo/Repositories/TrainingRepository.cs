@@ -22,9 +22,23 @@ namespace StudioUp.Repo.Repositories
             _context = context;
             _mapper = mapper;
             _logger = logger;
+            _mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<TrainingPostDTO, Training>()
+                    .ForMember(dest => dest.TrainerID, opt => opt.MapFrom(src => src.TrainerID))
+                    .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.DayOfWeek))
+                    .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour))
+                    .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => src.Minutes))
+                    .ForMember(dest => dest.TrainingCustomerTypeId, opt => opt.MapFrom(src => src.TrainingCustomerTypeId))
+                    .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.ParticipantsCount))
+                    .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+                cfg.CreateMap<Training, TrainingDTO>();
+                cfg.CreateMap<TrainingDTO, Training>();
+            }).CreateMapper();
+
         }
 
-        public async Task<IEnumerable<TrainingDTO>> GetAllTrainings()
+        public async Task<List<TrainingDTO>> GetAllTrainings()
         {
             try
             {
@@ -32,7 +46,7 @@ namespace StudioUp.Repo.Repositories
                               .Include(t => t.TrainingCustomerType)
                               .Include(t => t.Trainer)
                               .ToListAsync();
-                return _mapper.Map<IEnumerable<TrainingDTO>>(lst);
+                return _mapper.Map<List<TrainingDTO>>(lst);
             }
             catch (Exception ex)
             {
@@ -43,7 +57,7 @@ namespace StudioUp.Repo.Repositories
         }
 
 
-        public async Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalender()
+        public async Task<List<CalanderTrainingDTO>> GetAllTrainingsCalender()
         {
 
             try
@@ -53,7 +67,7 @@ namespace StudioUp.Repo.Repositories
                 .Include(t => t.TrainingCustomerType.TrainingType)
                 .Include(t => t.Trainer)
                 .ToListAsync();
-            return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
+            return _mapper.Map<List<CalanderTrainingDTO>>(lst);
             }
             catch (Exception ex)
             {
@@ -80,7 +94,7 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public async Task<TrainingDTO> AddTraining(TrainingDTO trainingDto)
+        public async Task<TrainingPostDTO> AddTraining(TrainingPostDTO trainingDto)
         {
             try
             {
@@ -96,7 +110,7 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        public async Task<TrainingDTO> UpdateTraining(TrainingDTO trainingDto, int id)
+        public async Task<TrainingPostDTO> UpdateTraining(TrainingPostDTO trainingDto, int id)
         {
             try
             {

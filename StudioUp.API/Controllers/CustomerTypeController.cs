@@ -10,18 +10,18 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class CustomerTypeController : ControllerBase
     {
-        private readonly IRepository<CustomerType> _repository;
+        private readonly IRepository<CustomerTypeDTO> _repository;
         private readonly ILogger<CustomerTypeController> _logger;
 
 
-        public CustomerTypeController(IRepository<CustomerType> repsitory, ILogger<CustomerTypeController> logger)
+        public CustomerTypeController(IRepository<CustomerTypeDTO> repsitory, ILogger<CustomerTypeController> logger)
         {
             _repository = repsitory;
             _logger = logger;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerType>>> GetCustomerTypes()
+        public async Task<ActionResult<IEnumerable<CustomerTypeDTO>>> GetCustomerTypes()
         {
             try
             {
@@ -37,7 +37,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CustomerType>> GetCustomerType(int id)
+        public async Task<ActionResult<CustomerTypeDTO>> GetCustomerType(int id)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerType(int id, CustomerType customerType)
+        public async Task<IActionResult> PutCustomerType(int id, CustomerTypeDTO customerType)
         {
             if (customerType == null)
             {
@@ -82,7 +82,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CustomerType>> PostCustomerType(CustomerType customerType)
+        public async Task<ActionResult<CustomerType>> PostCustomerType(CustomerTypeDTO customerType)
         {
             if (customerType == null)
             {

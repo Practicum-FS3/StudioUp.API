@@ -13,8 +13,8 @@ namespace StudioUp.Repo.IRepositories
         //Task<List<DTO.TrainingCustomerTypeDTO>> GetActiveTrainingCustomerTypes();
 
         Task<TrainingCustomerTypeDTO> GetTrainingCustomerTypeById(int id);
-        Task<TrainingCustomerTypeDTO> UpdateTrainingCustomerType(int id, DTO.TrainingCustomerTypeDTO trainingCustomerTypedto);
-        Task<DTO.TrainingCustomerTypeDTO> AddTrainingCustomerType(DTO.TrainingCustomerTypeDTO TrainingCustomerType);
-        Task <TrainingCustomerTypeDTO> DeleteTrainingCustomerType(int id);
+        Task<TrainingCustomerTypePostComand> UpdateTrainingCustomerType(int id, DTO.TrainingCustomerTypePostComand trainingCustomerTypedto);
+        Task<DTO.TrainingCustomerTypePostComand> AddTrainingCustomerType(DTO.TrainingCustomerTypePostComand TrainingCustomerType);
+        Task<TrainingCustomerTypeDTO> DeleteTrainingCustomerType(int id);
     }
 }
