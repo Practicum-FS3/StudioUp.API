@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
@@ -7,21 +6,17 @@ using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repository
 {
     public class HMORepository : IHMORepository
     {
-
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<HMORepository> _logger;
 
-
-        public HMORepository(DataContext context, IMapper mapper,ILogger<HMORepository> logger)
+        public HMORepository(DataContext context, IMapper mapper, ILogger<HMORepository> logger)
         {
             _context = context;
             _mapper = mapper;
@@ -30,15 +25,10 @@ namespace StudioUp.Repo.Repository
 
         public async Task<HMODTO> AddAsync(HMODTO hmo)
         {
-            try{
-                var newHMO = await this._context.HMOs.AddAsync(_mapper.Map<HMO>(hmo));
-                await _context.SaveChangesAsync();
-                return hmo;
-            }
-            catch (Exception ex) {
-                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
-                throw;
-            }
+            var newHMO = _mapper.Map<HMO>(hmo);
+            _context.HMOs.Add(newHMO);
+            await _context.SaveChangesAsync();
+            return hmo;
         }
 
         public async Task DeleteAsync(int id)
@@ -59,64 +49,39 @@ namespace StudioUp.Repo.Repository
             }
         }
 
+
+
         public async Task<List<HMODTO>> GetAllAsync()
         {
-            try
-            {
-                return _mapper.Map<List<HMO>, List<HMODTO>>(await this._context.HMOs.ToListAsync());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
-                throw;
-            }
+            return _mapper.Map<List<HMO>, List<HMODTO>>(await _context.HMOs.ToListAsync());
         }
 
         public async Task<HMODTO> GetByIdAsync(int id)
         {
-            try
-            {
-                var h = _mapper.Map<HMO , HMODTO>(await _context.HMOs.FirstOrDefaultAsync(x => x.ID == id));
-                return h;
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
-                throw;
-            }
+            var hmo = await _context.HMOs.FirstOrDefaultAsync(x => x.ID == id);
+            return _mapper.Map<HMO, HMODTO>(hmo);
         }
 
-        public async Task<bool> UpdateAsync(int id , HMODTO hmo)
+        public async Task<bool> UpdateAsync(HMODTO hmo)
         {
-            try
+            var h = await _context.HMOs.FirstOrDefaultAsync(h => h.ID == hmo.ID);
+            if (h == null)
             {
-                var h = await this._context.HMOs.FirstOrDefaultAsync(h => h.ID == id);
-                if (h == null) { 
-
-                }
-                h.Title = hmo.Title;
-                h.IsActive = hmo.IsActive;
-
-                h.ArrangementName = hmo.ArrangementName;
-
-                h.TrainingsPerMonth = hmo.TrainingsPerMonth;
-                h.TrainingPrice = hmo.TrainingPrice;
-
-                h.TrainingDescription = hmo.TrainingDescription;
-
-                h.MaximumAge = hmo.MaximumAge;
-
-                h.MinimumAge = hmo.MinimumAge;
-                _context.HMOs.Update(_mapper.Map<HMO>(h));
-                await this._context.SaveChangesAsync();
-                return true;
+                return false;
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
-                throw;
-            }
+
+            h.Title = hmo.Title;
+            h.IsActive = hmo.IsActive;
+            h.ArrangementName = hmo.ArrangementName;
+            h.TrainingsPerMonth = hmo.TrainingsPerMonth;
+            h.TrainingPrice = hmo.TrainingPrice;
+            h.TrainingDescription = hmo.TrainingDescription;
+            h.MaximumAge = hmo.MaximumAge;
+            h.MinimumAge = hmo.MinimumAge;
+
+            _context.HMOs.Update(h);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

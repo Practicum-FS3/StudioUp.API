@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
-using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
-using StudioUp.Repo.Repositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -10,112 +8,106 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class HMOController : ControllerBase
     {
-        readonly IHMORepository HMOService;
+        private readonly IHMORepository _hmoService;
         private readonly ILogger<HMOController> _logger;
 
-
-        public HMOController(IHMORepository HMOService, ILogger<HMOController> logger)
+        public HMOController(IHMORepository hmoService, ILogger<HMOController> logger)
         {
-            this.HMOService = HMOService;
+            _hmoService = hmoService;
             _logger = logger;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet]
         public async Task<ActionResult<List<HMODTO>>> GetAll()
         {
             try
             {
-                var HMO = await HMOService.GetAllAsync();
-                return Ok(HMO);
+                var hmoList = await _hmoService.GetAllAsync();
+                return Ok(hmoList);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in HMOController/GetAll");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                _logger.LogError(ex, "Error in GetAll method.");
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [HttpPost]
-        [Route("Add")]
-        public async Task<ActionResult<HMODTO>> add(HMODTO hmo)
+        public async Task<ActionResult<HMODTO>> Add(HMODTO hmo)
         {
             if (hmo == null)
             {
-                return BadRequest("The content field is null.");
+                return BadRequest("The HMO field is null.");
             }
             try
             {
-                var HMO = await HMOService.AddAsync(hmo);
-                return Ok(HMO);
+                var newHMO = await _hmoService.AddAsync(hmo);
+                return CreatedAtAction(nameof(GetById), new { id = newHMO.ID }, newHMO);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in HMOController/add");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                _logger.LogError(ex, "Error in Add method.");
+                return StatusCode(500, "Internal server error");
             }
-
         }
 
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> delete(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-
-                await HMOService.DeleteAsync(id);
+                await _hmoService.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
-
-                _logger.LogError(ex, " this error in HMOController/delete");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                _logger.LogError(ex, "Error in Delete method.");
+                return StatusCode(500, "Internal server error");
             }
         }
 
-        [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<HMODTO>> getById(int id)
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<HMODTO>> GetById(int id)
         {
             try
             {
-                var HMO = await HMOService.GetByIdAsync(id);
-                if (HMO == null)
+                var hmo = await _hmoService.GetByIdAsync(id);
+                if (hmo == null)
                 {
-                    return NotFound("content hmo not found by ID");
-
+                    return NotFound("HMO not found.");
                 }
-                return Ok(HMO);
+                return Ok(hmo);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in HMOController/getById");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                _logger.LogError(ex, "Error in GetById method.");
+                return StatusCode(500, "Internal server error");
             }
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> update(int id, HMODTO hmo)
+        [HttpPut]
+        public async Task<IActionResult> Update(HMODTO hmo)
         {
             if (hmo == null)
             {
-                return BadRequest("The hmo field is null.");
-            }
-            if (id != hmo.ID)
-            {
-                return BadRequest("ID in URL does not match ID in body");
+                return BadRequest("The HMO field is null.");
             }
             try
             {
-                await HMOService.UpdateAsync(id, hmo);
+                var isUpdated = await _hmoService.UpdateAsync(hmo);
+                if (!isUpdated)
+                {
+                    return NotFound("HMO not found.");
+                }
                 return NoContent();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in HMOController/update");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                _logger.LogError(ex, "Error in Update method.");
+                return StatusCode(500, "Internal server error");
             }
-
         }
-
     }
 }

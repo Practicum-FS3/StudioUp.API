@@ -35,7 +35,7 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-      
+
 
         public async Task<bool> DeleteAsync(int id)
         {
@@ -50,11 +50,13 @@ namespace StudioUp.Repo.Repositories
                 await context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception exeption)
+            catch (Exception ex)
             {
-                throw exeption;
+                throw ex;
             }
         }
+
+
 
         public async Task<List<LeumitCommimentTypesDTO>> GetAllAsync()
         {

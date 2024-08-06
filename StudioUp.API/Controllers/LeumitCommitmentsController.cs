@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// LeumitCommitmentsController
+using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
-using StudioUp.Models;
-using StudioUp.Repo;
 using StudioUp.Repo.IRepositories;
-using StudioUp.Repo.Repositories;
+
 namespace StudioUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LeumitCommitmentsController: ControllerBase
+    public class LeumitCommitmentsController : ControllerBase
     {
         private readonly ILeumitCommimentsRepository leumitCommimentsRepository;
 
@@ -16,82 +15,102 @@ namespace StudioUp.API.Controllers
         {
             this.leumitCommimentsRepository = leumitCommimentsRepository;
         }
+
         [HttpGet("GetAll")]
-        public async Task<List<LeumitCommitmentsDTO>> getAllLeumitCommitments()
+        public async Task<ActionResult<List<LeumitCommitmentsDTO>>> GetAll()
         {
             try
             {
-                return await leumitCommimentsRepository.GetAllAsync();
+                var commitments = await leumitCommimentsRepository.GetAllAsync();
+                return Ok(commitments);
             }
-            catch (Exception exeption)
+            catch (Exception ex)
             {
-                throw exeption;
+                return StatusCode(500, "Internal server error");
             }
         }
+
         [HttpGet("GetById/{id}")]
-        public async Task<LeumitCommitmentsDTO> getLeumitCommitmentsById(string id)
+        public async Task<ActionResult<LeumitCommitmentsDTO>> GetById(string id)
         {
             try
             {
-                return await leumitCommimentsRepository.GetByIdAsync(id);
-            }
-            catch (Exception exeption)
-            {
-                throw exeption;
-            }
-        }
-        [HttpPut("Update/{id}")]
-        public async Task<ActionResult<LeumitCommitmentsDTO>> update(string id, LeumitCommitmentsDTO newLeumitCommiments)
-        {
-           
-            try
-            {
-
-                if (id != newLeumitCommiments.Id)
-                    return Conflict();
-                await leumitCommimentsRepository.UpdateAsync(newLeumitCommiments, id);
-                return Ok(newLeumitCommiments);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-        [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult> delete(string id)
-        {         
-            try
-            {
-                var leumitCommiment = await leumitCommimentsRepository.GetByIdAsync(id);
-                if (leumitCommiment == null)
+                var commitment = await leumitCommimentsRepository.GetByIdAsync(id);
+                if (commitment == null)
                 {
-                    return NotFound($"Training with ID {id} not found.");
+                    return NotFound($"LeumitCommitments with ID {id} not found.");
                 }
-                leumitCommiment.IsActive = false;
-                await leumitCommimentsRepository.UpdateAsync(leumitCommiment, id);
-                return NoContent();
-
+                return Ok(commitment);
             }
             catch (Exception ex)
             {
-                throw ex;
+                return StatusCode(500, "Internal server error");
             }
         }
-        [HttpPost]
-        [Route("Add")]
-        //לבדוק את טיפוס ההחזרה
-        public async Task<ActionResult<LeumitCommitmentsDTO>> add(LeumitCommitmentsDTO leumitCommimentsDTO)
+
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> Update(string id, LeumitCommitmentsDTO leumitCommitmentsDTO)
+        {
+            if (leumitCommitmentsDTO == null)
+            {
+                return BadRequest("The leumitCommitmentsDTO field is null.");
+            }
+
+            if (id != leumitCommitmentsDTO.Id)
+            {
+                return Conflict("ID in the path does not match ID in the body.");
+            }
+
+            try
+            {
+                var updatedCommitment = await leumitCommimentsRepository.UpdateAsync(leumitCommitmentsDTO, id);
+                if (updatedCommitment == null)
+                {
+                    return NotFound("Commitment not found.");
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {
-                await leumitCommimentsRepository.AddAsync(leumitCommimentsDTO);
-                return CreatedAtAction(nameof(add), leumitCommimentsDTO);
+                var isDeleted = await leumitCommimentsRepository.DeleteAsync(id);
+                if (!isDeleted)
+                {
+                    return NotFound($"LeumitCommitments with ID {id} not found.");
+                }
+                return NoContent();
             }
             catch (Exception ex)
             {
-                throw ex;
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<LeumitCommitmentsDTO>> Add(LeumitCommitmentsDTO leumitCommitmentsDTO)
+        {
+            if (leumitCommitmentsDTO == null)
+            {
+                return BadRequest("The leumitCommitmentsDTO field is null.");
             }
 
+            try
+            {
+                await leumitCommimentsRepository.AddAsync(leumitCommitmentsDTO);
+                return CreatedAtAction(nameof(Add), leumitCommitmentsDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }
