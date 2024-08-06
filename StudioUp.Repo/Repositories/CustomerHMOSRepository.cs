@@ -28,13 +28,14 @@ namespace StudioUp.Repo.Repositories
         public async Task<CustomerHMOSDTO> GetByIdAsync(int id)
         {
             var customerHMOS = await _context.CustomerHMOS.FindAsync(id);
-            if (!customerHMOS.IsActive)
+            if (customerHMOS == null || !customerHMOS.IsActive)
                 return null;
             return _mapper.Map<CustomerHMOSDTO>(customerHMOS);
         }
         public async Task<int> AddAsync(CustomerHMOSDTO customerHMOSDTO)
         {
             var customerHMOS = _mapper.Map<CustomerHMOS>(customerHMOSDTO);
+            customerHMOS.IsActive = true;
             var newCustomer = await _context.CustomerHMOS.AddAsync(customerHMOS);
             await _context.SaveChangesAsync();
             return newCustomer.Entity.ID;

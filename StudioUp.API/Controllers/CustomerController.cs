@@ -60,7 +60,7 @@ namespace StudioUp.API.Controllers
         [Route("addCustomer")]
         public async Task<ActionResult<CustomerDTO>> AddCustomer(CustomerDTO customer)
         {
-             try
+            try
             {
                 var c = await _customerService.AddAsync(customer);
                 if (c == null)
@@ -85,7 +85,7 @@ namespace StudioUp.API.Controllers
             }
             try
             {
-                 await _customerService.UpdateAsync(customer);
+                await _customerService.UpdateAsync(customer);
                 return NoContent();
             }
             catch (Exception ex)
@@ -100,7 +100,7 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                 await _customerService.DeleteAsync(id);
+                await _customerService.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
@@ -126,9 +126,6 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
-
-
 
     }
 }

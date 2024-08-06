@@ -18,6 +18,7 @@ namespace StudioUp.DTO
         public int TrainerID { get; set; }
         public int DayOfWeek { get; set; }
 
+
         public string Hour
         {
             get { return hour; }
@@ -31,7 +32,6 @@ namespace StudioUp.DTO
         }
 
         
-
         public int TrainingCustomerTypeId { get; set; }
         public int ParticipantsCount { get; set; }
         public bool IsActive { get; set; }

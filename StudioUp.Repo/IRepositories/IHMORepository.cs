@@ -14,7 +14,7 @@ namespace StudioUp.Repo.IRepositories
 
         Task<HMODTO> GetByIdAsync(int id);
 
-        Task UpdateAsync(int id, HMODTO hmo);
+        Task<bool> UpdateAsync(int id, HMODTO hmo);
 
 
         Task<HMODTO> AddAsync(HMODTO hmo);

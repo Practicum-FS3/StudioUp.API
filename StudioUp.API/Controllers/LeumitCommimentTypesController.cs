@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
@@ -14,10 +15,11 @@ namespace StudioUp.API.Controllers
     public class LeumitCommimentTypesController: ControllerBase
     {
         private readonly ILeumitCommimentTypesRepository leumitCommimentTypesRepository;
-
+     
         public LeumitCommimentTypesController(ILeumitCommimentTypesRepository leumitCommimentTypesRepository)
         {
             this.leumitCommimentTypesRepository = leumitCommimentTypesRepository;
+          
         }
         [HttpGet("GetAll")]
         public async Task<List<LeumitCommimentTypesDTO>> getAllLeumitCommitments()
@@ -32,7 +34,7 @@ namespace StudioUp.API.Controllers
             }
         }
         [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<LeumitCommimentTypesDTO>> getLeumitCommitmentsById(string id)
+        public async Task<ActionResult<LeumitCommimentTypesDTO>> getLeumitCommitmentsById(int id)
         {
             try
             {
@@ -46,7 +48,7 @@ namespace StudioUp.API.Controllers
             }
         }
         [HttpPut("Update/{id}")]
-        public async Task<ActionResult<LeumitCommimentTypesDTO>> update(string id, LeumitCommimentTypesDTO newLeumitCommimentTypesDTO)
+        public async Task<ActionResult<LeumitCommimentTypesDTO>> update(int id, LeumitCommimentTypesDTO newLeumitCommimentTypesDTO)
         {
             try
             {
@@ -63,12 +65,17 @@ namespace StudioUp.API.Controllers
 
         }
         [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult>delete(string id)
+        public async Task<ActionResult>delete(int id)
         {
             try
             {
-                if(!await leumitCommimentTypesRepository.DeleteAsync(id))
-                    return Conflict();
+                var leumitCommimentTypes = await leumitCommimentTypesRepository.GetByIdAsync(id);
+                if (leumitCommimentTypes == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+                leumitCommimentTypes.IsActive = false;
+                await leumitCommimentTypesRepository.UpdateAsync(leumitCommimentTypes, id);
                 return NoContent();
             }
             catch (Exception ex)
@@ -78,7 +85,7 @@ namespace StudioUp.API.Controllers
         }
         [HttpPost]
         [Route("Add")]
-        //לבדוק את טיפוס ההחזרה
+     
         public async Task<ActionResult<LeumitCommimentTypesDTO>> add(LeumitCommimentTypesDTO leumitCommimentTypesDTO)
         {
             try
