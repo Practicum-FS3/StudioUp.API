@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -14,7 +13,7 @@ namespace StudioUp.DTO
         private string hour = "00";
         private string minute = "00";
         public int TrainerID { get; set; }
-            public int DayOfWeek { get; set; }
+        public int DayOfWeek { get; set; }
 
         public string Hour
         {
@@ -27,11 +26,9 @@ namespace StudioUp.DTO
             get { return minute; }
             set { minute = FormatToTwoDigits(value); }
         }
-
         public int TrainingCustomerTypeId { get; set; }
         public int ParticipantsCount { get; set; }
         public bool IsActive { get; set; }
-
 
         private string FormatToTwoDigits(string value)
         {
