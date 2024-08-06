@@ -37,7 +37,7 @@ namespace StudioUp.Repo.Repositories
 
       
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(int id)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        public async Task<LeumitCommimentTypesDTO> GetByIdAsync(string id)
+        public async Task<LeumitCommimentTypesDTO> GetByIdAsync(int id)
         {
             try
             {
@@ -84,18 +84,16 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        public async Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO, string id)
+        public async Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO, int id)
         {
-            try
+            var existingEntity = await context.LeumitCommimentTypes.FindAsync(id);
+            if (existingEntity == null)
             {
-                context.LeumitCommimentTypes.Update(mapper.Map<LeumitCommimentTypes>(leumitCommimentTypesDTO));
-                await context.SaveChangesAsync();
-                return leumitCommimentTypesDTO;
+                throw new Exception("Entity not found");
             }
-            catch (Exception exeption)
-            {
-                throw exeption;
-            }
+            mapper.Map(leumitCommimentTypesDTO, existingEntity);
+            await context.SaveChangesAsync();
+            return leumitCommimentTypesDTO;
         }
     }
 }
