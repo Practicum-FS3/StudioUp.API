@@ -11,8 +11,8 @@ namespace StudioUp.Repo.IRepositories
     {
         Task<List<TrainerDTO>> GetAllTrainers();
         Task<TrainerDTO> GetTrainerById(int id);
-        Task<bool> UpdateTrainer(TrainerDTO trainer);
+        Task UpdateTrainer(TrainerDTO trainer);
         Task<TrainerDTO> AddTrainer(TrainerDTO trainer);
-        Task<bool> DeleteTrainer(int id);
+        Task DeleteTrainer(int id);
     }
 }
