@@ -11,6 +11,7 @@ namespace StudioUp.API.Mappings
             CreateMap<ContentType, ContentTypeDTO>().ReverseMap();
             CreateMap<ContentSection, ContentSectionDTO>().ReverseMap();
 
+
             CreateMap<TrainingDTO, Training>()
                  .ForMember(dest => dest.TrainerID, opt => opt.MapFrom(src => src.TrainerID))
                  .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.DayOfWeek))
