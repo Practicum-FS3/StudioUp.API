@@ -34,10 +34,15 @@ namespace StudioUp.Repo.Repositories
                 var trainings = await _context.TrainingCustomers.Where(x => x.CustomerID == customerId
                 && x.Training.Date >= startDate && x.Training.Date <= endDate
                 && x.IsActive)
-                    .Include(x => x.Customer)
-                    .Include(x => x.Training)
-                    .Include(x => x.Training.Training)
-
+                    .Include(tc => tc.Customer)
+                            .ThenInclude(c => c.CustomerType)
+                        .Include(tc => tc.Training)
+                              .ThenInclude(at => at.Training)
+                                 .ThenInclude(t => t.Trainer)
+                      .Include(tc => tc.Training)
+                            .ThenInclude(at => at.Training)
+                                .ThenInclude(t => t.TrainingCustomerType)
+                                    .ThenInclude(tct => tct.TrainingType)
                     .ToListAsync();
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
             }
@@ -56,11 +61,16 @@ namespace StudioUp.Repo.Repositories
                 var endDate = startDate.AddDays(7);
                 var trainings = await _context.TrainingCustomers.Where(x => x.IsActive
                 && x.Training.Date >= startDate && x.Training.Date < endDate)
-                    .Include(x => x.Customer)
-                    .Include(x => x.Training)
-                    .Include(x => x.Training.Training)
-                    .ToListAsync();
-
+                      .Include(tc => tc.Customer)
+                            .ThenInclude(c => c.CustomerType)
+                       .Include(tc => tc.Training)
+                             .ThenInclude(at => at.Training)
+                                .ThenInclude(t => t.Trainer)
+                        .Include(tc => tc.Training)
+                            .ThenInclude(at => at.Training)
+                                .ThenInclude(t => t.TrainingCustomerType)
+                                    .ThenInclude(tct => tct.TrainingType)
+                        .ToListAsync();
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
             }
             catch (Exception ex)
