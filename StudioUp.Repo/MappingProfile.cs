@@ -17,10 +17,11 @@ namespace StudioUp.Repo
         {
 
             CreateMap<AvailableTraining, AvailableTrainingDTO>().ReverseMap();
+            CreateMap<Contact, ContactDTO>().ReverseMap();
             CreateMap<Customer, CustomerDTO>().ReverseMap();
             CreateMap<CustomerType, CustomerTypeDTO>().ReverseMap();
             CreateMap<HMO, HMODTO>().ReverseMap();
-            CreateMap<PaymentOption, PaymentOptionDTO>().ReverseMap();
+            CreateMap<DTO.PaymentOptionDTO, DTO.PaymentOptionDTO>().ReverseMap();
             CreateMap<Models.SubscriptionType, SubscriptionTypeDTO>().ReverseMap();
             CreateMap<Trainer, TrainerDTO>().ReverseMap();
             CreateMap<TrainingCustomer, TrainingCustomerDTO>().ReverseMap();
@@ -37,7 +38,10 @@ namespace StudioUp.Repo
             CreateMap<LeumitCommimentTypes, LeumitCommimentTypesDTO>().ReverseMap();
             CreateMap<Training, CalanderTrainingDTO>()
                   .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Trainer.FirstName + " " + src.Trainer.LastName))
-                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => string.Format("{0}:{1}",src.Hour,src.Minute)));
+                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Hour, src.Minute)))
+            .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.CustomerType.Title))
+            .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title));
+
 
 
 
@@ -45,13 +49,18 @@ namespace StudioUp.Repo
             CreateMap<AvailableTraining, CalanderAvailableTrainingDTO>()
             .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Training.Trainer.FirstName + " " + src.Training.Trainer.LastName))
             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.DayOfWeek))
-            .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Training.Hour, src.Training.Minute)))
+            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Training.Hour, src.Training.Minute)))
             .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.Training.TrainingCustomerType.CustomerType.Title))
             .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.Training.TrainingCustomerType.TrainingType.Title));
 
-
-            
-
+            CreateMap<TrainingCustomer, CalanderAvailableTrainingDTO>()
+            .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Training.Training.Trainer != null ? $"{src.Training.Training.Trainer.FirstName} {src.Training.Training.Trainer.LastName}" : string.Empty))
+            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Training.Training.Hour, src.Training.Training.Minute)))
+            .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.Customer.CustomerType.Title))
+            .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.Training.Training.TrainingCustomerType.TrainingType.Title))
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Training.Date))
+            .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.Training.DayOfWeek))
+            .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.Training.ParticipantsCount));
         }
     }
 }

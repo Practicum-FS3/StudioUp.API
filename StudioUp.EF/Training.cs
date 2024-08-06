@@ -23,7 +23,6 @@ namespace StudioUp.Models
         public int Hour { get; set; }
         [Range(0, 60)]
         public int Minute { get; set; }
-        
         public int? ParticipantsCount { get; set; }
         public bool IsActive { get; set; }
 
