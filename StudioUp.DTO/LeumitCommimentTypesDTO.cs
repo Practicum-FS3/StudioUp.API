@@ -9,7 +9,8 @@ namespace StudioUp.DTO
 {
     public class LeumitCommimentTypesDTO
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Title { get; set; }
+        public bool IsActive { get; set; }
     }
 }
