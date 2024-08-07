@@ -109,9 +109,9 @@ namespace StudioUp.Repo.Repositories
                 return mapTrain;
 
             }
-            catch (Exception e)
+            catch 
             {
-                throw e;
+                throw ;
             }
         }
        

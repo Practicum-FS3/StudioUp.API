@@ -28,10 +28,14 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
+<<<<<<< HEAD
+                var x = await context.Customers.AddAsync(mapper.Map<Customer>(entity));
+               
+=======
                 var mapCast = mapper.Map<Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);
+>>>>>>> 91234ae66ed1c5306253fde45f6eae98db268ed2
                 await context.SaveChangesAsync();
-                entity.Id = newCustomer.Entity.Id;
                 return entity;
             }
             catch (Exception ex)

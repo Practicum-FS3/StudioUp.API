@@ -91,6 +91,9 @@ namespace StudioUp.API
             builder.Services.AddScoped<ICustomerTypeRepository, CustomerTypeRepository>();
             builder.Services.AddScoped<IRepository<SubscriptionTypeDTO>, SubscriptionTypeRepository>();
             builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
+            builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainigTypeRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
             builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
 

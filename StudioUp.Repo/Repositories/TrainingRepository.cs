@@ -14,17 +14,15 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly ILogger<TrainingRepository> _logger;
 
 
         public TrainingRepository(DataContext context, IMapper mapper, ILogger<TrainingRepository> logger)
         {
             _context = context;
             _mapper = mapper;
-            _logger = logger;
         }
 
-        public async Task<IEnumerable<TrainingDTO>> GetAllTrainings()
+        public async Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync()
         {
             try
             {
@@ -34,16 +32,15 @@ namespace StudioUp.Repo.Repositories
                               .ToListAsync();
                 return _mapper.Map<IEnumerable<TrainingDTO>>(lst);
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func GetAllTrainings-Repo");
                 throw;
             }
 
         }
 
 
-        public async Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalender()
+        public async Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalenderAsync()
         {
 
             try
@@ -55,48 +52,41 @@ namespace StudioUp.Repo.Repositories
                 .ToListAsync();
             return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "- this error in the func GetAllTrainingsCalender-Repo");
                 throw;
             }
         }
 
-        public async Task<TrainingDTO> GetTrainingById(int id)
+        public async Task<TrainingDTO> GetTrainingByIdAsync(int id)
         {
             try
             {
-                Training training = await _context.Trainings
-                               .Include(t => t.TrainingCustomerType)
-                               .Include(t => t.Trainer)
-                               .FirstOrDefaultAsync(t => t.ID == id);
+                Training training = await _context.Trainings.Include(t => t.TrainingCustomerType).Include(t => t.Trainer).FirstOrDefaultAsync(t => t.ID == id);
                 return _mapper.Map<TrainingDTO>(training);
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "- this error in the func GetTrainingById-Repo");
                 throw;
             }
 
         }
 
-        public async Task<TrainingDTO> AddTraining(TrainingDTO trainingDto)
+        public async Task<TrainingDTO> AddTrainingAsync(TrainingDTO trainingDto)
         {
             try
             {
-                Training training = _mapper.Map<Training>(trainingDto);
-                _context.Trainings.Add(training);
+                var x = await _context.Trainings.AddAsync(_mapper.Map<Training>(trainingDto));
                 await _context.SaveChangesAsync();
                 return trainingDto;
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func AddTraining-Repo");
                 throw;
             }
         }
 
-        public async Task<TrainingDTO> UpdateTraining(TrainingDTO trainingDto, int id)
+        public async Task<TrainingDTO> UpdateTrainingAsync(TrainingDTO trainingDto, int id)
         {
             try
             {
@@ -106,15 +96,14 @@ namespace StudioUp.Repo.Repositories
                 await _context.SaveChangesAsync();
                 return trainingDto;
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func UpdateTraining-Repo");
                 throw;
             }
 
         }
 
-        public async Task DeleteTraining(int id)
+        public async Task DeleteTrainingAsync(int id)
         {
             try
             {
@@ -126,9 +115,8 @@ namespace StudioUp.Repo.Repositories
                 _context.Trainings.Remove(training);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func UpdateTraining-Repo");
                 throw;
             }
 
