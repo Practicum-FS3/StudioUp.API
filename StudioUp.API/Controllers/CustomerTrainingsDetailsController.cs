@@ -49,8 +49,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpGet("filterCustomers")]
-        public async Task<ActionResult<List<CalanderAvailableTrainingDTO>>> FilterCustomers([FromQuery] DTO.CalanderAvailableTrainingFilterDTO filter)
+        [HttpGet("FilterCustomersTrainingDeatails")]
+        public async Task<ActionResult<List<CalanderAvailableTrainingDTO>>> FilterCustomersTrainingDeatails([FromQuery] DTO.CalanderAvailableTrainingFilterDTO filter)
         {
             try
             {

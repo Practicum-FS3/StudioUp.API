@@ -20,8 +20,8 @@ namespace StudioUp.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet("GetAllCustomer")]
-        public async Task<ActionResult<List<CustomerDTO>>> GetAllCustomer()
+        [HttpGet("GetAllCustomers")]
+        public async Task<ActionResult<List<CustomerDTO>>> GetAllCustomers()
         {
             try
             {
