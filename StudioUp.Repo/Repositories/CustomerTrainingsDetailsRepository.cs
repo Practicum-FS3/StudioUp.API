@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
 using StudioUp.Models;
-
 
 namespace StudioUp.Repo.Repositories
 {
@@ -32,23 +30,24 @@ namespace StudioUp.Repo.Repositories
                 var startDate = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
                 var endDate = startDate.AddDays(7);
                 var trainings = await _context.TrainingCustomers.Where(x => x.CustomerID == customerId
-                && x.Training.Date >= startDate && x.Training.Date <= endDate
-                && x.IsActive)
+                    && x.Training.Date >= startDate && x.Training.Date <= endDate
+                    && x.IsActive)
                     .Include(tc => tc.Customer)
-                            .ThenInclude(c => c.CustomerType)
-                        .Include(tc => tc.Training)
-                              .ThenInclude(at => at.Training)
-                                 .ThenInclude(t => t.Trainer)
-                      .Include(tc => tc.Training)
-                            .ThenInclude(at => at.Training)
-                                .ThenInclude(t => t.TrainingCustomerType)
-                                    .ThenInclude(tct => tct.TrainingType)
+                        .ThenInclude(c => c.CustomerType)
+                    .Include(tc => tc.Training)
+                        .ThenInclude(at => at.Training)
+                            .ThenInclude(t => t.Trainer)
+                    .Include(tc => tc.Training)
+                        .ThenInclude(at => at.Training)
+                            .ThenInclude(t => t.TrainingCustomerType)
+                                .ThenInclude(tct => tct.TrainingType)
                     .ToListAsync();
+
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("An error occurred while retrieving training details for the customer.", ex);
             }
         }
 
@@ -69,12 +68,7 @@ namespace StudioUp.Repo.Repositories
                 {
                     if (filter.Past.HasValue && filter.Future.HasValue)
                     {
-                        // If both are true or both are false, no need to filter by date
-                        if (!filter.Past.Value && !filter.Future.Value)
-                        {
-                            query = query.Where(x => x.Training.Date >= today);
-                        }
-                        else if (filter.Past.Value && filter.Future.Value)
+                        if ((filter.Past.Value && filter.Future.Value) || (!filter.Past.Value && !filter.Future.Value))
                         {
                             // No action needed, as we want to include all trainings
                         }
@@ -105,38 +99,35 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("An error occurred while filtering the training sessions.", ex);
             }
         }
-
-
-
 
         public async Task<List<CalanderAvailableTrainingDTO>> GetAllCustomersDetailsAsync()
         {
             try
             {
                 var trainings = await _context.TrainingCustomers.Where(x => x.IsActive)
-                      .Include(tc => tc.Customer)
-                            .ThenInclude(c => c.CustomerType)
-                       .Include(tc => tc.Training)
-                             .ThenInclude(at => at.Training)
-                                .ThenInclude(t => t.Trainer)
-                        .Include(tc => tc.Training)
-                            .ThenInclude(at => at.Training)
-                                .ThenInclude(t => t.TrainingCustomerType)
-                                    .ThenInclude(tct => tct.TrainingType)
-                        .Where(ct => ct.IsActive).ToListAsync();
+                    .Include(tc => tc.Customer)
+                        .ThenInclude(c => c.CustomerType)
+                    .Include(tc => tc.Training)
+                        .ThenInclude(at => at.Training)
+                            .ThenInclude(t => t.Trainer)
+                    .Include(tc => tc.Training)
+                        .ThenInclude(at => at.Training)
+                            .ThenInclude(t => t.TrainingCustomerType)
+                                .ThenInclude(tct => tct.TrainingType)
+                    .Where(ct => ct.IsActive).ToListAsync();
+
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception("An error occurred while retrieving all customer training details.", ex);
             }
         }
-
     }
-    //TODO - find a place
+
     public static class DateTimeExtensions
     {
         public static DateTime StartOfWeek(this DateTime dt, DayOfWeek startOfWeek)
@@ -146,4 +137,3 @@ namespace StudioUp.Repo.Repositories
         }
     }
 }
-

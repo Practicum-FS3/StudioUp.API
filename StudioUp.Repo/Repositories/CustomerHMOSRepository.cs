@@ -6,7 +6,6 @@ using StudioUp.Repo.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
@@ -15,60 +14,99 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+
         public CustomerHMOSRepository(DataContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
+
         public async Task<IEnumerable<CustomerHMOSDTO>> GetAllAsync()
         {
-            var customersHMOs = await _context.CustomerHMOS.Where(ct => ct.IsActive).ToListAsync();
-            return _mapper.Map<IEnumerable<CustomerHMOSDTO>>(customersHMOs);
+            try
+            {
+                var customersHMOs = await _context.CustomerHMOS.Where(ct => ct.IsActive).ToListAsync();
+                return _mapper.Map<IEnumerable<CustomerHMOSDTO>>(customersHMOs);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving all customer HMOs.", ex);
+            }
         }
+
         public async Task<CustomerHMOSDTO> GetByIdAsync(int id)
         {
-            var customerHMOS = await _context.CustomerHMOS.Where(ct => ct.ID == id && ct.IsActive)
-                                             .FirstOrDefaultAsync(); 
-            return _mapper.Map<CustomerHMOSDTO>(customerHMOS);
+            try
+            {
+                var customerHMOS = await _context.CustomerHMOS
+                    .Where(ct => ct.ID == id && ct.IsActive)
+                    .FirstOrDefaultAsync();
+
+                if (customerHMOS == null)
+                {
+                    throw new Exception($"CustomerHMO with ID {id} does not exist or is inactive.");
+                }
+
+                return _mapper.Map<CustomerHMOSDTO>(customerHMOS);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while retrieving the customer HMO with ID {id}.", ex);
+            }
         }
+
         public async Task<int> AddAsync(CustomerHMOSDTO customerHMOSDTO)
         {
-            var customerHMOS = _mapper.Map<CustomerHMOS>(customerHMOSDTO);
-            customerHMOS.IsActive = true;
-            var newCustomer = await _context.CustomerHMOS.AddAsync(customerHMOS);
-            await _context.SaveChangesAsync();
-            return newCustomer.Entity.ID;
+            try
+            {
+                var customerHMOS = _mapper.Map<CustomerHMOS>(customerHMOSDTO);
+                customerHMOS.IsActive = true;
+                var newCustomer = await _context.CustomerHMOS.AddAsync(customerHMOS);
+                await _context.SaveChangesAsync();
+                return newCustomer.Entity.ID;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while adding a new customer HMO.", ex);
+            }
         }
+
         public async Task UpdateAsync(CustomerHMOSDTO customerHMOSDTO)
         {
             try
             {
-                _context.CustomerHMOS.Update(_mapper.Map<CustomerHMOS>(customerHMOSDTO));
+                var existingCustomerHMO = await _context.CustomerHMOS.FindAsync(customerHMOSDTO.ID);
+                if (existingCustomerHMO == null)
+                {
+                    throw new Exception($"CustomerHMO with ID {customerHMOSDTO.ID} does not exist.");
+                }
+
+                _mapper.Map(customerHMOSDTO, existingCustomerHMO);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception($"An error occurred while updating the customer HMO with ID {customerHMOSDTO.ID}.", ex);
             }
-
         }
+
         public async Task DeleteAsync(int id)
         {
             try
             {
                 var customerHMO = await _context.CustomerHMOS.FindAsync(id);
                 if (customerHMO == null || !customerHMO.IsActive)
-                    return;
+                {
+                    throw new Exception($"CustomerHMO with ID {id} does not exist or is already inactive.");
+                }
 
                 customerHMO.IsActive = false;
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception($"An error occurred while attempting to delete the customer HMO with ID {id}.", ex);
             }
-
         }
-
     }
 }
