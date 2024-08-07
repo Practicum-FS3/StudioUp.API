@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
 using StudioUp.Models;
+using StudioUp.Repo.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class CustomerTypeRepository : IRepository<CustomerTypeDTO>
+    public class CustomerTypeRepository : ICustomerTypeRepository
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -27,7 +28,9 @@ namespace StudioUp.Repo.Repositories
 
         public async Task<List<CustomerTypeDTO>> GetAllAsync()
         {
-            return _mapper.Map<List<CustomerTypeDTO>>(await _context.CustomerTypes.ToListAsync());
+            var l = await _context.CustomerTypes.ToListAsync();
+
+            return _mapper.Map<List<CustomerTypeDTO>>(l);
         }
 
         public async Task<CustomerTypeDTO> GetByIdAsync(int id)

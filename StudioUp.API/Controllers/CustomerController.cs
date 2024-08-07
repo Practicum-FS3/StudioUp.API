@@ -20,7 +20,7 @@ namespace StudioUp.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet("GetAllCustomer")]
         public async Task<ActionResult<List<CustomerDTO>>> GetAllCustomer()
         {
             try
@@ -35,7 +35,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpGet("byId/{id}")]
+        [HttpGet("GetCustomerById/{id}")]
 
         public async Task<ActionResult<CustomerDTO>> GetCustomerById(int id)
         {
@@ -50,14 +50,13 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in CustomerController/GetCustomerById");
+                _logger.LogError(ex, " this error in CustomerController/GetByIdAsync");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
 
-        [HttpPost]
-        [Route("addCustomer")]
+        [HttpPost("AddCustomer")]
         public async Task<ActionResult<CustomerDTO>> AddCustomer(CustomerDTO customer)
         {
             try
@@ -71,12 +70,14 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
+
                 _logger.LogError(ex, " this error in CustomerController/AddCustomer");
+
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-        [HttpPut]
+        [HttpPut("UpdateCustomer")]
         public async Task<IActionResult> UpdateCustomer(CustomerDTO customer)
         {
             if (customer == null)
@@ -91,11 +92,12 @@ namespace StudioUp.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, " this error in CustomerController/UpdateCustomer");
+
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteCustomer/{id}")]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
             try
@@ -106,11 +108,12 @@ namespace StudioUp.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, " this error in CustomerController/DeleteCustomer");
+
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpGet("filter")]
-        public async Task<ActionResult<List<CustomerDTO>>> FilterCustomers(DTO.CustomerFilterDTO filter)
+        [HttpGet("FilterCustomers")]
+        public async Task<ActionResult<List<CustomerDTO>>> FilterCustomers([FromQuery] DTO.CustomerFilterDTO filter)
         {
             try
             {
@@ -123,6 +126,7 @@ namespace StudioUp.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, " this error in CustomerController/FilterCustomers");
+
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

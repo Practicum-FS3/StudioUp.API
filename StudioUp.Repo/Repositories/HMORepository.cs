@@ -87,7 +87,7 @@ namespace StudioUp.Repo.Repository
             }
         }
 
-        public async Task UpdateAsync(int id , HMODTO hmo)
+        public async Task<bool> UpdateAsync(int id , HMODTO hmo)
         {
             try
             {
@@ -97,8 +97,20 @@ namespace StudioUp.Repo.Repository
                 }
                 h.Title = hmo.Title;
                 h.IsActive = hmo.IsActive;
+
+                h.ArrangementName = hmo.ArrangementName;
+
+                h.TrainingsPerMonth = hmo.TrainingsPerMonth;
+                h.TrainingPrice = hmo.TrainingPrice;
+
+                h.TrainingDescription = hmo.TrainingDescription;
+
+                h.MaximumAge = hmo.MaximumAge;
+
+                h.MinimumAge = hmo.MinimumAge;
                 _context.HMOs.Update(_mapper.Map<HMO>(h));
-                await _context.SaveChangesAsync();
+                await this._context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {

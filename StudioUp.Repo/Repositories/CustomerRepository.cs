@@ -27,11 +27,10 @@ namespace StudioUp.Repo.Repositories
         }
 
         public async Task<CustomerDTO> AddAsync(CustomerDTO entity)
-
         {
             try
             {
-                var mapCast = mapper.Map<Models.Customer>(entity);
+                var mapCast = mapper.Map<Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);
                 await context.SaveChangesAsync();
                 entity.Id = newCustomer.Entity.Id;
@@ -39,8 +38,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
-                throw;
+                throw ex;
             }
         }
 
@@ -70,8 +68,7 @@ namespace StudioUp.Repo.Repositories
             catch (Exception ex)
             {
 
-                _logger.LogError(ex, "- this error in the func GetCustomerByEmailAndPassword-Repo");
-                throw;
+                throw ex;
             }
 
         }
@@ -90,8 +87,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
-                throw;
+                throw ex;
             }
         }
 
@@ -106,8 +102,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
-                throw;
+                throw ex;
             }
 
         }
@@ -123,8 +118,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
-                throw;
+                throw ex;
             }
         }
 
@@ -132,32 +126,12 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var customerToUpdate = await context.Customers.FirstOrDefaultAsync(customerToUpdate => customerToUpdate.Id == entity.Id);
-
-                if (customerToUpdate == null)
-                {
-                }
-
-                customerToUpdate.Address = entity.Address;
-                customerToUpdate.LastName = entity.LastName;
-                customerToUpdate.FirstName = entity.FirstName;
-                customerToUpdate.PaymentOptionId = entity.PaymentOptionId;
-                customerToUpdate.HMOId = entity.HMOId;
-                customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
-
-                customerToUpdate.IsActive = entity.IsActive;
-                customerToUpdate.SubscriptionTypeId = entity.SubscriptionTypeId;
-                customerToUpdate.Tel = entity.Tel;
-                customerToUpdate.Email = entity.Email;
-                context.Customers.Update(mapper.Map<Customer>(customerToUpdate));
-
+                context.Customers.Update(mapper.Map<Customer>(entity));
                 await context.SaveChangesAsync();
-
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
-                throw;
+                throw ex;
             }
         }
         public async Task<List<CustomerDTO>> FilterAsync(CustomerFilterDTO filter)
@@ -199,8 +173,7 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func FilterAsync-Repo");
-                throw;
+                throw ex;
 
             }
         }

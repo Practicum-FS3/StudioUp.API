@@ -28,23 +28,29 @@ namespace StudioUp.Repo.Repositories
         public async Task<CustomerHMOSDTO> GetByIdAsync(int id)
         {
             var customerHMOS = await _context.CustomerHMOS.FindAsync(id);
-            if (!customerHMOS.IsActive)
+            if (customerHMOS == null || !customerHMOS.IsActive)
                 return null;
             return _mapper.Map<CustomerHMOSDTO>(customerHMOS);
         }
         public async Task<int> AddAsync(CustomerHMOSDTO customerHMOSDTO)
         {
             var customerHMOS = _mapper.Map<CustomerHMOS>(customerHMOSDTO);
+            customerHMOS.IsActive = true;
             var newCustomer = await _context.CustomerHMOS.AddAsync(customerHMOS);
             await _context.SaveChangesAsync();
             return newCustomer.Entity.ID;
         }
-        public async Task UpdateAsync(int id, CustomerHMOSDTO customerHMOSDTO)
+        public async Task UpdateAsync(CustomerHMOSDTO customerHMOSDTO)
         {
-            var customerHMOS = await _context.CustomerHMOS.FindAsync(id);
-            _mapper.Map(customerHMOSDTO, customerHMOS);
-            _context.Entry(customerHMOS).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.CustomerHMOS.Update(_mapper.Map<CustomerHMOS>(customerHMOSDTO));
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
         }
         public async Task<bool> DeleteAsync(int id)
@@ -55,6 +61,7 @@ namespace StudioUp.Repo.Repositories
             customerHMOS.IsActive = false;
             await _context.SaveChangesAsync();
             return true;
+
         }
 
     }

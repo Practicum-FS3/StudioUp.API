@@ -8,8 +8,8 @@ namespace StudioUp.DTO
 {
     public class CalanderAvailableTrainingFilterDTO
     {
-        public bool? Past;
-        public bool? Future;
+        public bool? Past { get; set; }
+        public bool? Future { get; set; }
         public DateOnly? StratDate { get; set; }
         public DateOnly? EndDate { get; set; }
     }

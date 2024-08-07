@@ -20,8 +20,8 @@ namespace StudioUp.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<CalanderAvailableTrainingDTO>>> GetByCystomerIdAsync(int id)
+        [HttpGet("GetCustomerTrainingsByCustomerIdAsync/{id}")]
+        public async Task<ActionResult<IEnumerable<CalanderAvailableTrainingDTO>>> GetCustomerTrainingsByCustomerIdAsync(int id)
         {
             try
             {
@@ -34,8 +34,8 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CalanderAvailableTrainingDTO>>> GetAllAsync()
+        [HttpGet("GetAllCustomerTrainingsAsync")]
+        public async Task<ActionResult<IEnumerable<CalanderAvailableTrainingDTO>>> GetAllCustomerTrainingsAsync()
         {
             try
             {
@@ -49,8 +49,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpGet("filter")]
-        public async Task<ActionResult<List<CalanderAvailableTrainingDTO>>> FilterCustomers(DTO.CalanderAvailableTrainingFilterDTO filter)
+        [HttpGet("filterCustomers")]
+        public async Task<ActionResult<List<CalanderAvailableTrainingDTO>>> FilterCustomers([FromQuery] DTO.CalanderAvailableTrainingFilterDTO filter)
         {
             try
             {
@@ -58,10 +58,11 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in CustomerTrainingsDeatails/FilterTrainings");
+                _logger.LogError(ex, "Error in CustomerTrainingsDetails/FilterTrainings");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
     }
 }

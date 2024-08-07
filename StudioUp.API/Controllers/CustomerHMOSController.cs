@@ -10,13 +10,16 @@ namespace StudioUp.API.Controllers
     public class CustomerHMOSController : ControllerBase
     {
         private readonly ICustomerHMOSRepository _customerHMOSRepository;
-        public CustomerHMOSController(ICustomerHMOSRepository customerHMOSRepository)
+        private readonly ILogger<CustomerHMOSController> _logger;
+
+        public CustomerHMOSController(ICustomerHMOSRepository customerHMOSRepository, ILogger<CustomerHMOSController> logger)
         {
             _customerHMOSRepository = customerHMOSRepository;
+            _logger = logger;
         }
 
-        [HttpGet("GetCustomerHMOS")]
-        public async Task<ActionResult<IEnumerable<CustomerHMOSDTO>>> GetAll()
+        [HttpGet("GetAllCustomerHMOS")]
+        public async Task<ActionResult<IEnumerable<CustomerHMOSDTO>>> GetAllCustomerHMOS()
         {
             try
             {
@@ -26,11 +29,12 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, " this error in CustomerHOMSController/GetAllCustomerHMOS");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
         [HttpGet("GetCustomerHMOSByID/{id}")]
-        public async Task<ActionResult<CustomerHMOSDTO>> GetById(int id)
+        public async Task<ActionResult<CustomerHMOSDTO>> GetCustomerHMOSByID(int id)
         {
             try
             {
@@ -41,37 +45,64 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message} ");
+                _logger.LogError(ex, " this error in CustomerHOMSController/GetCustomerHMOSByID");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpPost("CreateCustomerHMOS")]
-        public async Task<ActionResult<int>> Create([FromBody] CustomerHMOSDTO customerHMOSDTO)
+        [HttpPost("AddCustomerHMO")]
+        public async Task<ActionResult<int>> AddCustomerHMO([FromBody] CustomerHMOSDTO customerHMOSDTO)
         {
-            if (customerHMOSDTO == null)
-                return BadRequest();
+            try
+            {
+                if (customerHMOSDTO == null)
+                    return BadRequest();
 
-            var newCustomerId = await _customerHMOSRepository.AddAsync(customerHMOSDTO);
-            return CreatedAtAction(nameof(GetById), new { id = newCustomerId }, newCustomerId);
+                var newCustomerId = await _customerHMOSRepository.AddAsync(customerHMOSDTO);
+                return CreatedAtAction(nameof(GetCustomerHMOSByID), new { id = newCustomerId }, newCustomerId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in CustomerHOMSController/AddCustomerHMO");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
-        [HttpPut("UpdateCustomerHMOS/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CustomerHMOSDTO customerHMOSDTO)
+        [HttpPut("UpdateCustomerHMOS")]
+        public async Task<IActionResult> UpdateCustomerHMOS([FromBody] CustomerHMOSDTO customerHMOSDTO)
         {
-            if (customerHMOSDTO == null)
-                return BadRequest();
+            try
+            {
+                if (customerHMOSDTO == null)
+                    return BadRequest();
 
-            await _customerHMOSRepository.UpdateAsync(id, customerHMOSDTO);
-            return NoContent();
+                await _customerHMOSRepository.UpdateAsync(customerHMOSDTO);
+
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in CustomerHOMSController/UpdateCustomerHMOS");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpDelete("DeleteCustomerHMOS/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteCustomerHMOS(int id)
         {
-            var success = await _customerHMOSRepository.DeleteAsync(id);
-            if (!success)
-                return NotFound();
+            try
+            {
+                var success = await _customerHMOSRepository.DeleteAsync(id);
+                if (!success)
+                    return NotFound();
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in CustomerHOMSController/DeleteCustomerHMOS");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
     }
