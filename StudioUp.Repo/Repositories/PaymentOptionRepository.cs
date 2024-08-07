@@ -16,30 +16,32 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly ILogger<PaymentOptionRepository> _logger;
 
 
-        public PaymentOptionRepository(DataContext context, IMapper mapper, ILogger<PaymentOptionRepository> logger)
+        public PaymentOptionRepository(DataContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _logger = logger;
         }
 
         public async Task<List<PaymentOptionDTO>> GetAllAsync()
         {
-            return _mapper.Map<List<PaymentOptionDTO>>(await _context.PaymentOptions.ToListAsync());
+            var x = await _context.PaymentOptions.Where(y => y.IsActive).ToListAsync();
+            return _mapper.Map<List<PaymentOptionDTO>>(x);
         }
 
         public async Task<PaymentOptionDTO> GetByIdAsync(int id)
         {
             try
             {
-                return _mapper.Map<PaymentOptionDTO>(await _context.PaymentOptions.FindAsync(id));
+                 var x=_mapper.Map<PaymentOptionDTO>(await _context.PaymentOptions.FindAsync(id));
+                if (x.IsActive)
+                    return x;
+                else
+                    throw new Exception($"cant find payment option by ID {id}");
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
                 throw;
             }
         }
@@ -52,9 +54,8 @@ namespace StudioUp.Repo.Repositories
                 await _context.SaveChangesAsync();
                 return paymentOption;
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
                 throw;
             }
 
@@ -67,9 +68,8 @@ namespace StudioUp.Repo.Repositories
                 _context.PaymentOptions.Update(_mapper.Map<PaymentOption>(paymentOption));
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
                 throw;
             }
 
@@ -80,19 +80,20 @@ namespace StudioUp.Repo.Repositories
             try
             {
                 var paymentOption = await _context.PaymentOptions.FindAsync(id);
-                if (paymentOption == null)
+                if (paymentOption == null||paymentOption.IsActive==false)
                 {
                     throw new Exception($"cant find payment option by ID {id}");
                 }
-                _context.PaymentOptions.Remove(paymentOption);
+                paymentOption.IsActive = false;
                     await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
                 throw;
             }
 
         }
+
+       
     }
 }

@@ -33,9 +33,9 @@ namespace StudioUp.Repo.Repositories
                 return _mapper.Map<List<TrainingCustomerDTO>>(trainingCustomers);
 
             }
-            catch (Exception e)
+            catch 
             {
-                throw e;
+                throw ;
 
             }
         }
@@ -49,9 +49,9 @@ namespace StudioUp.Repo.Repositories
                 return mapTrainng;
 
             }
-            catch (Exception e)
+            catch 
             {
-                throw e;
+                throw ;
             }
         }
 
@@ -61,11 +61,10 @@ namespace StudioUp.Repo.Repositories
             {
                 var trainingCustomers = await _context.TrainingCustomers.Where(tc => tc.TrainingID == id).ToListAsync();
                 return _mapper.Map<List<TrainingCustomerDTO>>(trainingCustomers);
-
             }
-            catch (Exception e)
+            catch 
             {
-                throw e;
+                throw ;
             }
         }
 
@@ -77,9 +76,9 @@ namespace StudioUp.Repo.Repositories
                 return _mapper.Map<List<TrainingCustomerDTO>>(trainingCustomers);
 
             }
-            catch (Exception e)
+            catch 
             {
-                throw e;
+                throw ;
             }
         }
 
@@ -93,9 +92,9 @@ namespace StudioUp.Repo.Repositories
                 trainingCustomer.ID = newTrainingCustomer.Entity.ID;
                 return trainingCustomer;
             }
-            catch (Exception ex)
+            catch 
             {
-                throw ex;
+                throw ;
             }
         }
 
@@ -119,9 +118,9 @@ namespace StudioUp.Repo.Repositories
                 return true;
 
             }
-            catch (Exception ex)
+            catch 
             {
-                throw ex;
+                throw ;
             }
         }
 
@@ -139,9 +138,9 @@ namespace StudioUp.Repo.Repositories
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception ex)
+            catch 
             {
-                throw ex;
+                throw ;
 
             }
         }

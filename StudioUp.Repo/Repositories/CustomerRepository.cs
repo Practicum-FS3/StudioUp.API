@@ -27,14 +27,12 @@ namespace StudioUp.Repo.Repositories
         }
 
         public async Task<CustomerDTO> AddAsync(CustomerDTO entity)
-
         {
             try
             {
-                var mapCast = mapper.Map<Models.Customer>(entity);
-                var newCustomer = await context.Customers.AddAsync(mapCast);
+                var x = await context.Customers.AddAsync(mapper.Map<Customer>(entity));
+               
                 await context.SaveChangesAsync();
-                entity.Id = newCustomer.Entity.Id;
                 return entity;
             }
             catch (Exception ex)

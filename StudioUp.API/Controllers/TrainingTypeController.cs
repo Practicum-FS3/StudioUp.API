@@ -2,6 +2,8 @@
 using StudioUp.Models;
 using StudioUp.Repo;
 using Microsoft.AspNetCore.Http;
+using StudioUp.DTO;
+using AutoMapper;
 
 
 namespace StudioUp.API.Controllers
@@ -12,21 +14,33 @@ namespace StudioUp.API.Controllers
     {
        
     
-        private readonly IRepository<TrainingType> _repository;
-
-        public TrainingTypeController(IRepository<TrainingType> repsitory)
+        private readonly IRepository<TrainingTypeDTO> _repository;
+        private readonly ILogger<TrainingTypeController> _logger;
+        public TrainingTypeController(IRepository<TrainingTypeDTO> repsitory, ILogger<TrainingTypeController> logger)
         {
             _repository = repsitory;
+            _logger = logger;   
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TrainingType>>> GetTrainingTypes()
+        [HttpGet("GetTrainingTypes")]
+        public async Task<ActionResult<IEnumerable<TrainingTypeDTO>>> GetTrainingTypes()
         {
-            var trainingTypes = await _repository.GetAllAsync();
+            try
+            {var trainingTypes = await _repository.GetAllAsync();
             return Ok(trainingTypes);
+
+            
+               
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in TrainingTypeController/GetTrainingTypes");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+
+            }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetTrainingTypeById/{id}")]
         public async Task<ActionResult<TrainingType>> GetTrainingType(int id)
         {
             var TrainingType = await _repository.GetByIdAsync(id);
@@ -37,30 +51,47 @@ namespace StudioUp.API.Controllers
             return Ok(TrainingType);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTrainingType(int id, TrainingType TrainingType)
+        [HttpPut("PutTrainingType")]
+        public async Task<IActionResult> PutTrainingType(TrainingTypeDTO TrainingTypeDto)
         {
-            if (id != TrainingType.ID)
-            {
-                return BadRequest();
-            }
 
-            await _repository.UpdateAsync(TrainingType);
+            await _repository.UpdateAsync(TrainingTypeDto);
             return NoContent();
         }
-
-        [HttpPost]
-        public async Task<ActionResult<TrainingType>> PostTrainingType(TrainingType TrainingType)
+       
+        [HttpPost("PostTrainingType")]
+        public async Task<ActionResult<TrainingTypeDTO>> PostTrainingType(TrainingTypeDTO TrainingTypeDto)
         {
-            await _repository.AddAsync(TrainingType);
-            return CreatedAtAction(nameof(GetTrainingType), new { id = TrainingType.ID }, TrainingType);
+          
+            if (TrainingTypeDto == null)
+            {
+                return BadRequest("The trainingType option field is null.");
+            }
+            try
+            {
+                var p = await _repository.AddAsync(TrainingTypeDto);
+                return Ok(p);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in TrainingTypeController/PostTrainingType");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteTrainingTypeById{id}")]
         public async Task<IActionResult> DeleteTrainingType(int id)
         {
-            await _repository.DeleteAsync(id);
-            return NoContent();
+            try
+            {
+                await _repository.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in TrainingTypeController/DeleteTrainingType");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

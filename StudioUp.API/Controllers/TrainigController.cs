@@ -28,12 +28,12 @@ namespace StudioUp.API.Controllers
         }
 
         // GET: api/Training
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TrainingDTO>>> Get()
+        [HttpGet("GetTrainings")]
+        public async Task<ActionResult<IEnumerable<TrainingDTO>>> GetTrainings()
         {
             try
             {
-                var trainings = await _trainingRepository.GetAllTrainings();
+                var trainings = await _trainingRepository.GetAllTrainingsAsync();
                 return Ok(trainings);
             }
             catch (Exception ex)
@@ -45,12 +45,12 @@ namespace StudioUp.API.Controllers
         }
         // GET: api/Training/forCalander
 
-        [HttpGet("forCalander")]
+        [HttpGet("GetTrainingsCalender")]
         public async Task<ActionResult<IEnumerable<TrainingDTO>>> GetTrainingsCalender()
         {
             try
             {
-                var trainings = await _trainingRepository.GetAllTrainingsCalender();
+                var trainings = await _trainingRepository.GetAllTrainingsCalenderAsync();
                 return Ok(trainings);
             }
             catch (Exception ex)
@@ -61,12 +61,12 @@ namespace StudioUp.API.Controllers
         }
 
         // GET: api/Training/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TrainingDTO>> GetById(int id)
+        [HttpGet("GetTrainingById/{id}")]
+        public async Task<ActionResult<TrainingDTO>> GetTrainingById(int id)
         {
             try
             {
-                var training = await _trainingRepository.GetTrainingById(id);
+                var training = await _trainingRepository.GetTrainingByIdAsync(id);
                 if (training == null)
                 {
                     return NotFound("training not found by ID");
@@ -81,10 +81,31 @@ namespace StudioUp.API.Controllers
         }
 
         // POST: api/Training
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] TrainingDTO trainingDTO)
+        /* [HttpPost("")]
+         public async Task<IActionResult> PostTraining([FromBody] TrainingDTO trainingDTO)
+         {
+             if (trainingDTO == null)
+             {
+                 return BadRequest("The training field is null.");
+             }
+             if (!ModelState.IsValid)
+                 return BadRequest(ModelState);
+             try
+             {
+                 await _trainingRepository.AddTraining(trainingDTO);
+                 return CreatedAtAction(nameof(Get), new { id = trainingDTO.ID }, trainingDTO);
+             }
+             catch (Exception ex)
+             {
+                 _logger.LogError(ex, " this error in TrainingController/Post");
+                 return StatusCode(500, $"Internal server error: {ex.Message}");
+             }
+
+         }*/
+        [HttpPost("PostTraining")]
+        public async Task<IActionResult> PostTraining(TrainingDTO training)
         {
-            if (trainingDTO == null)
+            if (training == null)
             {
                 return BadRequest("The training field is null.");
             }
@@ -92,8 +113,8 @@ namespace StudioUp.API.Controllers
                 return BadRequest(ModelState);
             try
             {
-                await _trainingRepository.AddTraining(trainingDTO);
-                return CreatedAtAction(nameof(Get), new { id = trainingDTO.ID }, trainingDTO);
+               var x= await _trainingRepository.AddTrainingAsync(training);
+                return Ok(x);
             }
             catch (Exception ex)
             {
@@ -104,24 +125,21 @@ namespace StudioUp.API.Controllers
         }
 
         // PUT: api/Training/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] TrainingDTO trainingDto)
+        [HttpPut("PutTraining")]
+        public async Task<IActionResult> PutTraining(TrainingDTO trainingDto)
         {
 
             if (trainingDto == null)
             {
                 return BadRequest("The trainingDto field is null.");
             }
-            if (id != trainingDto.ID)
-            {
-                return BadRequest("ID in URL does not match ID in body");
-            }
+           
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             try
             {
-                var training = await _trainingRepository.GetTrainingById(id);
-                await _trainingRepository.UpdateTraining(trainingDto, id);
+                var training = await _trainingRepository.GetTrainingByIdAsync(trainingDto.ID);
+                await _trainingRepository.UpdateTrainingAsync(trainingDto, trainingDto.ID);
                 return NoContent();
             }
             catch (Exception ex)
@@ -132,12 +150,12 @@ namespace StudioUp.API.Controllers
         }
 
         // DELETE: api/Training/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("DeleteTraining/{id}")]
+        public async Task<IActionResult> DeleteTraining(int id)
         {
             try
             {
-                var training = await _trainingRepository.GetTrainingById(id);
+                var training = await _trainingRepository.GetTrainingByIdAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
