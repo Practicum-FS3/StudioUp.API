@@ -92,10 +92,7 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var success = await _customerHMOSRepository.DeleteAsync(id);
-                if (!success)
-                    return NotFound();
-
+                await _customerHMOSRepository.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
