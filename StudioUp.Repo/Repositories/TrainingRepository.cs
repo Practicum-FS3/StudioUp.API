@@ -49,6 +49,8 @@ namespace StudioUp.Repo.Repositories
             return _mapper.Map<TrainingDTO>(training);
         }
 
+     
+
         public async Task AddTraining(TrainingPostDTO trainingPostDto)
         {        
             Training training = _mapper.Map<Training>(trainingPostDto);
