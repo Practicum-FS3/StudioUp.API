@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,15 +16,17 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext context;
         private readonly IMapper mapper;
+        private readonly ILogger<CustomerRepository> _logger;
 
-        public CustomerRepository(DataContext context, IMapper mapper)
+
+        public CustomerRepository(DataContext context, IMapper mapper, ILogger<CustomerRepository> logger)
         {
             this.context = context;
             this.mapper = mapper;
-            
+            _logger = logger;
         }
 
-        public async Task<DTO.CustomerDTO> AddAsync(CustomerDTO entity)
+        public async Task<CustomerDTO> AddAsync(CustomerDTO entity)
 
         {
             try
@@ -37,50 +39,59 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
+                throw;
             }
         }
 
         public async Task<CustomerDTO> GetCustomerByEmailAndPassword(string email, string password)
         {
-            var login = await context.Login.FirstOrDefaultAsync(l => l.Email == email && l.Password == password);
-            if (login is not null)
+            try
             {
-                try
+                var login = await context.Login.FirstOrDefaultAsync(l => l.Email == email && l.Password == password);
+                if (login is not null)
                 {
-                    var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
-                    var mapCust = mapper.Map<CustomerDTO>(cust);
-                    return mapCust;
+                    try
+                    {
+                        var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+                        var mapCust = mapper.Map<CustomerDTO>(cust);
+                        return mapCust;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw ex;
+                    return null;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return null;
-            }          
+
+                _logger.LogError(ex, "- this error in the func GetCustomerByEmailAndPassword-Repo");
+                throw;
+            }
+
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             try
             {
                 var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
                 if (c == null)
                 {
-                    return false;
                 }
                 var mapC = mapper.Map<Customer>(c);
                 context.Customers.Remove(mapC);
                 await context.SaveChangesAsync();
-                return true;
             }
             catch (Exception ex)
             {
-                throw ex;
-
+                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
+                throw;
             }
         }
 
@@ -91,12 +102,12 @@ namespace StudioUp.Repo.Repositories
                 var l = await context.Customers.ToListAsync();
 
                 return mapper.Map<List<CustomerDTO>>(l);
-                
+
             }
             catch (Exception ex)
             {
-                throw ex;
-
+                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
+                throw;
             }
 
         }
@@ -112,11 +123,12 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
+                throw;
             }
         }
 
-        public async Task<bool> UpdateAsync(CustomerDTO entity)
+        public async Task UpdateAsync(CustomerDTO entity)
         {
             try
             {
@@ -124,7 +136,6 @@ namespace StudioUp.Repo.Repositories
 
                 if (customerToUpdate == null)
                 {
-                    return false;
                 }
 
                 customerToUpdate.Address = entity.Address;
@@ -141,53 +152,58 @@ namespace StudioUp.Repo.Repositories
                 context.Customers.Update(mapper.Map<Customer>(customerToUpdate));
 
                 await context.SaveChangesAsync();
-                return true;
 
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
+                throw;
             }
         }
         public async Task<List<CustomerDTO>> FilterAsync(CustomerFilterDTO filter)
         {
-            var query = context.Customers.AsQueryable();
-
-            if (!string.IsNullOrEmpty(filter.FirstName) || !string.IsNullOrEmpty(filter.LastName))
+            try
             {
-                var firstName = filter.FirstName?.Trim().Replace(" ", "").ToLower();
-                var lastName = filter.LastName?.Trim().Replace(" ", "").ToLower();
+                var query = context.Customers.AsQueryable();
 
-                query = query.Where(c =>
-                    (string.IsNullOrEmpty(firstName) || c.FirstName.ToLower().Replace(" ", "").Contains(firstName)) &&
-                    (string.IsNullOrEmpty(lastName) || c.LastName.ToLower().Replace(" ", "").Contains(lastName)));
+                if (!string.IsNullOrEmpty(filter.FirstName) || !string.IsNullOrEmpty(filter.LastName))
+                {
+                    var firstName = filter.FirstName?.Trim().Replace(" ", "").ToLower();
+                    var lastName = filter.LastName?.Trim().Replace(" ", "").ToLower();
+
+                    query = query.Where(c =>
+                        (string.IsNullOrEmpty(firstName) || c.FirstName.ToLower().Replace(" ", "").Contains(firstName)) &&
+                        (string.IsNullOrEmpty(lastName) || c.LastName.ToLower().Replace(" ", "").Contains(lastName)));
+                }
+
+                if (!string.IsNullOrEmpty(filter.Email))
+                {
+                    var email = filter.Email.Trim().Replace(" ", "").ToLower();
+                    query = query.Where(c => c.Email.ToLower().Replace(" ", "").Contains(email));
+                }
+
+                return await query.Select(c => new CustomerDTO
+                {
+                    Id = c.Id,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    Address = c.Address,
+                    Email = c.Email,
+                    Tel = c.Tel,
+                    PaymentOptionId = c.PaymentOptionId.Value,
+                    HMOId = c.HMOId.Value,
+                    CustomerTypeId = c.CustomerTypeId.Value,
+                    SubscriptionTypeId = c.SubscriptionTypeId.Value,
+                    IsActive = c.IsActive
+                }).ToListAsync();
             }
-
-            if (!string.IsNullOrEmpty(filter.Email))
+            catch (Exception ex)
             {
-                var email = filter.Email.Trim().Replace(" ", "").ToLower();
-                query = query.Where(c => c.Email.ToLower().Replace(" ", "").Contains(email));
+                _logger.LogError(ex, "- this error in the func FilterAsync-Repo");
+                throw;
+
             }
-
-            return await query.Select(c => new CustomerDTO
-            {
-                Id = c.Id,
-                FirstName = c.FirstName,
-                LastName = c.LastName,
-                Address = c.Address,
-                Email = c.Email,
-                Tel = c.Tel,
-                PaymentOptionId = c.PaymentOptionId.Value,
-                HMOId = c.HMOId.Value,
-                CustomerTypeId = c.CustomerTypeId.Value,
-                SubscriptionTypeId = c.SubscriptionTypeId.Value,
-                IsActive = c.IsActive
-            }).ToListAsync();
         }
-
-
-
-
     }
 }
 

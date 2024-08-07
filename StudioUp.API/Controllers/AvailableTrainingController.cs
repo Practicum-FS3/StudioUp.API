@@ -13,9 +13,12 @@ namespace StudioUp.API.Controllers
     public class AvailableTrainingController : ControllerBase
     {
         private readonly IAvailableTrainingRepository _availableTrainingRepository;
-        public AvailableTrainingController(IAvailableTrainingRepository availableTrainingRepository)
+        private readonly ILogger<AvailableTrainingController> _logger;
+
+        public AvailableTrainingController(IAvailableTrainingRepository availableTrainingRepository, ILogger<AvailableTrainingController> logger)
         {
             _availableTrainingRepository = availableTrainingRepository;
+            _logger = logger;
         }
 
         [HttpGet("GetAll")]
@@ -28,6 +31,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, " this error in AvailableTrainingController/GetAllAvailableTrainings");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -48,36 +52,15 @@ namespace StudioUp.API.Controllers
             try
             {
                 var availableTrainingDTO = await _availableTrainingRepository.GetAvailableTrainingByIdAsync(id);
-
                 if (availableTrainingDTO == null)
                 {
-                    return NotFound($"Training with ID {id} not found.");
+                    return NotFound("available training not found by ID");
                 }
-
                 return Ok(availableTrainingDTO);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message} ");
-            }
-        }
-
-        [HttpGet("GetByTrainingId/{id}")]
-        public async Task<ActionResult<AvailableTrainingDTO>> GetByTrainingIdAvailableTraining(int id)
-        {
-            try
-            {
-                var availableTrainingDTO = await _availableTrainingRepository.GetAvailableTrainingByTrainingIdAsync(id);
-
-                if (availableTrainingDTO == null)
-                {
-                    return NotFound($"Training with ID {id} not found.");
-                }
-
-                return Ok(availableTrainingDTO);
-            }
-            catch (Exception ex)
-            {
+                _logger.LogError(ex, " this error in AvailableTrainingController/GetByIdAvailableTraining");
                 return StatusCode(500, $"Internal server error: {ex.Message} ");
             }
         }
@@ -106,7 +89,7 @@ namespace StudioUp.API.Controllers
         {
             if (availableTrainingDTO == null)
             {
-                return BadRequest("The availableTrainingDTO field is required.");
+                return BadRequest("The availableTrainingDTO field is null.");
             }
             try
             {
@@ -115,6 +98,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, " this error in AvailableTrainingController/CreateAvailableTraining");
                 return StatusCode(500, $"Internal server error: {ex.Message} | {ex.InnerException?.Message}");
             }
         }
@@ -122,17 +106,22 @@ namespace StudioUp.API.Controllers
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> UpdateAvailableTraining(int id, [FromBody] AvailableTrainingDTO availableTrainingDTO)
         {
+            if (availableTrainingDTO == null)
+            {
+                return BadRequest("AvailableTrainingDTO object is null");
+            }
             if (id != availableTrainingDTO.Id)
             {
-                return BadRequest("ID mismatch.");
+                return BadRequest("ID in URL does not match ID in body");
             }
             try
             {
-                await _availableTrainingRepository.UpdateAvailableTrainingAsync(id,availableTrainingDTO);
+                await _availableTrainingRepository.UpdateAvailableTrainingAsync(id, availableTrainingDTO);
                 return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, " this error in AvailableTrainingController/UpdateAvailableTrainingAsync");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -142,19 +131,12 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var availableTraining = await _availableTrainingRepository.GetAvailableTrainingByIdAsync(id);
-                if (availableTraining == null)
-                {
-                    return NotFound($"Training with ID {id} not found.");
-                }
-
-                availableTraining.IsActive = false;
-                await _availableTrainingRepository.UpdateAvailableTrainingAsync(id, availableTraining);
-
+                await _availableTrainingRepository.DeleteAvailableTrainingAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, " this error in AvailableTrainingController/DeleteAvailableTraining");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
