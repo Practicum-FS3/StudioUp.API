@@ -78,7 +78,36 @@ namespace StudioUp.Repo.Repositories
 
         public async Task<TrainingDTO> GetTrainingById(int id)
         {
+            Training training= await _context.Trainings
+                .Include(t => t.TrainingCustomerType)
+                .Include(t => t.Trainer)
+                .FirstOrDefaultAsync(t => t.ID == id);
+            return _mapper.Map<TrainingDTO>(training);
+        }
+
+     
+
+        public async Task AddTraining(TrainingPostDTO trainingPostDto)
+        {        
+            Training training = _mapper.Map<Training>(trainingPostDto);
+           
+            _context.Trainings.Add(training);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateTraining(TrainingPostDTO trainingPostDto, int id)
+        {
+            //Training training=_context.Trainings.FirstOrDefault(t => t.ID == id);
+            //_mapper.Map(trainingPostDto, training);
+            //_context.Trainings.Update(training);
+            //await _context.SaveChangesAsync();
+            var training = await _context.Trainings.FindAsync(id);
+
+            // אם לא נמצא אובייקט מתאים, החזר שגיאה
+            if (training == null)
+
             try
+
             {
                 Training training = await _context.Trainings
                                .Include(t => t.TrainingCustomerType)

@@ -64,6 +64,26 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message} ");
             }
         }
+
+        [HttpGet("GetByTrainingIdForCalander/{id}")]
+        public async Task<ActionResult<CalanderAvailableTrainingDTO>> GetByTrainingIdAvailableTrainingForCalander(int id)
+        {
+            try
+            {
+                var availableTrainingDTO = await _availableTrainingRepository.GetAvailableByTrainingIdForCalander(id);
+
+                if (availableTrainingDTO == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                return Ok(availableTrainingDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message} ");
+            }
+        }
         [HttpPost("Add")]
         public async Task<ActionResult<AvailableTrainingDTO>> CreateAvailableTraining([FromBody] AvailableTrainingDTO availableTrainingDTO)
         {
