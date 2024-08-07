@@ -18,24 +18,20 @@ namespace StudioUp.API
 {
     public class Program
     {
+
         public static void Main(string[] args)
         {
             // Early init of NLog to allow startup and exception logging, before host is built
             var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
             logger.Debug("init main");
-
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-
                 // Configure services
                 ConfigureServices(builder);
-
                 var app = builder.Build();
-
                 // Configure middleware
                 ConfigureMiddleware(app);
-
                 app.Run();
             }
             catch (Exception exception)
@@ -50,6 +46,7 @@ namespace StudioUp.API
                 NLog.LogManager.Shutdown();
             }
         }
+
 
         private static void ConfigureServices(WebApplicationBuilder builder)
         {
