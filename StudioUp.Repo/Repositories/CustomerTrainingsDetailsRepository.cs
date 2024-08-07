@@ -48,19 +48,75 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetAvailableTrainingsForCustomerAsync-Repo");
-                throw;
+                throw ex;
             }
         }
+
+        public async Task<List<CalanderAvailableTrainingDTO>> FilterAsync(CalanderAvailableTrainingFilterDTO filter)
+        {
+            try
+            {
+                var query = _context.TrainingCustomers
+                    .Include(x => x.Customer)
+                    .Include(x => x.Training)
+                    .Include(x => x.Training.Training)
+                    .AsQueryable();
+
+                DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+                // Filter by past or future trainings
+                if (filter.Past.HasValue || filter.Future.HasValue)
+                {
+                    if (filter.Past.HasValue && filter.Future.HasValue)
+                    {
+                        // If both are true or both are false, no need to filter by date
+                        if (!filter.Past.Value && !filter.Future.Value)
+                        {
+                            query = query.Where(x => x.Training.Date >= today);
+                        }
+                        else if (filter.Past.Value && filter.Future.Value)
+                        {
+                            // No action needed, as we want to include all trainings
+                        }
+                        else if (filter.Past.Value)
+                        {
+                            query = query.Where(x => x.Training.Date < today);
+                        }
+                        else if (filter.Future.Value)
+                        {
+                            query = query.Where(x => x.Training.Date >= today);
+                        }
+                    }
+                }
+
+                // Filter by date range
+                if (filter.StratDate.HasValue && filter.EndDate.HasValue)
+                {
+                    if (filter.StratDate.Value > filter.EndDate.Value)
+                    {
+                        throw new ArgumentException("StartDate cannot be greater than EndDate.");
+                    }
+
+                    query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value);
+                }
+
+                var result = await query.Where(ct => ct.IsActive).ToListAsync();
+                return _mapper.Map<List<CalanderAvailableTrainingDTO>>(result);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
 
         public async Task<List<CalanderAvailableTrainingDTO>> GetAllCustomersDetailsAsync()
         {
             try
             {
-                var startDate = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
-                var endDate = startDate.AddDays(7);
-                var trainings = await _context.TrainingCustomers.Where(x => x.IsActive
-                && x.Training.Date >= startDate && x.Training.Date < endDate)
+                var trainings = await _context.TrainingCustomers.Where(x => x.IsActive)
                       .Include(tc => tc.Customer)
                             .ThenInclude(c => c.CustomerType)
                        .Include(tc => tc.Training)
@@ -70,13 +126,12 @@ namespace StudioUp.Repo.Repositories
                             .ThenInclude(at => at.Training)
                                 .ThenInclude(t => t.TrainingCustomerType)
                                     .ThenInclude(tct => tct.TrainingType)
-                        .ToListAsync();
+                        .Where(ct => ct.IsActive).ToListAsync();
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetAvailableTrainingsForCustomerAsync-Repo");
-                throw;
+                throw ex;
             }
         }
 

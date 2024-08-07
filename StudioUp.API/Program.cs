@@ -82,12 +82,13 @@ namespace StudioUp.API
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
+            // בדוגמה הזו, המימוש של ICustomerSubscriptionRepository הוא CustomerSubscriptionRepository
+            builder.Services.AddScoped<ICustomerSubscriptionRepository, CustomerSubscriptionRepository>();
             builder.Services.AddScoped<IContactRepository, ContactRepository>();
             builder.Services.AddScoped<IHMORepository, HMORepository>();
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
             builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
-            builder.Services.AddScoped<IRepository<CustomerTypeDTO>, CustomerTypeRepository>();
+            builder.Services.AddScoped<ICustomerTypeRepository, CustomerTypeRepository>();
             builder.Services.AddScoped<IRepository<SubscriptionTypeDTO>, SubscriptionTypeRepository>();
             builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
             builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainigTypeRepository>();
@@ -101,6 +102,9 @@ namespace StudioUp.API
             builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
             builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
            // builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

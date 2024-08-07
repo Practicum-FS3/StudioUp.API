@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
 using StudioUp.Models;
+using StudioUp.Repo.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class CustomerTypeRepository : IRepository<CustomerTypeDTO>
+    public class CustomerTypeRepository : ICustomerTypeRepository
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -27,12 +28,15 @@ namespace StudioUp.Repo.Repositories
 
         public async Task<List<CustomerTypeDTO>> GetAllAsync()
         {
-            return _mapper.Map<List<CustomerTypeDTO>>(await _context.CustomerTypes.ToListAsync());
+            var l = await _context.CustomerTypes.Where(ct => ct.IsActive).ToListAsync();
+
+            return _mapper.Map<List<CustomerTypeDTO>>(l);
         }
 
         public async Task<CustomerTypeDTO> GetByIdAsync(int id)
         {
-            return _mapper.Map<CustomerTypeDTO>(await _context.CustomerTypes.FindAsync(id));
+            return _mapper.Map<CustomerTypeDTO>(await _context.CustomerTypes.Where(ct => ct.ID == id && ct.IsActive)
+                                             .FirstOrDefaultAsync());
         }
 
         public async Task<CustomerTypeDTO> AddAsync(CustomerTypeDTO customerType)
@@ -51,12 +55,20 @@ namespace StudioUp.Repo.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            var customerType = await _context.CustomerTypes.FindAsync(id);
-            if (customerType != null)
+            try
             {
-                _context.CustomerTypes.Remove(customerType);
+                var customerType = await _context.CustomerTypes.FindAsync(id);
+                if (customerType == null || !customerType.IsActive)
+                    return;
+
+                customerType.IsActive = false;
                 await _context.SaveChangesAsync();
             }
+            catch (Exception ex)
+            {
+                throw ex; 
+            }
+
         }
     }
 }
