@@ -51,7 +51,7 @@ namespace StudioUp.Repo.Repositories
                 {
                     try
                     {
-                        var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+                        var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email && c.IsActive);
                         var mapCust = mapper.Map<CustomerDTO>(cust);
                         return mapCust;
                     }
@@ -77,12 +77,11 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
-                if (c == null)
-                {
-                }
-                var mapC = mapper.Map<Customer>(c);
-                context.Customers.Remove(mapC);
+                var customers = await context.Customers.FindAsync(id);
+                if (customers == null || !customers.IsActive)
+                    return;
+
+                customers.IsActive = false;
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -91,11 +90,12 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
+
         public async Task<List<CustomerDTO>> GetAllAsync()
         {
             try
             {
-                var l = await context.Customers.ToListAsync();
+                var l = await context.Customers.Where(ct => ct.IsActive).ToListAsync();
 
                 return mapper.Map<List<CustomerDTO>>(l);
 
@@ -111,7 +111,7 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
+                var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id && t.IsActive);
                 var mapCust = mapper.Map<CustomerDTO>(c);
                 return mapCust;
 
@@ -169,7 +169,7 @@ namespace StudioUp.Repo.Repositories
                     CustomerTypeId = c.CustomerTypeId.Value,
                     SubscriptionTypeId = c.SubscriptionTypeId.Value,
                     IsActive = c.IsActive
-                }).ToListAsync();
+                }).Where(ct => ct.IsActive).ToListAsync();
             }
             catch (Exception ex)
             {

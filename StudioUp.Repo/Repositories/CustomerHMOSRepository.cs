@@ -22,14 +22,13 @@ namespace StudioUp.Repo.Repositories
         }
         public async Task<IEnumerable<CustomerHMOSDTO>> GetAllAsync()
         {
-            var customersHMOs = await _context.CustomerHMOS.ToListAsync();
+            var customersHMOs = await _context.CustomerHMOS.Where(ct => ct.IsActive).ToListAsync();
             return _mapper.Map<IEnumerable<CustomerHMOSDTO>>(customersHMOs);
         }
         public async Task<CustomerHMOSDTO> GetByIdAsync(int id)
         {
-            var customerHMOS = await _context.CustomerHMOS.FindAsync(id);
-            if (customerHMOS == null || !customerHMOS.IsActive)
-                return null;
+            var customerHMOS = await _context.CustomerHMOS.Where(ct => ct.ID == id && ct.IsActive)
+                                             .FirstOrDefaultAsync(); 
             return _mapper.Map<CustomerHMOSDTO>(customerHMOS);
         }
         public async Task<int> AddAsync(CustomerHMOSDTO customerHMOSDTO)
@@ -53,14 +52,21 @@ namespace StudioUp.Repo.Repositories
             }
 
         }
-        public async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            var customerHMOS = await _context.CustomerHMOS.FindAsync(id);
-            if (customerHMOS == null || !customerHMOS.IsActive)
-                return false;
-            customerHMOS.IsActive = false;
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                var customerHMO = await _context.CustomerHMOS.FindAsync(id);
+                if (customerHMO == null || !customerHMO.IsActive)
+                    return;
+
+                customerHMO.IsActive = false;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
         }
 

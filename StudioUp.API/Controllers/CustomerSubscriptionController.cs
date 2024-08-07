@@ -33,6 +33,25 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpGet("customer/{customerId}")]
+        public async Task<ActionResult<IEnumerable<CustomerSubscriptionDTO>>> GetCustomerSubscriptionsByCustomerId(int customerId)
+        {
+            try
+            {
+                var subscriptions = await _repository.GetCustomerSubscriptionsByCustomerIdAsync(customerId);
+                if (subscriptions == null || !subscriptions.Any())
+                {
+                    return NotFound();
+                }
+                return Ok(subscriptions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in CustomerSubscriptionsController/GetCustomerSubscriptionsByCustomerId");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
         [HttpGet("GetCustomerSubscriptionsByCustomerId/{customerId}")]
         public async Task<ActionResult<IEnumerable<CustomerSubscriptionDTO>>> GetCustomerSubscriptionsByCustomerId(int customerId)
         {
@@ -69,7 +88,7 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpPost("AddCustomerSubscription")]
+            [HttpPost("AddCustomerSubscription")]
         public async Task<ActionResult> AddCustomerSubscription(CustomerSubscriptionDTO subscriptionDTO)
         {
             try

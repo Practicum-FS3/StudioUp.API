@@ -13,6 +13,6 @@ namespace StudioUp.Repo.IRepositories
         public Task<CustomerHMOSDTO> GetByIdAsync(int id);
         public Task<int> AddAsync(CustomerHMOSDTO customerHMOSDTO);
         public Task UpdateAsync(CustomerHMOSDTO customerHMOSDTO);
-        public Task<bool> DeleteAsync(int id);
+        public Task DeleteAsync(int id);
     }
 }

@@ -100,7 +100,7 @@ namespace StudioUp.Repo.Repositories
                     query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value);
                 }
 
-                var result = await query.ToListAsync();
+                var result = await query.Where(ct => ct.IsActive).ToListAsync();
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(result);
             }
             catch (Exception ex)
@@ -126,7 +126,7 @@ namespace StudioUp.Repo.Repositories
                             .ThenInclude(at => at.Training)
                                 .ThenInclude(t => t.TrainingCustomerType)
                                     .ThenInclude(tct => tct.TrainingType)
-                        .ToListAsync();
+                        .Where(ct => ct.IsActive).ToListAsync();
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
             }
             catch (Exception ex)

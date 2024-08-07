@@ -17,19 +17,20 @@ namespace StudioUp.Repo.Repositories
 
         public async Task<IEnumerable<CustomerSubscription>> GetAllCustomerSubscriptionsAsync()
         {
-            return await _context.CustomerSubscriptions.Include(c => c.Customer).Include(s => s.SubscriptionType).ToListAsync();
+            return await _context.CustomerSubscriptions.Include(c => c.Customer).Include(s => s.SubscriptionType).Where(s => s.IsActive).ToListAsync();
         }
 
         public async Task<IEnumerable<CustomerSubscription>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId)
         {
             return await _context.CustomerSubscriptions
-                .Where(cs => cs.CustomerID == customerId)
+                .Where(cs => cs.CustomerID == customerId && cs.IsActive)
                 .ToListAsync();
         }
 
         public async Task<CustomerSubscription> GetCustomerSubscriptionByIdAsync(int id)
         {
-            return await _context.CustomerSubscriptions.FindAsync(id);
+            return await _context.CustomerSubscriptions.Where(c => c.ID == id && c.IsActive)
+                                             .FirstOrDefaultAsync(); 
         }
 
         public async Task AddCustomerSubscriptionAsync(CustomerSubscription subscription)
@@ -46,12 +47,20 @@ namespace StudioUp.Repo.Repositories
 
         public async Task DeleteCustomerSubscriptionAsync(int id)
         {
-            var subscription = await _context.CustomerSubscriptions.FindAsync(id);
-            if (subscription != null)
+            try
             {
-                _context.CustomerSubscriptions.Remove(subscription);
+                var customerSubscription = await _context.CustomerSubscriptions.FindAsync(id);
+                if (customerSubscription == null || !customerSubscription.IsActive)
+                    return;
+
+                customerSubscription.IsActive = false;
                 await _context.SaveChangesAsync();
             }
+            catch (Exception ex)
+            {
+                throw ex; 
+            }
+
         }
     }
 }
