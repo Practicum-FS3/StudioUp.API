@@ -44,12 +44,12 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-               List<Training> lst = await _context.Trainings.Where(t => t.IsActive)
-                .Include(t => t.TrainingCustomerType.CustomerType)
-                .Include(t => t.TrainingCustomerType.TrainingType)
-                .Include(t => t.Trainer)
-                .ToListAsync();
-            return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
+                List<Training> lst = await _context.Trainings.Where(t => t.IsActive)
+                 .Include(t => t.TrainingCustomerType.CustomerType)
+                 .Include(t => t.TrainingCustomerType.TrainingType)
+                 .Include(t => t.Trainer)
+                 .ToListAsync();
+                return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
             }
 
             catch (Exception ex)
@@ -79,7 +79,7 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                if(trainingDto == null)
+                if (trainingDto == null)
                 {
                     throw new Exception("Training cannot be null");
                 }
@@ -132,6 +132,6 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-       
+
     }
 }

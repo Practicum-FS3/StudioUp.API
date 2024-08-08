@@ -44,7 +44,7 @@ namespace StudioUp.API.Controllers
         //    var trainingCustomerType = await _repository.GetActiveTrainingCustomerTypes();
         //    return Ok(trainingCustomerType);
         //}
-       
+
 
         [HttpGet("GetTrainingCustomerTypeById/{id}")]
         public async Task<ActionResult<TrainingCustomerTypeDTO>> GetTrainingCustomerTypeById(int id)
@@ -65,7 +65,7 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error:{ex.Message}");
             }
         }
-       
+
 
         //עדכון רגיל של אימון
         [HttpPut("UpdateTrainingCustomerType")]
@@ -73,7 +73,7 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                if (trainingCustomerTypedto == null) 
+                if (trainingCustomerTypedto == null)
                 {
                     return BadRequest("The content field is null");
                 }
@@ -95,7 +95,7 @@ namespace StudioUp.API.Controllers
         [HttpPost("addTrainingCustomerType")]
         public async Task<ActionResult<TrainingCustomerTypeDTO>> addTrainingCustomerType(TrainingCustomerTypeDTO trainingCustomerTypedto)
         {
-            try 
+            try
             {
                 if (trainingCustomerTypedto == null)
                 {

@@ -22,7 +22,7 @@ namespace StudioUp.Repo.Repositories
             _context = context;
             _mapper = mapper;
         }
-        
+
         public async Task<List<TrainingTypeDTO>> GetAllAsync()
         {
             try
@@ -35,7 +35,7 @@ namespace StudioUp.Repo.Repositories
                 throw new Exception("An error occurred while attempting to get the Training Types List.", ex);
             }
 
-        }  
+        }
 
         public async Task<TrainingTypeDTO> GetByIdAsync(int id)
         {
@@ -56,13 +56,13 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                if(trainingTypeDto == null)
+                if (trainingTypeDto == null)
                     throw new Exception("Training cannot be null");
                 var trainingType = _mapper.Map<TrainingType>(trainingTypeDto);
                 trainingType.IsActive = true;
                 var newTrainingType = await _context.TrainingTypes.AddAsync(trainingType);
                 await _context.SaveChangesAsync();
-                trainingTypeDto.ID=newTrainingType.Entity.ID;
+                trainingTypeDto.ID = newTrainingType.Entity.ID;
                 return trainingTypeDto;
             }
 

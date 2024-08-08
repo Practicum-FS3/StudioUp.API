@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,6 @@ namespace StudioUp.Repo.Repositories
         private readonly IMapper mapper;
         private readonly ILogger<CustomerRepository> _logger;
 
-
         public CustomerRepository(DataContext context, IMapper mapper, ILogger<CustomerRepository> logger)
         {
             this.context = context;
@@ -27,20 +25,17 @@ namespace StudioUp.Repo.Repositories
         }
 
         public async Task<CustomerDTO> AddAsync(CustomerDTO entity)
-
         {
             try
             {
-                var mapCast = mapper.Map<Models.Customer>(entity);
+                var mapCast = mapper.Map<Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);
                 await context.SaveChangesAsync();
-                entity.Id = newCustomer.Entity.Id;
                 return entity;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
-                throw;
+                throw new Exception("An error occurred while adding a new customer.", ex);
             }
         }
 
@@ -53,13 +48,13 @@ namespace StudioUp.Repo.Repositories
                 {
                     try
                     {
-                        var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+                        var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email && c.IsActive);
                         var mapCust = mapper.Map<CustomerDTO>(cust);
                         return mapCust;
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
+                        throw new Exception("An error occurred while retrieving the customer by email and password.", ex);
                     }
                 }
                 else
@@ -69,29 +64,26 @@ namespace StudioUp.Repo.Repositories
             }
             catch (Exception ex)
             {
-
-                _logger.LogError(ex, "- this error in the func GetCustomerByEmailAndPassword-Repo");
-                throw;
+                throw new Exception("An error occurred while retrieving the login information.", ex);
             }
-
         }
 
         public async Task DeleteAsync(int id)
         {
             try
             {
-                var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
-                if (c == null)
+                var customers = await context.Customers.FindAsync(id);
+                if (customers == null || !customers.IsActive)
                 {
+                    throw new Exception($"Customer with ID {id} does not exist or is already inactive.");
                 }
-                var mapC = mapper.Map<Customer>(c);
-                context.Customers.Remove(mapC);
+
+                customers.IsActive = false;
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
-                throw;
+                throw new Exception($"An error occurred while attempting to delete the customer with ID {id}.", ex);
             }
         }
 
@@ -99,32 +91,30 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var l = await context.Customers.ToListAsync();
-
-                return mapper.Map<List<CustomerDTO>>(l);
-
+                var customers = await context.Customers.Where(ct => ct.IsActive).ToListAsync();
+                return mapper.Map<List<CustomerDTO>>(customers);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
-                throw;
+                throw new Exception("An error occurred while retrieving all active customers.", ex);
             }
-
         }
 
         public async Task<CustomerDTO> GetByIdAsync(int id)
         {
             try
             {
-                var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
-                var mapCust = mapper.Map<CustomerDTO>(c);
+                var customer = await context.Customers.FirstOrDefaultAsync(t => t.Id == id && t.IsActive);
+                if (customer == null)
+                {
+                    throw new Exception($"Customer with ID {id} does not exist or is inactive.");
+                }
+                var mapCust = mapper.Map<CustomerDTO>(customer);
                 return mapCust;
-
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
-                throw;
+                throw new Exception($"An error occurred while retrieving the customer with ID {id}.", ex);
             }
         }
 
@@ -132,34 +122,21 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var customerToUpdate = await context.Customers.FirstOrDefaultAsync(customerToUpdate => customerToUpdate.Id == entity.Id);
-
-                if (customerToUpdate == null)
+                var existingCustomer = await context.Customers.FindAsync(entity.Id);
+                if (existingCustomer == null)
                 {
+                    throw new Exception($"Customer with ID {entity.Id} does not exist.");
                 }
 
-                customerToUpdate.Address = entity.Address;
-                customerToUpdate.LastName = entity.LastName;
-                customerToUpdate.FirstName = entity.FirstName;
-                customerToUpdate.PaymentOptionId = entity.PaymentOptionId;
-                customerToUpdate.HMOId = entity.HMOId;
-                customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
-
-                customerToUpdate.IsActive = entity.IsActive;
-                customerToUpdate.SubscriptionTypeId = entity.SubscriptionTypeId;
-                customerToUpdate.Tel = entity.Tel;
-                customerToUpdate.Email = entity.Email;
-                context.Customers.Update(mapper.Map<Customer>(customerToUpdate));
-
+                mapper.Map(entity, existingCustomer);
                 await context.SaveChangesAsync();
-
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
-                throw;
+                throw new Exception($"An error occurred while updating the customer with ID {entity.Id}.", ex);
             }
         }
+
         public async Task<List<CustomerDTO>> FilterAsync(CustomerFilterDTO filter)
         {
             try
@@ -195,16 +172,12 @@ namespace StudioUp.Repo.Repositories
                     CustomerTypeId = c.CustomerTypeId.Value,
                     SubscriptionTypeId = c.SubscriptionTypeId.Value,
                     IsActive = c.IsActive
-                }).ToListAsync();
+                }).Where(ct => ct.IsActive).ToListAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func FilterAsync-Repo");
-                throw;
-
+                throw new Exception("An error occurred while filtering customers.", ex);
             }
         }
     }
 }
-
-

@@ -115,11 +115,11 @@ namespace StudioUp.API.Controllers
                     return BadRequest("The content field is null.");
                 }
                 var training = await _trainingRepository.GetTrainingById(trainingDto.ID);
-                if (training == null) 
+                if (training == null)
                 {
                     return NotFound();
                 }
-                
+
                 await _trainingRepository.UpdateTraining(trainingDto);
                 return NoContent();
             }

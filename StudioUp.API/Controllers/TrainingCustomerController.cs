@@ -19,7 +19,7 @@ namespace StudioUp.API.Controllers
         private readonly ITrainingCustomerRepository _trainingCustomerRepository;
         private readonly ILogger<TrainingCustomerController> _logger;
 
-      
+
 
         public TrainingCustomerController(ITrainingCustomerRepository trainingCustomerRepository, ILogger<TrainingCustomerController> logger)
         {
@@ -43,7 +43,7 @@ namespace StudioUp.API.Controllers
                 _logger.LogError(ex, "this error in TrainingCustomerController/GetAllTrainingCustomers");
                 return StatusCode(500, $"Internal server error:{ex.Message}");
             }
-            
+
         }
 
 
@@ -68,7 +68,7 @@ namespace StudioUp.API.Controllers
 
         }
 
-        
+
         [HttpGet("GetTraningCustomerByTraningId/{id}")]
         public async Task<ActionResult<IEnumerable<TrainingCustomerDTO>>> GetTraningCustomerByTrainingId(int id)
         {
@@ -88,7 +88,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        
+
         [HttpGet("GetTraningCustomerByCustomerId/{id}")]
         public async Task<ActionResult<IEnumerable<TrainingCustomerDTO>>> GetTraningCustomerByCustomerId(int id)
         {

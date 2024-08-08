@@ -13,7 +13,7 @@ namespace StudioUp.Repo.Repositories
 {
 
 
-    public class TrainingCustomerRepository: ITrainingCustomerRepository
+    public class TrainingCustomerRepository : ITrainingCustomerRepository
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -29,7 +29,7 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var trainingCustomers = await _context.TrainingCustomers.Where(t=>t.IsActive).ToListAsync();
+                var trainingCustomers = await _context.TrainingCustomers.Where(t => t.IsActive).ToListAsync();
                 return _mapper.Map<List<TrainingCustomerDTO>>(trainingCustomers);
 
             }
@@ -112,7 +112,7 @@ namespace StudioUp.Repo.Repositories
                 if (trainingCustomerToUpdate == null)
                 {
                     throw new Exception("Training Customer not found.");
-                }              
+                }
                 _mapper.Map(trainingCustomer, trainingCustomerToUpdate);
                 await _context.SaveChangesAsync();
             }
@@ -141,6 +141,6 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        
+
     }
 }

@@ -13,7 +13,7 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class TrainingTypeController : ControllerBase
     {
-       
+
         private readonly IRepository<TrainingTypeDTO> _repository;
         private readonly ILogger<TrainingTypeController> _logger;
 
@@ -36,7 +36,7 @@ namespace StudioUp.API.Controllers
             {
                 _logger.LogError(ex, "this error in TrainingTypeController/GetAllTrainingTypes");
                 return StatusCode(500, $"Internal server error:{ex.Message}");
-            }          
+            }
         }
 
 
@@ -104,13 +104,13 @@ namespace StudioUp.API.Controllers
             {
                 _logger.LogError(ex, "this error in TrainingTypeController/AddTrainingType");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
-            }              
+            }
         }
 
 
         [HttpDelete("DeleteTrainingType/{id}")]
         public async Task<IActionResult> DeleteTrainingType(int id)
-        {         
+        {
             try
             {
                 var trainingType = await _repository.GetByIdAsync(id);

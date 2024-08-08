@@ -19,8 +19,8 @@ namespace StudioUp.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PaymentOptionDTO>>> GetPaymentOptions()
+        [HttpGet("GetPaymentOptions")]
+        public async Task<ActionResult<IEnumerable<PaymentOptionDTO>>> GetAPaymentOptions()
         {
             try
             {
@@ -36,7 +36,7 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetPaymentOptionById/{id}")]
         public async Task<ActionResult<PaymentOptionDTO>> GetPaymentOption(int id)
         {
             try
@@ -57,17 +57,14 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPaymentOption(int id, PaymentOptionDTO paymentOption)
+        [HttpPut("PutPaymentOption")]
+        public async Task<IActionResult> PutPaymentOption(PaymentOptionDTO paymentOption)
         {
             if (paymentOption == null)
             {
                 return BadRequest("The payment option field is null.");
             }
-            if (id != paymentOption.ID)
-            {
-                return BadRequest("ID in URL does not match ID in body");
-            }
+           
             try
             {
                 await _repository.UpdateAsync(paymentOption);
@@ -82,7 +79,7 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("PostPaymentOption")]
         public async Task<ActionResult<PaymentOptionDTO>> PostPaymentOption(PaymentOptionDTO paymentOption)
         {
             if (paymentOption == null)
@@ -101,7 +98,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeletePaymentOptionById/{id}")]
+        
         public async Task<IActionResult> DeletePaymentOption(int id)
         {
             try

@@ -29,7 +29,7 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var TrainingCustomerType = await _context.TrainingCustomersTypes.Where(t=>t.IsActive).ToListAsync();
+                var TrainingCustomerType = await _context.TrainingCustomersTypes.Where(t => t.IsActive).ToListAsync();
                 return _mapper.Map<List<TrainingCustomerTypeDTO>>(TrainingCustomerType);
             }
 
@@ -132,7 +132,7 @@ namespace StudioUp.Repo.Repositories
             try
             {
                 var thisTCT = await _context.TrainingCustomersTypes.FindAsync(id);
-                if (thisTCT == null || !thisTCT.IsActive) 
+                if (thisTCT == null || !thisTCT.IsActive)
                     return;
                 thisTCT.IsActive = false;
                 await _context.SaveChangesAsync();
@@ -143,8 +143,8 @@ namespace StudioUp.Repo.Repositories
                 throw new Exception("An error occurred while attempting to delete the Training Customer Type.", ex);
             }
         }
-        
-      
+
+
 
         //public async Task<List<DTO.TrainingCustomerTypeDTO>> GetActiveTrainingCustomerTypes()
         //{
@@ -154,7 +154,7 @@ namespace StudioUp.Repo.Repositories
         //}
 
 
-       
+
 
     }
 
