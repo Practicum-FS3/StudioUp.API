@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Core.Types;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo;
@@ -10,20 +11,31 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class TrainingCustomersTypesController : Controller
     {
-        private readonly ITrainingCustomerTypeRepository _repository;
+        private readonly IRepository<TrainingCustomerTypeDTO> _repository;
+        private readonly ILogger<TrainingCustomersTypesController> _logger;
 
-        public TrainingCustomersTypesController(ITrainingCustomerTypeRepository repsitory)
+        public TrainingCustomersTypesController(IRepository<TrainingCustomerTypeDTO> repsitory, ILogger<TrainingCustomersTypesController> logger)
         {
             _repository = repsitory;
+            _logger = logger;
         }
 
         //גם כאלו שהם לא בפעילות TrainingCusromerType פונקציה שמביאה את כל המערך של
-        [HttpGet("allTCT")]
-        public async Task<ActionResult<IEnumerable<TrainingCustomerType>>> GetTrainingCustomerType()
+        [HttpGet("GetAllTrainingCustomerTypes")]
+        public async Task<ActionResult<IEnumerable<TrainingCustomerType>>> GetAllTrainingCustomerTypes()
         {
-            var trainingCustomerType = await _repository.GetAllTrainingCustomerTypes();
-            return Ok(trainingCustomerType);
+            try
+            {
+                var trainingCustomerType = await _repository.GetAllAsync();
+                return Ok(trainingCustomerType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "this error in TrainingCustomersTypesController/GetAllTrainingCustomerTypes");
+                return StatusCode(500, $"Internal server error:{ex.Message}");
+            }
         }
+
 
         ////אבל רק את אלו שבפעילות TrainingCusromerType פונקציה שמביאה את המערך של
         //[HttpGet("TCTInActivity")]
@@ -33,42 +45,97 @@ namespace StudioUp.API.Controllers
         //    return Ok(trainingCustomerType);
         //}
        
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TrainingCustomerType>> GetTrainingCustomerType(int id)
-        {
-            var TrainingCustomerType = await _repository.GetTrainingCustomerTypeById(id);
-            if (TrainingCustomerType == null)
-            {
-                return NotFound();
-            }
-            return Ok(TrainingCustomerType);
-        }
 
-        //הפונקציה לא מוחקת בפועל את השיעור אלא רק הופכת את ה isActive להיות false
-        [HttpPut("delete/{id}")]
-        public async Task<IActionResult> DeleteTrainingCustomerType(int id)
+        [HttpGet("GetTrainingCustomerTypeById/{id}")]
+        public async Task<ActionResult<TrainingCustomerTypeDTO>> GetTrainingCustomerTypeById(int id)
         {
-            await _repository.DeleteTrainingCustomerType(id);
-            return Ok();
+            try
+            {
+                var TrainingCustomerType = await _repository.GetByIdAsync(id);
+                if (TrainingCustomerType == null)
+                {
+                    return NotFound($"Training Customer Type with id {id} not found");
+                }
+                return Ok(TrainingCustomerType);
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "this error in TrainingCustomersTypesController/GetTrainingCustomerTypeById");
+                return StatusCode(500, $"Internal server error:{ex.Message}");
+            }
         }
+       
 
         //עדכון רגיל של אימון
-        [HttpPut("{id}")]
-        public async Task<ActionResult<TrainingCustomerTypeDTO>> UpdateTrainingCustomerType(int id, TrainingCustomerTypeDTO trainingCustomerTypedto)
+        [HttpPut("UpdateTrainingCustomerType")]
+        public async Task<ActionResult<TrainingCustomerTypeDTO>> UpdateTrainingCustomerType([FromBody] TrainingCustomerTypeDTO trainingCustomerTypedto)
         {
-            if (id != trainingCustomerTypedto.ID)
+            try
             {
-                return BadRequest();
+                if (trainingCustomerTypedto == null) 
+                {
+                    return BadRequest("The content field is null");
+                }
+                var trainingCustomerType = await _repository.GetByIdAsync(trainingCustomerTypedto.ID);
+                if (trainingCustomerType == null)
+                {
+                    return NotFound();
+                }
+                await _repository.UpdateAsync(trainingCustomerTypedto);
+                return NoContent();
             }
-            await _repository.UpdateTrainingCustomerType(id,trainingCustomerTypedto);
-            return Ok(trainingCustomerTypedto);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "this error in TrainingCustomersTypesController/UpdateTrainingCustomerType");
+                return StatusCode(500, $"Internal server error:{ex.Message}");
+            }
         }
 
-        [HttpPost]
+        [HttpPost("addTrainingCustomerType")]
         public async Task<ActionResult<TrainingCustomerTypeDTO>> addTrainingCustomerType(TrainingCustomerTypeDTO trainingCustomerTypedto)
         {
-            await _repository.AddTrainingCustomerType(trainingCustomerTypedto);
-            return CreatedAtAction(nameof(GetTrainingCustomerType), new { id = trainingCustomerTypedto.ID }, trainingCustomerTypedto);
+            try 
+            {
+                if (trainingCustomerTypedto == null)
+                {
+                    return BadRequest("Training Customer Type cannot be null.");
+                }
+                if (trainingCustomerTypedto == null)
+                    return BadRequest();
+                var trainingCustomerType = await _repository.AddAsync(trainingCustomerTypedto);
+                trainingCustomerType.IsActive = true;
+                return CreatedAtAction(nameof(GetAllTrainingCustomerTypes), new { id = trainingCustomerTypedto.ID }, trainingCustomerTypedto);
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "this error in TrainingCustomersTypesController/addTrainingCustomerType");
+                return StatusCode(500, $"Internal server error:{ex.Message}");
+            }
+        }
+
+
+        //הפונקציה לא מוחקת בפועל את השיעור אלא רק הופכת את ה isActive להיות false
+        [HttpDelete("DeleteTrainingCustomerType/{id}")]
+        public async Task<IActionResult> DeleteTrainingCustomerType(int id)
+        {
+            try
+            {
+                var TrainingCustomerType = await _repository.GetByIdAsync(id);
+                if (TrainingCustomerType == null)
+                {
+                    return NotFound($"Training Customer Type with id {id} not found");
+                }
+                await _repository.DeleteAsync(id);
+                return NoContent();
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "this error in TrainingCustomersTypesController/DeleteTrainingCustomerType");
+                return StatusCode(500, $"Internal server error:{ex.Message}");
+            }
         }
 
 

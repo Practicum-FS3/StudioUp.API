@@ -83,6 +83,7 @@ namespace StudioUp.Repo
             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.Training.DayOfWeek))
             .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.Training.ParticipantsCount));
 
+            CreateMap<TrainingCustomer, TrainingCustomerDTO>().ReverseMap();
         }
     }
 }
