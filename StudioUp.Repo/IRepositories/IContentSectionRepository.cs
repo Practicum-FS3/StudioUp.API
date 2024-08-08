@@ -6,11 +6,11 @@ namespace StudioUp.Repo
 {
     public interface IContentSectionRepository
     {
-        Task<IEnumerable<ContentSectionDTO>> GetAllAsync();
-        Task<ContentSectionDTO> GetByIdAsync(int id);
-        Task<ContentSectionDTO> AddAsync(ContentSectionDTO contentSection);
-        Task UpdateAsync(ContentSectionDTO contentSection);
-        Task DeleteAsync(ContentSectionDTO contentSection);
-        Task<IEnumerable<ContentSectionDTO>> GetByContentTypeAsync(int contentTypeId); // הוספת פונקציה חדשה
+        Task<IEnumerable<ContentSectionDowoladDTO>> GetAllAsync();
+        Task<ContentSectionDowoladDTO> GetByIdAsync(int id);
+        Task<ContentSectionDowoladDTO> AddAsync(ContentSectionUploadDTO contentSection);
+        Task UpdateAsync(ContentSectionUploadDTO contentSection);
+        Task DeleteAsync(int ID);
+        Task<IEnumerable<ContentSectionDowoladDTO>> GetByContentTypeAsync(int contentTypeId); // הוספת פונקציה חדשה
     }
 }

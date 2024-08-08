@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.Repositories;
@@ -21,11 +22,26 @@ namespace StudioUp.Repo
             CreateMap<Customer, CustomerDTO>().ReverseMap();
             CreateMap<CustomerType, CustomerTypeDTO>().ReverseMap();
             CreateMap<HMO, HMODTO>().ReverseMap();
-            CreateMap<DTO.PaymentOptionDTO, DTO.PaymentOptionDTO>().ReverseMap();
-            CreateMap<Models.SubscriptionType, SubscriptionTypeDTO>().ReverseMap();
+            CreateMap<PaymentOptionDTO,PaymentOptionDTO>().ReverseMap();
+            CreateMap<SubscriptionType, SubscriptionTypeDTO>().ReverseMap();
             CreateMap<Trainer, TrainerDTO>().ReverseMap();
             CreateMap<TrainingCustomer, TrainingCustomerDTO>().ReverseMap();
             CreateMap<TrainingCustomerType, TrainingCustomerTypeDTO>().ReverseMap();
+
+
+            CreateMap<ContentType, ContentTypeDTO>().ReverseMap();
+            //CreateMap<ContentSection, ContentSectionDowoladDTO>().ReverseMap();
+            CreateMap<ContentSection, ContentSectionDowoladDTO>()
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => new FileDownloadDTO
+                {
+                    FileName = src.ContentTypeID.ToString() + " " + src.ID.ToString(),
+                    ContentType = "image/png", // ערך קבוע
+                    Data = src.ImageData,
+                }));
+
+            //     CreateMap<ContentSectionUploadDTO, ContentSection>().ReverseMap();
+            CreateMap<ContentSectionUploadDTO, ContentSection>()
+             .ForMember(dest => dest.ImageData, opt => opt.MapFrom(src => ConvertIFormFileToByteArray(src.fileUploadDTO)));
 
             CreateMap<Training, TrainingDTO>().ReverseMap();
             CreateMap<TrainingType, TrainingTypeDTO>().ReverseMap();
@@ -82,7 +98,17 @@ namespace StudioUp.Repo
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Training.Date))
             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.Training.DayOfWeek))
             .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.Training.ParticipantsCount));
+        }
+        private byte[] ConvertIFormFileToByteArray(FileUploadDTO file)
+        {
+            if (file == null)
+                return null;
 
+            using (var memoryStream = new MemoryStream())
+            {
+                file.File.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
     }
 }

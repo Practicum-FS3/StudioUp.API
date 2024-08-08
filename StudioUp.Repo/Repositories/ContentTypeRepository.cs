@@ -24,12 +24,11 @@ namespace StudioUp.Repo
         {
             try
             {
-                var cT = await _context.ContentTypes.ToListAsync();
+                var cT = await _context.ContentTypes.Where(c => c.IsActive).ToListAsync();
                 return _mapper.Map<IEnumerable<ContentTypeDTO>>(cT);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetAll-Repo");
                 throw;
             }
         }
@@ -37,12 +36,11 @@ namespace StudioUp.Repo
         {
             try
             {
-                var cT = await _context.ContentTypes.Include(x => x.ContentSections).FirstOrDefaultAsync(x => x.ID == id);
+                var cT = await _context.ContentTypes.Include(x => x.ContentSections).Where(c => c.IsActive).FirstOrDefaultAsync(x => x.ID == id);
                 return _mapper.Map<ContentTypeDTO>(cT);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetByIdWithContentSection-Repo");
                 throw;
             }
 
@@ -51,12 +49,11 @@ namespace StudioUp.Repo
         {
             try
             {
-                var cT = await _context.ContentTypes.Include(x => x.ContentSections.Where(x => x.ViewInHP == true)).FirstOrDefaultAsync(x => x.ID == id);
+                var cT = await _context.ContentTypes.Include(x => x.ContentSections.Where(x => x.ViewInHP && x.IsActive)).FirstOrDefaultAsync(x => x.ID == id);
                 return _mapper.Map<ContentTypeDTO>(cT);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetByIdWithContentSectionHPOnly-Repo");
                 throw;
             }
         }
@@ -65,12 +62,11 @@ namespace StudioUp.Repo
         {
             try
             {
-                var cT = await _context.ContentTypes.FindAsync(id);
+                var cT = await _context.ContentTypes.FirstOrDefaultAsync(c => c.ID == id && c.IsActive);
                 return _mapper.Map<ContentTypeDTO>(cT);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "- this error in the func GetById-Repo");
                 throw;
             }
         }
@@ -82,9 +78,8 @@ namespace StudioUp.Repo
                 await _context.SaveChangesAsync();
                 return contentType;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "- this error in the func Create-Repo");
                 throw;
             }
         }
@@ -97,9 +92,8 @@ namespace StudioUp.Repo
                 // _context.Entry(contentType).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "- this error in the func Update-Repo");
                 throw;
             }
         }
@@ -109,12 +103,15 @@ namespace StudioUp.Repo
             try
             {
                 ContentType contentType = await _context.ContentTypes.FindAsync(id);
-                _context.ContentTypes.Remove(contentType);
+                if (contentType == null)
+                {
+                    throw new Exception($"cant find content type with id: {id}");
+                }
+                contentType.IsActive = false;
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "- this error in the func Delete-Repo");
                 throw;
             }
 

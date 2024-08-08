@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using StudioUp.DTO;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.IO;
 
 namespace StudioUp.Repo
 {
@@ -15,102 +17,100 @@ namespace StudioUp.Repo
         private readonly ILogger<ContentSectionRepository> _logger;
 
 
-        public ContentSectionRepository(DataContext context, IMapper mapper, ILogger<ContentSectionRepository> logger)
+        public ContentSectionRepository(DataContext context, IMapper mapper, ILogger<ContentSectionRepository> logger
+            )
         {
             _context = context;
             _mapper = mapper;
             _logger = logger;
         }
 
-        public async Task<IEnumerable<ContentSectionDTO>> GetAllAsync()
+        public async Task<IEnumerable<ContentSectionDowoladDTO>> GetAllAsync()
         {
             try
             {
-                var cS = await _context.ContentSections.Include(cs => cs.ContentType).ToListAsync();
-                return _mapper.Map<IEnumerable<ContentSectionDTO>>(cS);
+                var cS = await _context.ContentSections.Include(cs => cs.ContentType).Where(cS => cS.IsActive).ToListAsync();
+                return _mapper.Map<IEnumerable<ContentSectionDowoladDTO>>(cS);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
                 throw;
             }
 
         }
 
-        public async Task<ContentSectionDTO> GetByIdAsync(int id)
+        public async Task<ContentSectionDowoladDTO> GetByIdAsync(int id)
         {
             try
             {
-                var contentSection = await _context.ContentSections.Include(cs => cs.ContentType).FirstOrDefaultAsync(cs => cs.ID == id);
-                return _mapper.Map<ContentSectionDTO>(contentSection);
+                var contentSection = await _context.ContentSections.Include(cs => cs.ContentType).FirstOrDefaultAsync(cs => cs.ID == id && cs.IsActive);
+                return _mapper.Map<ContentSectionDowoladDTO>(contentSection);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
                 throw;
             }
         }
 
-        public async Task<ContentSectionDTO> AddAsync(ContentSectionDTO contentSection)
+        public async Task<ContentSectionDowoladDTO> AddAsync(ContentSectionUploadDTO contentSection)
         {
             try
             {
-                var c = contentSection;
-                await _context.ContentSections.AddAsync(_mapper.Map<ContentSection>(contentSection));
+               var c= await _context.ContentSections.AddAsync(_mapper.Map<ContentSection>(contentSection));
                 await _context.SaveChangesAsync();
-                return contentSection;
+                return _mapper.Map<ContentSectionDowoladDTO>(contentSection);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
                 throw;
             }
 
         }
 
-        public async Task UpdateAsync(ContentSectionDTO contentSection)
+        public async Task UpdateAsync(ContentSectionUploadDTO contentSection)
         {
             try
             {
                 _context.ContentSections.Update(_mapper.Map<ContentSection>(contentSection));
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
                 throw;
             }
 
         }
-
-        public async Task DeleteAsync(ContentSectionDTO contentSection)
+        public async Task DeleteAsync(int ID)
         {
             try
             {
-                _context.ContentSections.Remove(_mapper.Map<ContentSection>(contentSection));
+                var contentSectionToDelete = await _context.ContentSections
+                    .FindAsync(ID);
+
+                if (contentSectionToDelete == null)
+                {
+                    throw new Exception($"can't delete content section with id:{ID}");
+                }
+                contentSectionToDelete.IsActive = false;
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
                 throw;
             }
-
         }
 
-        public async Task<IEnumerable<ContentSectionDTO>> GetByContentTypeAsync(int contentTypeId)
+        public async Task<IEnumerable<ContentSectionDowoladDTO>> GetByContentTypeAsync(int contentTypeId)
         {
             try
             {
-                return _mapper.Map<IEnumerable<ContentSectionDTO>>(await _context.ContentSections
+                return _mapper.Map<IEnumerable<ContentSectionDowoladDTO>>(await _context.ContentSections
                              .Include(cs => cs.ContentType)
                              .Where(cs => cs.ContentTypeID == contentTypeId)
                              .ToListAsync());
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "- this error in the func GetByContentTypeAsync-Repo");
                 throw;
             }
 

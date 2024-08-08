@@ -19,8 +19,8 @@ namespace StudioUp.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ContentTypeDTO>>> GetAll()
+        [HttpGet("/GetAllContentType")]
+        public async Task<ActionResult<IEnumerable<ContentTypeDTO>>> GetAllContentType()
         {
             try
             {
@@ -29,12 +29,12 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in ContentTypeController/GetAll");
+                _logger.LogError(ex, " this error in ContentTypeController/GetAllContentType");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpGet("GetByIdWithContentSection/{id}")]
-        public async Task<ActionResult<ContentTypeDTO>> GetByIdWithContentSection(int id)
+        [HttpGet("GetContentTypeByIdWithContentSection/{id}")]
+        public async Task<ActionResult<ContentTypeDTO>> GetContentTypeByIdWithContentSection(int id)
         {
             try
             {
@@ -47,13 +47,13 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in ContentTypeController/GetByIdWithContentSection");
+                _logger.LogError(ex, " this error in ContentTypeController/GetContentTypeByIdWithContentSection");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
         }
-        [HttpGet("GetByIdWithContentSectionHPOnly/{id}")]
-        public async Task<ActionResult<ContentTypeDTO>> GetByIdWithContentSectionHPOnly(int id)
+        [HttpGet("GetContentTypeByIdWithContentSectionHPOnly/{id}")]
+        public async Task<ActionResult<ContentTypeDTO>> GetContentTypeByIdWithContentSectionHPOnly(int id)
         {
             try
             {
@@ -67,13 +67,13 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in ContentTypeController/GetByIdWithContentSectionHPOnly");
+                _logger.LogError(ex, " this error in ContentTypeController/GetContentTypeByIdWithContentSectionHPOnly");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
         }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ContentTypeDTO>> GetById(int id)
+        [HttpGet("/GetByContentTypeId/{id}")]
+        public async Task<ActionResult<ContentTypeDTO>> GetByContentTypeId(int id)
         {
             try
             {
@@ -88,14 +88,14 @@ namespace StudioUp.API.Controllers
             catch (Exception ex)
             {
 
-                _logger.LogError(ex, " this error in ContentTypeController/GetById");
+                _logger.LogError(ex, " this error in ContentTypeController/GetByContentTypeId");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ContentTypeDTO>> Create(ContentTypeDTO contentTypeDTO)
+        [HttpPost("/CreateContentType")]
+        public async Task<ActionResult<ContentTypeDTO>> CreateContentType(ContentTypeDTO contentTypeDTO)
         {
             if (contentTypeDTO == null)
             {
@@ -108,23 +108,18 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in ContentTypeController/Create");
+                _logger.LogError(ex, " this error in ContentTypeController/CreateContentType");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, ContentTypeDTO contentTypeDTO)
+        [HttpPut("/UpdateContentType")]
+        public async Task<ActionResult> UpdateContentType(ContentTypeDTO contentTypeDTO)
         {
             if (contentTypeDTO == null)
             {
                 return BadRequest("The content type field is null.");
-            }
-            if (id != contentTypeDTO.ID)
-            {
-                _logger.LogError("cant update in ContentTypeController/Update");
-                return BadRequest();
             }
             try
             {
@@ -139,8 +134,8 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("/DeleteContentType/{id}")]
+        public async Task<IActionResult> DeleteContentType(int id)
         {
             try
             {
@@ -149,7 +144,7 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in ContentTypeController/Delete");
+                _logger.LogError(ex, " this error in ContentTypeController/DeleteContentType");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
