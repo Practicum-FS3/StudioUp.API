@@ -273,23 +273,42 @@ namespace StudioUp.Repo.Repositories
                     // בדיקה לפי שעה ודקה אם התאריך הוא היום (עבר)
                     if (filter.Past.Value && !filter.Future.Value)
                     {
+                        Console.WriteLine($"Checking past for date: {todayDate}, time: {todayDateTime.Hour}:{todayDateTime.Minute}");
+                        foreach (var training in queryTraininigs)
+                        {
+                            Console.WriteLine($"for time: {training.Hour}:{training.Minute}");
+                        }
+
                         query = query.Where(x =>
-                            x.Training.Date < todayDate ||
+                            x.Training.Date < todayDate || // אימונים לפני היום
                             (x.Training.Date == todayDate &&
-                            queryTraininigs.Any(t => t.ID == x.TrainingID &&
-                            (t.Hour < todayDateTime.Hour ||
-                            (t.Hour == todayDateTime.Hour && t.Minute <= todayDateTime.Minute)))));
+                            queryTraininigs.Any(t =>
+                                t.ID == x.TrainingID &&
+                                (t.Hour < todayDateTime.Hour || // שעות קטנות מהשעה הנוכחית
+                                (t.Hour == todayDateTime.Hour && t.Minute <= todayDateTime.Minute) // שעות שוות ודקות קטנות או שוות
+                            )
+                            )
+                        ));
                     }
+
                     // בדיקה לפי שעה ודקה אם התאריך הוא היום (עתיד)
                     else if (filter.Future.Value && !filter.Past.Value)
                     {
+                        Console.WriteLine($"Checking future for date: {todayDate}, time: {todayDateTime.Hour}:{todayDateTime.Minute}");
+
                         query = query.Where(x =>
-                            x.Training.Date > todayDate ||
+                            x.Training.Date > todayDate || // אימונים לאחר היום
                             (x.Training.Date == todayDate &&
-                            queryTraininigs.Any(t => t.ID == x.TrainingID &&
-                            (t.Hour > todayDateTime.Hour ||
-                            (t.Hour == todayDateTime.Hour && t.Minute >= todayDateTime.Minute)))));
+                            queryTraininigs.Any(t =>
+                                 t.ID == x.TrainingID &&
+                                (t.Hour > todayDateTime.Hour || // שעות גדולות מהשעה הנוכחית
+                                (t.Hour == todayDateTime.Hour && t.Minute >= todayDateTime.Minute) // שעות שוות ודקות גדולות או שוות
+                            )
+                            )
+                        ));
                     }
+
+
 
                 }
 
@@ -301,6 +320,8 @@ namespace StudioUp.Repo.Repositories
                 throw;
             }
         }
+
+
 
         private void ApplyDateRangeFilter(ref IQueryable<TrainingCustomer> query, DateOnly? startDate, DateOnly? endDate, bool isPast = false)
         {
