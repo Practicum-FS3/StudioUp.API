@@ -26,8 +26,15 @@ namespace StudioUp.Repo.Repositories
 
         public async Task<List<PaymentOptionDTO>> GetAllAsync()
         {
-            var x = await _context.PaymentOptions.Where(y => y.IsActive).ToListAsync();
-            return _mapper.Map<List<PaymentOptionDTO>>(x);
+            try
+            {
+                var x = await _context.PaymentOptions.Where(y => y.IsActive).ToListAsync();
+                return _mapper.Map<List<PaymentOptionDTO>>(x);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task<PaymentOptionDTO> GetByIdAsync(int id)

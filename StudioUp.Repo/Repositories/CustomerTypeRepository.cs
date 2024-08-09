@@ -31,9 +31,9 @@ namespace StudioUp.Repo.Repositories
                 var customerTypes = await _context.CustomerTypes.Where(ct => ct.IsActive).ToListAsync();
                 return _mapper.Map<List<CustomerTypeDTO>>(customerTypes);
             }
-            catch (Exception ex)
+            catch 
             {
-                throw new Exception("An error occurred while retrieving customer types.", ex);
+                throw;
             }
         }
 
@@ -51,9 +51,9 @@ namespace StudioUp.Repo.Repositories
 
                 return _mapper.Map<CustomerTypeDTO>(customerType);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while retrieving the CustomerType with ID {id}.", ex);
+                throw;
             }
         }
 
@@ -66,9 +66,9 @@ namespace StudioUp.Repo.Repositories
                 await _context.SaveChangesAsync();
                 return _mapper.Map<CustomerTypeDTO>(entity);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while adding a new CustomerType.", ex);
+                throw;
             }
         }
 
@@ -86,9 +86,9 @@ namespace StudioUp.Repo.Repositories
                 _mapper.Map(customerType, existingCustomerType);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while updating the CustomerType.", ex);
+                throw;
             }
         }
 
@@ -111,9 +111,9 @@ namespace StudioUp.Repo.Repositories
                 customerType.IsActive = false;
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while attempting to delete the CustomerType.", ex);
+                throw;
             }
         }
     }

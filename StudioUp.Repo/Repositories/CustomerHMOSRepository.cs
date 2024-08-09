@@ -28,9 +28,9 @@ namespace StudioUp.Repo.Repositories
                 var customersHMOs = await _context.CustomerHMOS.Where(ct => ct.IsActive).ToListAsync();
                 return _mapper.Map<IEnumerable<CustomerHMOSDTO>>(customersHMOs);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while retrieving all customer HMOs.", ex);
+                throw;
             }
         }
 
@@ -49,9 +49,9 @@ namespace StudioUp.Repo.Repositories
 
                 return _mapper.Map<CustomerHMOSDTO>(customerHMOS);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while retrieving the customer HMO with ID {id}.", ex);
+                throw;
             }
         }
 
@@ -65,9 +65,9 @@ namespace StudioUp.Repo.Repositories
                 await _context.SaveChangesAsync();
                 return newCustomer.Entity.ID;
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while adding a new customer HMO.", ex);
+                throw;
             }
         }
 
@@ -84,9 +84,9 @@ namespace StudioUp.Repo.Repositories
                 _mapper.Map(customerHMOSDTO, existingCustomerHMO);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while updating the customer HMO with ID {customerHMOSDTO.ID}.", ex);
+                throw;
             }
         }
 
@@ -103,9 +103,9 @@ namespace StudioUp.Repo.Repositories
                 customerHMO.IsActive = false;
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while attempting to delete the customer HMO with ID {id}.", ex);
+                throw;
             }
         }
     }

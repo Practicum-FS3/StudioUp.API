@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 using System;
@@ -11,10 +13,13 @@ namespace StudioUp.Repo.Repositories
     public class CustomerSubscriptionRepository : ICustomerSubscriptionRepository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public CustomerSubscriptionRepository(DataContext context)
+
+        public CustomerSubscriptionRepository(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<CustomerSubscription>> GetAllCustomerSubscriptionsAsync()
@@ -27,61 +32,63 @@ namespace StudioUp.Repo.Repositories
                     .Where(s => s.IsActive)
                     .ToListAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while retrieving all customer subscriptions.", ex);
+                throw;
             }
         }
 
-        public async Task<IEnumerable<CustomerSubscription>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId)
+        public async Task<List<CustomerSubscriptionDTO>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId)
         {
             try
             {
-                return await _context.CustomerSubscriptions
+                var subscriptions = await _context.CustomerSubscriptions
                     .Where(cs => cs.CustomerID == customerId && cs.IsActive)
                     .ToListAsync();
+
+                return _mapper.Map<List<CustomerSubscriptionDTO>>(subscriptions);
+
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while retrieving subscriptions for customer ID {customerId}.", ex);
+                throw;
             }
         }
 
-        public async Task<CustomerSubscription> GetCustomerSubscriptionByIdAsync(int id)
+        public async Task<CustomerSubscriptionDTO> GetCustomerSubscriptionByIdAsync(int id)
         {
             try
             {
-                var customerSubscription = await _context.CustomerSubscriptions
-                    .Where(c => c.ID == id && c.IsActive)
-                    .FirstOrDefaultAsync();
-
-                if (customerSubscription == null)
+                var subscription = await _context.CustomerSubscriptions.FirstOrDefaultAsync(t => t.ID == id && t.IsActive);
+                if (subscription == null)
                 {
                     throw new Exception($"CustomerSubscription with ID {id} does not exist or is inactive.");
                 }
-
-                return customerSubscription;
+                var mapSub = _mapper.Map<CustomerSubscriptionDTO>(subscription);
+                return mapSub;
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while retrieving the subscription with ID {id}.", ex);
+                throw;
             }
         }
 
-        public async Task AddCustomerSubscriptionAsync(CustomerSubscription subscription)
+        public async Task<CustomerSubscriptionDTO> AddCustomerSubscriptionAsync(CustomerSubscriptionDTO subscription)
         {
             try
             {
-                await _context.CustomerSubscriptions.AddAsync(subscription);
+                var mapCastS = _mapper.Map<CustomerSubscription>(subscription);
+                await _context.CustomerSubscriptions.AddAsync(mapCastS);
                 await _context.SaveChangesAsync();
+                return subscription;
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while adding a new customer subscription.", ex);
+                throw;
             }
         }
 
-        public async Task UpdateCustomerSubscriptionAsync(CustomerSubscription subscription)
+        public async Task UpdateCustomerSubscriptionAsync(CustomerSubscriptionDTO subscription)
         {
             try
             {
@@ -91,13 +98,12 @@ namespace StudioUp.Repo.Repositories
                 {
                     throw new Exception($"CustomerSubscription with ID {subscription.ID} does not exist.");
                 }
-
-                _context.Entry(existingSubscription).CurrentValues.SetValues(subscription);
+                _mapper.Map(subscription, existingSubscription);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while updating the subscription with ID {subscription.ID}.", ex);
+                throw;
             }
         }
 
@@ -115,9 +121,9 @@ namespace StudioUp.Repo.Repositories
                 customerSubscription.IsActive = false;
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while attempting to delete the subscription with ID {id}.", ex);
+                throw;
             }
         }
     }

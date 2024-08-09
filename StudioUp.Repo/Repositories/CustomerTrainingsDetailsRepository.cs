@@ -45,11 +45,142 @@ namespace StudioUp.Repo.Repositories
 
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while retrieving training details for the customer.", ex);
+                throw;
             }
         }
+
+        //public async Task<List<CalanderAvailableTrainingDTO>> FilterAsync(CalanderAvailableTrainingFilterDTO filter)
+        //{
+        //    try
+        //    {
+        //        var query = _context.TrainingCustomers
+        //       .Include(x => x.Customer)
+        //       .ThenInclude(c => c.CustomerType)
+        //       .Include(x => x.Training)
+        //       .ThenInclude(t => t.Training)
+        //       .ThenInclude(tr => tr.Trainer)
+        //       .Include(x => x.Training)
+        //       .ThenInclude(t => t.Training)
+        //       .ThenInclude(t => t.TrainingCustomerType)
+        //       .ThenInclude(tct => tct.TrainingType)
+        //       .AsQueryable();
+
+        //        var queryTraininigs=_context.Trainings.AsQueryable();
+
+        //        DateOnly todayDate = DateOnly.FromDateTime(DateTime.Now);
+        //        DateTime todayDateTime = DateTime.Now;
+        //        //error
+        //        if (filter.StratDate.HasValue && filter.EndDate.HasValue && filter.StratDate.Value > filter.EndDate.Value)
+        //        {
+        //            throw new ArgumentException("StartDate cannot be greater than EndDate.");
+        //        }
+        //        //all
+        //        if (filter.Future.HasValue && filter.Past.HasValue && filter.Past.Value == filter.Future.Value)
+        //        {
+        //            //all
+        //            if (!filter.StratDate.HasValue && !filter.EndDate.HasValue)
+        //            {
+
+        //            }
+        //            //range between startDate to endDate
+        //            else if (filter.StratDate.HasValue && filter.EndDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value);
+
+        //            }
+        //            //range from start etc
+        //            else if (filter.StratDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date >= filter.StratDate.Value);
+
+        //            }
+        //            //range until end etc
+        //            else if (filter.EndDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date <= filter.EndDate.Value);
+
+        //            }
+
+        //        }
+        //        //past
+        //        else if(filter.Future.HasValue && filter.Past.HasValue && filter.Past.Value && !filter.Future.Value)
+        //        {
+        //            //all in past
+        //            if (!filter.StratDate.HasValue && !filter.EndDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date <= todayDate);
+        //            }
+        //            //range between startDate to endDate in the past
+        //            else if (filter.StratDate.HasValue && filter.EndDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value && x.Training.Date <= todayDate);
+
+        //            }
+        //            //range from start etc in the past
+        //            else if (filter.StratDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= todayDate);
+
+        //            }
+        //            //range until end etc in the past
+        //            else if (filter.EndDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date <= filter.EndDate.Value && x.Training.Date <= todayDate);
+
+        //            }
+        //            query = query.Where(x => x.Training.Date != todayDate || 
+        //            (x.Training.Date == todayDate && 
+        //            (queryTraininigs.FirstOrDefault(t => t.ID == x.TrainingID)).Hour < todayDateTime.Hour || 
+        //            ((queryTraininigs.FirstOrDefault(t => t.ID == x.TrainingID)).Hour == todayDateTime.Hour && 
+        //            (queryTraininigs.FirstOrDefault(t => t.ID == x.TrainingID)).Minute <= todayDateTime.Minute)));
+
+        //        }
+        //        //future
+        //        else
+        //        {
+        //            //all in future
+        //            if (!filter.StratDate.HasValue && !filter.EndDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date >= todayDate);
+        //            }
+        //            //range between startDate to endDate in the future
+        //            else if (filter.StratDate.HasValue && filter.EndDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value && x.Training.Date >= todayDate);
+
+        //            }
+        //            //range from start etc in the future
+        //            else if (filter.StratDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date >= todayDate);
+
+        //            }
+        //            //range until end etc in the future
+        //            else if (filter.EndDate.HasValue)
+        //            {
+        //                query = query.Where(x => x.Training.Date <= filter.EndDate.Value && x.Training.Date >= todayDate);
+
+        //            }
+        //            query = query.Where(x => x.Training.Date != todayDate ||
+        //           (x.Training.Date == todayDate &&
+        //           (queryTraininigs.FirstOrDefault(t => t.ID == x.TrainingID)).Hour > todayDateTime.Hour ||
+        //           ((queryTraininigs.FirstOrDefault(t => t.ID == x.TrainingID)).Hour == todayDateTime.Hour &&
+        //           (queryTraininigs.FirstOrDefault(t => t.ID == x.TrainingID)).Minute >= todayDateTime.Minute)));
+        //        }
+
+
+
+        //        var result = await query.Where(ct => ct.IsActive).ToListAsync();                
+
+        //        return _mapper.Map<List<CalanderAvailableTrainingDTO>>(result);
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
 
         public async Task<List<CalanderAvailableTrainingDTO>> FilterAsync(CalanderAvailableTrainingFilterDTO filter)
         {
@@ -57,51 +188,141 @@ namespace StudioUp.Repo.Repositories
             {
                 var query = _context.TrainingCustomers
                     .Include(x => x.Customer)
+                        .ThenInclude(c => c.CustomerType)
                     .Include(x => x.Training)
-                    .Include(x => x.Training.Training)
+                        .ThenInclude(t => t.Training)
+                        .ThenInclude(tr => tr.Trainer)
+                    .Include(x => x.Training)
+                        .ThenInclude(t => t.Training)
+                        .ThenInclude(t => t.TrainingCustomerType)
+                        .ThenInclude(tct => tct.TrainingType)
                     .AsQueryable();
 
-                DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+                var queryTraininigs = _context.Trainings.AsQueryable();
 
-                // Filter by past or future trainings
-                if (filter.Past.HasValue || filter.Future.HasValue)
+                DateOnly todayDate = DateOnly.FromDateTime(DateTime.Now);
+                DateTime todayDateTime = DateTime.Now;
+
+                if (filter.StratDate.HasValue && filter.EndDate.HasValue && filter.StratDate.Value > filter.EndDate.Value)
                 {
-                    if (filter.Past.HasValue && filter.Future.HasValue)
-                    {
-                        if ((filter.Past.Value && filter.Future.Value) || (!filter.Past.Value && !filter.Future.Value))
-                        {
-                            // No action needed, as we want to include all trainings
-                        }
-                        else if (filter.Past.Value)
-                        {
-                            query = query.Where(x => x.Training.Date < today);
-                        }
-                        else if (filter.Future.Value)
-                        {
-                            query = query.Where(x => x.Training.Date >= today);
-                        }
-                    }
+                    throw new ArgumentException("StartDate cannot be greater than EndDate.");
                 }
 
-                // Filter by date range
-                if (filter.StratDate.HasValue && filter.EndDate.HasValue)
+                if (filter.Future.HasValue && filter.Past.HasValue)
                 {
-                    if (filter.StratDate.Value > filter.EndDate.Value)
+                    // כל האימונים (עבר ועתיד), ללא תאריכים מוגדרים
+                    if (filter.Past.Value == filter.Future.Value && !filter.StratDate.HasValue && !filter.EndDate.HasValue)
                     {
-                        throw new ArgumentException("StartDate cannot be greater than EndDate.");
+                        // ללא פילטרים נוספים
+                    }
+                    // כל האימונים בטווח תאריכים מוגדר
+                    else if (filter.Past.Value == filter.Future.Value && filter.StratDate.HasValue && filter.EndDate.HasValue)
+                    {
+                        ApplyDateRangeFilter(ref query, filter.StratDate, filter.EndDate);
+                    }
+                    // כל האימונים מהתחלה מוגדרת (עד תאריך סיום כלשהו)
+                    else if (filter.Past.Value == filter.Future.Value && filter.StratDate.HasValue)
+                    {
+                        ApplyDateRangeFilter(ref query, filter.StratDate, null);
+                    }
+                    // כל האימונים עד תאריך סיום מוגדר
+                    else if (filter.Past.Value == filter.Future.Value && filter.EndDate.HasValue)
+                    {
+                        ApplyDateRangeFilter(ref query, null, filter.EndDate);
+                    }
+                    // אימונים בעבר בלבד, ללא תאריכים מוגדרים
+                    else if (filter.Past.Value && !filter.Future.Value && !filter.StratDate.HasValue && !filter.EndDate.HasValue)
+                    {
+                        query = query.Where(x => x.Training.Date <= todayDate);
+                    }
+                    // אימונים בעבר בלבד בטווח תאריכים מוגדר
+                    else if (filter.Past.Value && !filter.Future.Value && filter.StratDate.HasValue && filter.EndDate.HasValue)
+                    {
+                        query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value && x.Training.Date <= todayDate);
+                    }
+                    // אימונים בעבר בלבד מהתחלה מוגדרת
+                    else if (filter.Past.Value && !filter.Future.Value && filter.StratDate.HasValue)
+                    {
+                        query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= todayDate);
+                    }
+                    // אימונים בעבר בלבד עד תאריך סיום מוגדר
+                    else if (filter.Past.Value && !filter.Future.Value && filter.EndDate.HasValue)
+                    {
+                        query = query.Where(x => x.Training.Date <= filter.EndDate.Value && x.Training.Date <= todayDate);
+                    }
+                    // אימונים בעתיד בלבד, ללא תאריכים מוגדרים
+                    else if (filter.Future.Value && !filter.Past.Value && !filter.StratDate.HasValue && !filter.EndDate.HasValue)
+                    {
+                        query = query.Where(x => x.Training.Date >= todayDate);
+                    }
+                    // אימונים בעתיד בלבד בטווח תאריכים מוגדר
+                    else if (filter.Future.Value && !filter.Past.Value && filter.StratDate.HasValue && filter.EndDate.HasValue)
+                    {
+                        query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value && x.Training.Date >= todayDate);
+                    }
+                    // אימונים בעתיד בלבד מהתחלה מוגדרת
+                    else if (filter.Future.Value && !filter.Past.Value && filter.StratDate.HasValue)
+                    {
+                        query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date >= todayDate);
+                    }
+                    // אימונים בעתיד בלבד עד תאריך סיום מוגדר
+                    else if (filter.Future.Value && !filter.Past.Value && filter.EndDate.HasValue)
+                    {
+                        query = query.Where(x => x.Training.Date <= filter.EndDate.Value && x.Training.Date >= todayDate);
+                    }
+                    // בדיקה לפי שעה ודקה אם התאריך הוא היום (עבר)
+                    if (filter.Past.Value && !filter.Future.Value)
+                    {
+                        query = query.Where(x =>
+                            x.Training.Date < todayDate ||
+                            (x.Training.Date == todayDate &&
+                            queryTraininigs.Any(t => t.ID == x.TrainingID &&
+                            (t.Hour < todayDateTime.Hour ||
+                            (t.Hour == todayDateTime.Hour && t.Minute <= todayDateTime.Minute)))));
+                    }
+                    // בדיקה לפי שעה ודקה אם התאריך הוא היום (עתיד)
+                    else if (filter.Future.Value && !filter.Past.Value)
+                    {
+                        query = query.Where(x =>
+                            x.Training.Date > todayDate ||
+                            (x.Training.Date == todayDate &&
+                            queryTraininigs.Any(t => t.ID == x.TrainingID &&
+                            (t.Hour > todayDateTime.Hour ||
+                            (t.Hour == todayDateTime.Hour && t.Minute >= todayDateTime.Minute)))));
                     }
 
-                    query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value);
                 }
 
                 var result = await query.Where(ct => ct.IsActive).ToListAsync();
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(result);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while filtering the training sessions.", ex);
+                throw;
             }
         }
+
+        private void ApplyDateRangeFilter(ref IQueryable<TrainingCustomer> query, DateOnly? startDate, DateOnly? endDate, bool isPast = false)
+        {
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query = query.Where(x => x.Training.Date >= startDate.Value && x.Training.Date <= endDate.Value);
+                if (isPast) query = query.Where(x => x.Training.Date <= DateOnly.FromDateTime(DateTime.Now));
+            }
+            else if (startDate.HasValue)
+            {
+                query = query.Where(x => x.Training.Date >= startDate.Value);
+                if (isPast) query = query.Where(x => x.Training.Date <= DateOnly.FromDateTime(DateTime.Now));
+            }
+            else if (endDate.HasValue)
+            {
+                query = query.Where(x => x.Training.Date <= endDate.Value);
+                if (isPast) query = query.Where(x => x.Training.Date <= DateOnly.FromDateTime(DateTime.Now));
+            }
+        }
+
+
+
 
         public async Task<List<CalanderAvailableTrainingDTO>> GetAllCustomersDetailsAsync()
         {
@@ -121,9 +342,9 @@ namespace StudioUp.Repo.Repositories
 
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while retrieving all customer training details.", ex);
+                throw;
             }
         }
     }
