@@ -33,9 +33,9 @@ namespace StudioUp.Repo.Repositories
                 await context.SaveChangesAsync();
                 return entity;
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while adding a new customer.", ex);
+                throw;
             }
         }
 
@@ -62,9 +62,9 @@ namespace StudioUp.Repo.Repositories
                     return null;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while retrieving the login information.", ex);
+                throw;
             }
         }
 
@@ -81,9 +81,9 @@ namespace StudioUp.Repo.Repositories
                 customers.IsActive = false;
                 await context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while attempting to delete the customer with ID {id}.", ex);
+                throw;
             }
         }
 
@@ -94,9 +94,9 @@ namespace StudioUp.Repo.Repositories
                 var customers = await context.Customers.Where(ct => ct.IsActive).ToListAsync();
                 return mapper.Map<List<CustomerDTO>>(customers);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while retrieving all active customers.", ex);
+                throw;
             }
         }
 
@@ -112,9 +112,9 @@ namespace StudioUp.Repo.Repositories
                 var mapCust = mapper.Map<CustomerDTO>(customer);
                 return mapCust;
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while retrieving the customer with ID {id}.", ex);
+                throw;
             }
         }
 
@@ -131,9 +131,9 @@ namespace StudioUp.Repo.Repositories
                 mapper.Map(entity, existingCustomer);
                 await context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"An error occurred while updating the customer with ID {entity.Id}.", ex);
+                throw;
             }
         }
 
@@ -174,9 +174,9 @@ namespace StudioUp.Repo.Repositories
                     IsActive = c.IsActive
                 }).Where(ct => ct.IsActive).ToListAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while filtering customers.", ex);
+                throw;
             }
         }
     }

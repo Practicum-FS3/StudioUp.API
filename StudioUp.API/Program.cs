@@ -75,8 +75,8 @@ namespace StudioUp.API
             // Repositories
             builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
             builder.Services.AddScoped<IContentTypeRepository, ContentTypeRepository>();
-            builder.Services.AddAutoMapper(typeof(MappingProfile)); 
-
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainingTypeRepository>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             // בדוגמה הזו, המימוש של ICustomerSubscriptionRepository הוא CustomerSubscriptionRepository
@@ -88,15 +88,16 @@ namespace StudioUp.API
             builder.Services.AddScoped<ICustomerTypeRepository, CustomerTypeRepository>();
             builder.Services.AddScoped<IRepository<SubscriptionTypeDTO>, SubscriptionTypeRepository>();
             builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
-            builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainigTypeRepository>();
+            builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainingTypeRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
             builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
-
+            builder.Services.AddScoped<IRepository<TrainingCustomerTypeDTO>, TrainingCustomerTypeRepository>();
             builder.Services.AddScoped<ICustomerHMOSRepository, CustomerHMOSRepository>();
             builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
             builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();

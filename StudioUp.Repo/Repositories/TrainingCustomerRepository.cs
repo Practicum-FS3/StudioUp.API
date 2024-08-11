@@ -11,7 +11,9 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class TrainingCustomerRepository:ITrainingCustomerRepository
+
+
+    public class TrainingCustomerRepository : ITrainingCustomerRepository
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -19,86 +21,89 @@ namespace StudioUp.Repo.Repositories
 
         public TrainingCustomerRepository(DataContext context, IMapper mapper)
         {
-            this._context = context;
-            this._mapper = mapper;
-
+            _context = context;
+            _mapper = mapper;
         }
 
         public async Task<List<TrainingCustomerDTO>> GetAllTrainingCustomers()
         {
             try
             {
-                var trainingCustomers = await _context.TrainingCustomers.ToListAsync();
-
+                var trainingCustomers = await _context.TrainingCustomers.Where(t => t.IsActive).ToListAsync();
                 return _mapper.Map<List<TrainingCustomerDTO>>(trainingCustomers);
 
             }
-            catch 
+            catch (Exception ex)
             {
-                throw ;
-
+                throw new Exception("An error occurred while attempting to get the Training Customers List.", ex);
             }
         }
 
-        public async Task<TrainingCustomerDTO> GetTraningCustomerById(int id)
+        public async Task<TrainingCustomerDTO> GetTrainingCustomerById(int id)
         {
             try
             {
-                var c = await _context.TrainingCustomers.FirstOrDefaultAsync(t => t.ID == id);
-                var mapTrainng = _mapper.Map<TrainingCustomerDTO>(c);
-                return mapTrainng;
-
+                var c = await _context.TrainingCustomers.Where(t => t.ID == id && t.IsActive).FirstOrDefaultAsync();
+                return _mapper.Map<TrainingCustomerDTO>(c);
             }
-            catch 
+            catch (Exception ex)
             {
-                throw ;
+                throw new Exception("An error occurred while attempting to get the Training Type.\", ex);\r\n.", ex);
             }
         }
 
-        public async Task<List<TrainingCustomerDTO>> GetTraningCustomerByTraningId(int id)
+
+        public async Task<List<TrainingCustomerDTO>> GetTrainingCustomerByTrainingId(int id)
         {
             try
             {
                 var trainingCustomers = await _context.TrainingCustomers.Where(tc => tc.TrainingID == id).ToListAsync();
                 return _mapper.Map<List<TrainingCustomerDTO>>(trainingCustomers);
+
             }
-            catch 
+            catch (Exception ex)
             {
-                throw ;
+                throw ex;
             }
         }
 
-        public async Task<List<TrainingCustomerDTO>> GetTraningCustomerByCustomerId(int id)
+
+        public async Task<List<TrainingCustomerDTO>> GetTrainingCustomerByCustomerId(int id)
         {
             try
             {
                 var trainingCustomers = await _context.TrainingCustomers.Where(tc => tc.CustomerID == id).ToListAsync();
                 return _mapper.Map<List<TrainingCustomerDTO>>(trainingCustomers);
-
             }
-            catch 
+
+            catch (Exception ex)
             {
-                throw ;
+                throw ex;
             }
         }
 
-        public async Task<TrainingCustomerDTO> AddTraningCustomer(TrainingCustomerDTO trainingCustomer)
+        public async Task<TrainingCustomerDTO> AddTrainingCustomer(TrainingCustomerDTO trainingCustomer)
         {
             try
             {
+                if (trainingCustomer == null)
+                {
+                    throw new Exception("Training Customer cannot be null");
+                }
                 var mapCast = _mapper.Map<TrainingCustomer>(trainingCustomer);
+                mapCast.IsActive = true;
                 var newTrainingCustomer = await _context.TrainingCustomers.AddAsync(mapCast);
                 await _context.SaveChangesAsync();
                 trainingCustomer.ID = newTrainingCustomer.Entity.ID;
                 return trainingCustomer;
             }
-            catch 
+            catch (Exception ex)
             {
-                throw ;
+                throw new Exception("An error occurred while attempting to add the Training Customer.", ex);
             }
         }
 
-        public async Task<bool> UpdateTrainingCustomers(TrainingCustomerDTO trainingCustomer)
+        public async Task UpdateTrainingCustomer(TrainingCustomerDTO trainingCustomer)
         {
             try
             {
@@ -106,45 +111,36 @@ namespace StudioUp.Repo.Repositories
 
                 if (trainingCustomerToUpdate == null)
                 {
-                    return false;
+                    throw new Exception("Training Customer not found.");
                 }
-
-                trainingCustomerToUpdate.TrainingID = trainingCustomer.TrainingID;
-                trainingCustomerToUpdate.CustomerID = trainingCustomer.CustomerID;
-                trainingCustomerToUpdate.Attended = trainingCustomer.Attended;
-                _context.TrainingCustomers.Update(_mapper.Map<TrainingCustomer>(trainingCustomerToUpdate));
-
+                _mapper.Map(trainingCustomer, trainingCustomerToUpdate);
                 await _context.SaveChangesAsync();
-                return true;
-
             }
-            catch 
+
+            catch (Exception ex)
             {
-                throw ;
+                throw new Exception("An error occurred while attempting to update the Training Customer.", ex);
             }
         }
 
-        public async Task<bool> DeleteTraningCustomer(int id)
+        public async Task DeleteTrainingCustomer(int id)
         {
             try
             {
                 var c = await _context.TrainingCustomers.FirstOrDefaultAsync(t => t.ID == id);
-                if (c == null)
+                if (c == null || !c.IsActive)
                 {
-                    return false;
+                    return;
                 }
-                var mapT = _mapper.Map<TrainingCustomer>(c);
-                _context.TrainingCustomers.Remove(mapT);
+                c.IsActive = false;
                 await _context.SaveChangesAsync();
-                return true;
             }
-            catch 
+            catch (Exception ex)
             {
-                throw ;
-
+                throw new Exception("An error occurred while attempting to delete the Training Customer.", ex);
             }
         }
 
-        
+
     }
 }

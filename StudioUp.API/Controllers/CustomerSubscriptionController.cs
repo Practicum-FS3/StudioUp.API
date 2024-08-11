@@ -35,12 +35,12 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet("GetCustomerSubscriptionsByCustomerId/{customerId}")]
-        public async Task<ActionResult<IEnumerable<CustomerSubscriptionDTO>>> GetCustomerSubscriptionsByCustomerId(int customerId)
+        public async Task<ActionResult<CustomerSubscriptionDTO>> GetCustomerSubscriptionsByCustomerId(int customerId)
         {
             try
             {
                 var subscriptions = await _repository.GetCustomerSubscriptionsByCustomerIdAsync(customerId);
-                if (subscriptions == null || !subscriptions.Any())
+                if (subscriptions == null)
                 {
                     return NotFound();
                 }
@@ -75,14 +75,13 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var subscription = new CustomerSubscription
+                var s = await _repository.AddCustomerSubscriptionAsync(subscriptionDTO);
+                if (s == null)
                 {
-                    CustomerID = subscriptionDTO.CustomerID,
-                    SubscriptionTypeId = subscriptionDTO.SubscriptionTypeId,
-                    StartDate = subscriptionDTO.StartDate
-                };
-                await _repository.AddCustomerSubscriptionAsync(subscription);
-                return CreatedAtAction(nameof(GetCustomerSubscriptionById), new { id = subscription.ID }, subscription);
+                    return BadRequest("customerSubscription field is null.");
+                }
+                return Ok(s);
+
             }
             catch (Exception ex)
             {
@@ -93,16 +92,14 @@ namespace StudioUp.API.Controllers
         [HttpPut("UpdateCustomerSubscription")]
         public async Task<IActionResult> UpdateCustomerSubscription(CustomerSubscriptionDTO subscriptionDTO)
         {
-            var subscription = new CustomerSubscription
+            if (subscriptionDTO == null)
             {
-                ID = subscriptionDTO.ID,
-                CustomerID = subscriptionDTO.CustomerID,
-                SubscriptionTypeId = subscriptionDTO.SubscriptionTypeId,
-                StartDate = subscriptionDTO.StartDate
-            };
+                return BadRequest("The content  field is null.");
+            }
+
             try
             {
-                await _repository.UpdateCustomerSubscriptionAsync(subscription);
+                await _repository.UpdateCustomerSubscriptionAsync(subscriptionDTO);
                 return NoContent();
 
             }
