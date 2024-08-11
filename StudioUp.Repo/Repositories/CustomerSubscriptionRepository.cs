@@ -1,7 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
@@ -9,40 +13,98 @@ namespace StudioUp.Repo.Repositories
     public class CustomerSubscriptionRepository : ICustomerSubscriptionRepository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public CustomerSubscriptionRepository(DataContext context)
+
+        public CustomerSubscriptionRepository(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<CustomerSubscription>> GetAllCustomerSubscriptionsAsync()
         {
-            return await _context.CustomerSubscriptions.Include(c => c.Customer).Include(s => s.SubscriptionType).Where(s => s.IsActive).ToListAsync();
+            try
+            {
+                return await _context.CustomerSubscriptions
+                    .Include(c => c.Customer)
+                    .Include(s => s.SubscriptionType)
+                    .Where(s => s.IsActive)
+                    .ToListAsync();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public async Task<IEnumerable<CustomerSubscription>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId)
+        public async Task<List<CustomerSubscriptionDTO>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId)
         {
-            return await _context.CustomerSubscriptions
-                .Where(cs => cs.CustomerID == customerId && cs.IsActive)
-                .ToListAsync();
+            try
+            {
+                var subscriptions = await _context.CustomerSubscriptions
+                    .Where(cs => cs.CustomerID == customerId && cs.IsActive)
+                    .ToListAsync();
+
+                return _mapper.Map<List<CustomerSubscriptionDTO>>(subscriptions);
+
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public async Task<CustomerSubscription> GetCustomerSubscriptionByIdAsync(int id)
+        public async Task<CustomerSubscriptionDTO> GetCustomerSubscriptionByIdAsync(int id)
         {
-            return await _context.CustomerSubscriptions.Where(c => c.ID == id && c.IsActive)
-                                             .FirstOrDefaultAsync(); 
+            try
+            {
+                var subscription = await _context.CustomerSubscriptions.FirstOrDefaultAsync(t => t.ID == id && t.IsActive);
+                if (subscription == null)
+                {
+                    throw new Exception($"CustomerSubscription with ID {id} does not exist or is inactive.");
+                }
+                var mapSub = _mapper.Map<CustomerSubscriptionDTO>(subscription);
+                return mapSub;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public async Task AddCustomerSubscriptionAsync(CustomerSubscription subscription)
+        public async Task<CustomerSubscriptionDTO> AddCustomerSubscriptionAsync(CustomerSubscriptionDTO subscription)
         {
-            await _context.CustomerSubscriptions.AddAsync(subscription);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var mapCastS = _mapper.Map<CustomerSubscription>(subscription);
+                await _context.CustomerSubscriptions.AddAsync(mapCastS);
+                await _context.SaveChangesAsync();
+                return subscription;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public async Task UpdateCustomerSubscriptionAsync(CustomerSubscription subscription)
+        public async Task UpdateCustomerSubscriptionAsync(CustomerSubscriptionDTO subscription)
         {
-            _context.CustomerSubscriptions.Update(subscription);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var existingSubscription = await _context.CustomerSubscriptions.FindAsync(subscription.ID);
+
+                if (existingSubscription == null)
+                {
+                    throw new Exception($"CustomerSubscription with ID {subscription.ID} does not exist.");
+                }
+                _mapper.Map(subscription, existingSubscription);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task DeleteCustomerSubscriptionAsync(int id)
@@ -50,17 +112,19 @@ namespace StudioUp.Repo.Repositories
             try
             {
                 var customerSubscription = await _context.CustomerSubscriptions.FindAsync(id);
+
                 if (customerSubscription == null || !customerSubscription.IsActive)
-                    return;
+                {
+                    throw new Exception($"CustomerSubscription with ID {id} does not exist or is already inactive.");
+                }
 
                 customerSubscription.IsActive = false;
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex; 
+                throw;
             }
-
         }
     }
 }

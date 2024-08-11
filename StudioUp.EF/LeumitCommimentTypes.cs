@@ -19,3 +19,5 @@ namespace StudioUp.Models
         public bool IsActive { get; set; }
     }
 }
+
+

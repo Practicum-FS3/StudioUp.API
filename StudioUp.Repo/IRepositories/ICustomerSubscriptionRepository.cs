@@ -1,4 +1,5 @@
-﻿using StudioUp.Models;
+﻿using StudioUp.DTO;
+using StudioUp.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,10 +8,10 @@ namespace StudioUp.Repo.IRepositories
     public interface ICustomerSubscriptionRepository
     {
         Task<IEnumerable<CustomerSubscription>> GetAllCustomerSubscriptionsAsync();
-        Task<CustomerSubscription> GetCustomerSubscriptionByIdAsync(int id);
-        Task AddCustomerSubscriptionAsync(CustomerSubscription subscription);
-        Task UpdateCustomerSubscriptionAsync(CustomerSubscription subscription);
+        Task<CustomerSubscriptionDTO> GetCustomerSubscriptionByIdAsync(int id);
+        Task<CustomerSubscriptionDTO> AddCustomerSubscriptionAsync(CustomerSubscriptionDTO subscription);
+        Task UpdateCustomerSubscriptionAsync(CustomerSubscriptionDTO subscription);
         Task DeleteCustomerSubscriptionAsync(int id);
-        Task<IEnumerable<CustomerSubscription>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId);
+        Task<List<CustomerSubscriptionDTO>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId);
     }
 }

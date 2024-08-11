@@ -3,7 +3,8 @@ using StudioUp.Models;
 using StudioUp.Repo;
 using Microsoft.AspNetCore.Http;
 using StudioUp.DTO;
-using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
+using NuGet.Protocol.Core.Types;
 
 
 namespace StudioUp.API.Controllers
@@ -12,87 +13,122 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class TrainingTypeController : ControllerBase
     {
-       
-    
+
         private readonly IRepository<TrainingTypeDTO> _repository;
         private readonly ILogger<TrainingTypeController> _logger;
+
         public TrainingTypeController(IRepository<TrainingTypeDTO> repsitory, ILogger<TrainingTypeController> logger)
         {
             _repository = repsitory;
-            _logger = logger;   
+            _logger = logger;
         }
 
-        [HttpGet("GetTrainingTypes")]
-        public async Task<ActionResult<IEnumerable<TrainingTypeDTO>>> GetTrainingTypes()
+
+        [HttpGet("GetAllTrainingTypes")]
+        public async Task<ActionResult<IEnumerable<TrainingTypeDTO>>> GetAllTrainingTypes()
         {
             try
-            {var trainingTypes = await _repository.GetAllAsync();
-            return Ok(trainingTypes);
-
-            
-               
+            {
+                var trainingTypes = await _repository.GetAllAsync();
+                return Ok(trainingTypes);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in TrainingTypeController/GetTrainingTypes");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-
+                _logger.LogError(ex, "this error in TrainingTypeController/GetAllTrainingTypes");
+                return StatusCode(500, $"Internal server error:{ex.Message}");
             }
         }
+
 
         [HttpGet("GetTrainingTypeById/{id}")]
-        public async Task<ActionResult<TrainingType>> GetTrainingType(int id)
+        public async Task<ActionResult<TrainingTypeDTO>> GetTrainingTypeById(int id)
         {
-            var TrainingType = await _repository.GetByIdAsync(id);
-            if (TrainingType == null)
-            {
-                return NotFound();
-            }
-            return Ok(TrainingType);
-        }
-
-        [HttpPut("PutTrainingType")]
-        public async Task<IActionResult> PutTrainingType(TrainingTypeDTO TrainingTypeDto)
-        {
-
-            await _repository.UpdateAsync(TrainingTypeDto);
-            return NoContent();
-        }
-       
-        [HttpPost("PostTrainingType")]
-        public async Task<ActionResult<TrainingTypeDTO>> PostTrainingType(TrainingTypeDTO TrainingTypeDto)
-        {
-          
-            if (TrainingTypeDto == null)
-            {
-                return BadRequest("The trainingType option field is null.");
-            }
             try
             {
-                var p = await _repository.AddAsync(TrainingTypeDto);
-                return Ok(p);
+                var trainingType = await _repository.GetByIdAsync(id);
+                if (trainingType == null)
+                {
+                    return NotFound($"Training Type with id {id} not found");
+                }
+                return Ok(trainingType);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in TrainingTypeController/PostTrainingType");
+                _logger.LogError(ex, "this error in TrainingTypeController/GetTrainingTypeById");
+                return StatusCode(500, $"Internal server error:{ex.Message}");
+
+            }
+        }
+
+
+        [HttpPut("UpdateTrainingType")]
+        public async Task<IActionResult> UpdateTrainingType([FromBody] TrainingTypeDTO trainingTypeDto)
+        {
+            try
+            {
+                if (trainingTypeDto == null)
+                {
+                    return BadRequest("The content field is null");
+                }
+
+                var trainingType = await _repository.GetByIdAsync(trainingTypeDto.ID);
+                if (trainingType == null)
+                {
+                    return NotFound();
+                }
+
+                await _repository.UpdateAsync(trainingTypeDto);
+                return NoContent();
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in TrainingTypeController/UpdateTrainingType");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+
+        [HttpPost("AddTrainingType")]
+        public async Task<ActionResult<TrainingType>> AddTrainingType([FromBody] TrainingTypeDTO TrainingTypeDto)
+        {
+            try
+            {
+                if (TrainingTypeDto == null)
+                    return BadRequest("Training Type cannot be null.");
+                var trainingType = await _repository.AddAsync(TrainingTypeDto);
+                trainingType.IsActive = true;
+                return CreatedAtAction(nameof(GetAllTrainingTypes), new { id = trainingType.ID }, trainingType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "this error in TrainingTypeController/AddTrainingType");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-        [HttpDelete("DeleteTrainingTypeById{id}")]
+
+        [HttpDelete("DeleteTrainingType/{id}")]
         public async Task<IActionResult> DeleteTrainingType(int id)
         {
             try
             {
+                var trainingType = await _repository.GetByIdAsync(id);
+                if (trainingType == null)
+                {
+                    return NotFound($"Training Type with ID {id} not found.");
+                }
+
                 await _repository.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in TrainingTypeController/DeleteTrainingType");
+                _logger.LogError(ex, "this error in TrainingTypeController/DeleteTrainingType");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+
             }
         }
+
     }
 }
-

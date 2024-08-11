@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,6 @@ namespace StudioUp.Repo.Repositories
         private readonly IMapper mapper;
         private readonly ILogger<CustomerRepository> _logger;
 
-
         public CustomerRepository(DataContext context, IMapper mapper, ILogger<CustomerRepository> logger)
         {
             this.context = context;
@@ -30,14 +28,19 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
+<<<<<<< HEAD
                 var x = await context.Customers.AddAsync(mapper.Map<Customer>(entity));
 
+=======
+                var mapCast = mapper.Map<Customer>(entity);
+                var newCustomer = await context.Customers.AddAsync(mapCast);
+>>>>>>> f574752bd32381204e9eef425985265c4c7e9cfd
                 await context.SaveChangesAsync();
                 return entity;
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -56,7 +59,7 @@ namespace StudioUp.Repo.Repositories
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
+                        throw new Exception("An error occurred while retrieving the customer by email and password.", ex);
                     }
                 }
                 else
@@ -64,12 +67,10 @@ namespace StudioUp.Repo.Repositories
                     return null;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-
-                throw ex;
+                throw;
             }
-
         }
 
         public async Task DeleteAsync(int id)
@@ -78,46 +79,47 @@ namespace StudioUp.Repo.Repositories
             {
                 var customers = await context.Customers.FindAsync(id);
                 if (customers == null || !customers.IsActive)
-                    return;
+                {
+                    throw new Exception($"Customer with ID {id} does not exist or is already inactive.");
+                }
 
                 customers.IsActive = false;
                 await context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
-
 
         public async Task<List<CustomerDTO>> GetAllAsync()
         {
             try
             {
-                var l = await context.Customers.Where(ct => ct.IsActive).ToListAsync();
-
-                return mapper.Map<List<CustomerDTO>>(l);
-
+                var customers = await context.Customers.Where(ct => ct.IsActive).ToListAsync();
+                return mapper.Map<List<CustomerDTO>>(customers);
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
-
         }
 
         public async Task<CustomerDTO> GetByIdAsync(int id)
         {
             try
             {
-                var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id && t.IsActive);
-                var mapCust = mapper.Map<CustomerDTO>(c);
+                var customer = await context.Customers.FirstOrDefaultAsync(t => t.Id == id && t.IsActive);
+                if (customer == null)
+                {
+                    throw new Exception($"Customer with ID {id} does not exist or is inactive.");
+                }
+                var mapCust = mapper.Map<CustomerDTO>(customer);
                 return mapCust;
-
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -125,14 +127,21 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                context.Customers.Update(mapper.Map<Customer>(entity));
+                var existingCustomer = await context.Customers.FindAsync(entity.Id);
+                if (existingCustomer == null)
+                {
+                    throw new Exception($"Customer with ID {entity.Id} does not exist.");
+                }
+
+                mapper.Map(entity, existingCustomer);
                 await context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
+
         public async Task<List<CustomerDTO>> FilterAsync(CustomerFilterDTO filter)
         {
             try
@@ -170,13 +179,10 @@ namespace StudioUp.Repo.Repositories
                     IsActive = c.IsActive
                 }).Where(ct => ct.IsActive).ToListAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
-
+                throw;
             }
         }
     }
 }
-
-

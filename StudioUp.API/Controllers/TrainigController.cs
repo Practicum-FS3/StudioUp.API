@@ -28,17 +28,17 @@ namespace StudioUp.API.Controllers
         }
 
         // GET: api/Training
-        [HttpGet("GetTrainings")]
-        public async Task<ActionResult<IEnumerable<TrainingDTO>>> GetTrainings()
+        [HttpGet("GetAllTrainings")]
+        public async Task<ActionResult<IEnumerable<TrainingDTO>>> GetAllTrainings()
         {
             try
             {
-                var trainings = await _trainingRepository.GetAllTrainingsAsync();
+                var trainings = await _trainingRepository.GetAllTrainings();
                 return Ok(trainings);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in TrainingController/Get");
+                _logger.LogError(ex, " this error in TrainingController/GetAllTrainings");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
@@ -50,7 +50,7 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var trainings = await _trainingRepository.GetAllTrainingsCalenderAsync();
+                var trainings = await _trainingRepository.GetAllTrainingsCalender();
                 return Ok(trainings);
             }
             catch (Exception ex)
@@ -66,85 +66,67 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var training = await _trainingRepository.GetTrainingByIdAsync(id);
+                var training = await _trainingRepository.GetTrainingById(id);
                 if (training == null)
                 {
-                    return NotFound("training not found by ID");
+                    return NotFound($"Training with id {id} not found");
                 }
                 return Ok(training);
             }
+
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in TrainingController/GetById");
+                _logger.LogError(ex, " this error in TrainingController/GetTrainingById");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-        // POST: api/Training
-        /* [HttpPost("")]
-         public async Task<IActionResult> PostTraining([FromBody] TrainingDTO trainingDTO)
-         {
-             if (trainingDTO == null)
-             {
-                 return BadRequest("The training field is null.");
-             }
-             if (!ModelState.IsValid)
-                 return BadRequest(ModelState);
-             try
-             {
-                 await _trainingRepository.AddTraining(trainingDTO);
-                 return CreatedAtAction(nameof(Get), new { id = trainingDTO.ID }, trainingDTO);
-             }
-             catch (Exception ex)
-             {
-                 _logger.LogError(ex, " this error in TrainingController/Post");
-                 return StatusCode(500, $"Internal server error: {ex.Message}");
-             }
 
-         }*/
-        [HttpPost("PostTraining")]
-        public async Task<IActionResult> PostTraining(TrainingDTO training)
+        // POST: api/Training
+        [HttpPost("AddTraining")]
+        public async Task<IActionResult> AddTraining([FromBody] TrainingDTO trainingDTO)
         {
-            if (training == null)
-            {
-                return BadRequest("The training field is null.");
-            }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             try
             {
-               var x= await _trainingRepository.AddTrainingAsync(training);
-                return Ok(x);
+                if (trainingDTO == null)
+                {
+                    return BadRequest("The training field is null.");
+                }
+                var training = await _trainingRepository.AddTraining(trainingDTO);
+                training.IsActive = true;
+                return CreatedAtAction(nameof(GetAllTrainings), new { id = training.ID }, training);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in TrainingController/Post");
+                _logger.LogError(ex, " this error in TrainingController/AddTraining");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
         }
 
         // PUT: api/Training/5
-        [HttpPut("PutTraining")]
-        public async Task<IActionResult> PutTraining(TrainingDTO trainingDto)
+        [HttpPut("UpdateTraining")]
+        public async Task<IActionResult> UpdateTraining([FromBody] TrainingDTO trainingDto)
         {
-
-            if (trainingDto == null)
-            {
-                return BadRequest("The trainingDto field is null.");
-            }
-           
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             try
             {
-                var training = await _trainingRepository.GetTrainingByIdAsync(trainingDto.ID);
-                await _trainingRepository.UpdateTrainingAsync(trainingDto, trainingDto.ID);
+                if (trainingDto == null)
+                {
+                    return BadRequest("The content field is null.");
+                }
+                var training = await _trainingRepository.GetTrainingById(trainingDto.ID);
+                if (training == null)
+                {
+                    return NotFound();
+                }
+
+                await _trainingRepository.UpdateTraining(trainingDto);
                 return NoContent();
             }
+
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in TrainingController/Put");
+                _logger.LogError(ex, " this error in TrainingController/UpdateTraining");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -155,12 +137,15 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var training = await _trainingRepository.GetTrainingByIdAsync(id);
+                var training = await _trainingRepository.GetTrainingById(id);
+                if (training == null)
+                    return NotFound($"Training with ID {id} not found.");
+                await _trainingRepository.DeleteTraining(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in TrainingController/Delete");
+                _logger.LogError(ex, " this error in TrainingController/DeleteTraining");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

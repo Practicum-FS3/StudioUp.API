@@ -10,11 +10,12 @@ namespace StudioUp.Repo.IRepositories
 {
     public interface ITrainingRepository
     {
-        public Task<IEnumerable<TrainingDTO>> GetAllTrainingsAsync();
-        public Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalenderAsync();
-        public Task<TrainingDTO> GetTrainingByIdAsync(int id);
-        public Task<TrainingDTO> AddTrainingAsync(TrainingDTO trainingDto);
-        public Task<TrainingDTO> UpdateTrainingAsync(TrainingDTO trainingDto,int id);
-        public Task DeleteTrainingAsync(int id);
+        public Task<IEnumerable<TrainingDTO>> GetAllTrainings();
+        public Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalender();
+        public Task<TrainingDTO> GetTrainingById(int id);
+        public Task<TrainingDTO> AddTraining(TrainingDTO trainingDto);
+        public Task UpdateTraining(TrainingDTO trainingDto);
+        public Task DeleteTraining(int id);
+
     }
 }
