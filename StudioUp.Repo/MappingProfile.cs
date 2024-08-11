@@ -35,7 +35,7 @@ namespace StudioUp.Repo
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => new FileDownloadDTO
                 {
                     FileName = src.ContentTypeID.ToString() + " " + src.ID.ToString(),
-                    ContentType = "image/png", // ערך קבוע
+                    ContentType = "image.png", // ערך קבוע
                     Data = src.ImageData,
                 }));
 
@@ -48,7 +48,6 @@ namespace StudioUp.Repo
             CreateMap<FileUpload, FileUploadDTO>().ReverseMap();
             CreateMap<FileUpload, FileDownloadDTO>().ReverseMap();
             CreateMap<CustomerHMOS, CustomerHMOSDTO>().ReverseMap();
-            //CreateMap<Training>
             //CreateMap<SubscriptionRoutes, SubscriptionRoutesDTO>().ReverseMap();
             CreateMap<LeumitCommitments, LeumitCommitmentsDTO>().ReverseMap();
             CreateMap<LeumitCommimentTypes, LeumitCommimentTypesDTO>().ReverseMap();
