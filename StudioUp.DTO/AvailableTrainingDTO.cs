@@ -15,5 +15,13 @@ namespace StudioUp.DTO
         public int ParticipantsCount { get; set; }
         public bool IsActive { get; set; }
 
+        public AvailableTrainingDTO(int TrainingId, DateOnly Date,int ParticipantsCount, bool IsActive)
+        {
+            this.TrainingId = TrainingId;   
+            this.Date = Date;
+            this.ParticipantsCount = ParticipantsCount;
+            this.IsActive = IsActive;
+        }
+
     }
 }
