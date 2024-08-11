@@ -53,7 +53,105 @@ namespace StudioUp.Repo.Repositories
                 .ToListAsync();
             return _mapper.Map<IEnumerable<CalanderAvailableTrainingDTO>>(availableTrainings);
         }
+        public async Task<List<CalanderAvailableTrainingDTO>> GetAllCustomersDetailsAsync()
+        {
+            try
+            {
+                var startDate = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
+                var endDate = startDate.AddDays(7);
+                var trainings = await _context.TrainingCustomers.Where(x => x.IsActive
+                && x.Training.Date >= startDate && x.Training.Date < endDate)
+                      .Include(tc => tc.Customer)
+                            .ThenInclude(c => c.CustomerType)
+                       .Include(tc => tc.Training)
+                             .ThenInclude(at => at.Training)
+                                .ThenInclude(t => t.Trainer)
+                        .Include(tc => tc.Training)
+                            .ThenInclude(at => at.Training)
+                                .ThenInclude(t => t.TrainingCustomerType)
+                                    .ThenInclude(tct => tct.TrainingType)
+                        .ToListAsync();
+                return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func GetAvailableTrainingsForCustomerAsync-Repo");
+                throw;
+            }
+        }
 
+    public async Task<List<CalanderAvailableTrainingDTO>> GetAllTrainingsDetailsForCustomerAsync(int customerId)
+        {
+            try
+            {
+                var startDate = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
+                var endDate = startDate.AddDays(7);
+
+                var customerTypeId = await _context.Customers
+                    .Where(x => x.Id == customerId)
+                    .Select(x => x.CustomerType.ID)
+                    .FirstOrDefaultAsync();
+
+                if (customerTypeId == 0)
+                {
+                    throw new ArgumentNullException("CustomerType or CustomerType ID is null.");
+                }
+                
+                var registeredTrainingCustomer = await _context.TrainingCustomers
+                    .Where(t =>
+                        t.Customer.Id == customerId &&
+                        t.Training.Date >= startDate &&
+                        t.Training.Date < endDate)
+                    .Select(t => new CalanderAvailableTrainingDTO
+                    {
+                        TrainingId = t.Training.TrainingId,
+                        TrainerName = $"{t.Training.Training.Trainer.FirstName} {t.Training.Training.Trainer.LastName}",
+                        Date = t.Training.Date,
+                        DayOfWeek = t.Training.Training.DayOfWeek,
+                        Time = $"{t.Training.Training.Hour}:{t.Training.Training.Minute}",
+                        CustomerTypeName = t.Training.Training.TrainingCustomerType.CustomerType.Title,
+                        TrainingTypeName = t.Training.Training.TrainingCustomerType.TrainingType.Title,
+                        ParticipantsCount = t.Training.ParticipantsCount,
+                        Attended = t.Attended,
+                        IsRegistered = true,
+                        IsActive = true
+                    })
+                    .ToListAsync();
+
+                var availableTrainingLst = await _context.AvailableTraining
+                    .Where(x =>
+                        x.Date >= startDate &&
+                        x.Date < endDate &&
+                        x.Training.TrainingCustomerType.CustomerType.ID == customerTypeId
+                        &&
+                      !registeredTrainingCustomer.Select(t=> t.TrainingId).Contains(x.TrainingId)
+                        )
+                    .Select(t => new CalanderAvailableTrainingDTO
+                    {
+                        TrainingId = t.TrainingId,
+                        TrainerName = $"{t.Training.Trainer.FirstName} {t.Training.Trainer.LastName}",
+                        Date = t.Date,
+                        DayOfWeek = t.Training.DayOfWeek,
+                        Time = $"{t.Training.Hour}:{t.Training.Minute}",
+                        CustomerTypeName = t.Training.TrainingCustomerType.CustomerType.Title,
+                        TrainingTypeName = t.Training.TrainingCustomerType.TrainingType.Title,
+                        ParticipantsCount = t.ParticipantsCount,
+                        Attended = false,
+                        IsRegistered = false,
+                        IsActive = true,
+                    })
+
+                    .ToListAsync();
+                var result = registeredTrainingCustomer.AsEnumerable().Union(availableTrainingLst.AsEnumerable()).ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- Error occurred in GetAllTrainingsDetailsForCustomerAsync method");
+                throw;
+            }
+        }
         public async Task<AvailableTrainingDTO> GetAvailableTrainingByIdAsync(int id)
         {
             try
@@ -140,6 +238,15 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        
+    }
+
+    //TODO - find a place
+    public static class DateTimeExtensions
+    {
+        public static DateTime StartOfWeek(this DateTime dt, DayOfWeek startOfWeek)
+        {
+            int diff = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
+            return dt.AddDays(-1 * diff).Date;
+        }
     }
 }
