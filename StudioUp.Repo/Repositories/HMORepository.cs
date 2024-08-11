@@ -93,14 +93,14 @@ namespace StudioUp.Repo.Repository
             }
         }
 
-        public async Task<bool> UpdateAsync(int id, HMODTO hmo)
+        public async Task<bool> UpdateAsync(HMODTO hmo)
         {
             try
             {
-                var existingHMO = await _context.HMOs.FirstOrDefaultAsync(h => h.ID == id && h.IsActive);
+                var existingHMO = await _context.HMOs.FirstOrDefaultAsync(h => h.ID == hmo.ID && h.IsActive);
                 if (existingHMO == null)
                 {
-                    throw new Exception($"HMO with ID {id} does not exist or is inactive.");
+                    throw new Exception($"HMO with ID {hmo.ID} does not exist or is inactive.");
                 }
 
                 _mapper.Map(hmo, existingHMO);

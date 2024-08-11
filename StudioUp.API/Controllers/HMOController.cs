@@ -93,20 +93,16 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> update(int id, HMODTO hmo)
+        [HttpPut("Update")]
+        public async Task<IActionResult> update(HMODTO hmo)
         {
             if (hmo == null)
             {
                 return BadRequest("The hmo field is null.");
             }
-            if (id != hmo.ID)
-            {
-                return BadRequest("ID in URL does not match ID in body");
-            }
             try
             {
-                await HMOService.UpdateAsync(id, hmo);
+                await HMOService.UpdateAsync(hmo);
                 return NoContent();
             }
             catch (Exception ex)

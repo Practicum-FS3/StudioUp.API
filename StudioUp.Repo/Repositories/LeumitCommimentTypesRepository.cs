@@ -89,20 +89,20 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        public async Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO, int id)
+        public async Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO lc)
         {
             try
             {
                 var existingEntity = await context.LeumitCommimentTypes
-                                                  .FirstOrDefaultAsync(l => l.Id == id && l.IsActive);
+                                                  .FirstOrDefaultAsync(l => l.Id == lc.Id && l.IsActive);
                 if (existingEntity == null)
                 {
-                    throw new Exception($"LeumitCommitmentType with ID {id} does not exist or is inactive.");
+                    throw new Exception($"LeumitCommitmentType with ID {lc.Id} does not exist or is inactive.");
                 }
 
-                mapper.Map(leumitCommimentTypesDTO, existingEntity);
+                mapper.Map(lc, existingEntity);
                 await context.SaveChangesAsync();
-                return leumitCommimentTypesDTO;
+                return lc;
             }
             catch (Exception exception)
             {

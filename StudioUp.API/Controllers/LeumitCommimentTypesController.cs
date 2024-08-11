@@ -47,15 +47,12 @@ namespace StudioUp.API.Controllers
                 throw exeption;
             }
         }
-        [HttpPut("Update/{id}")]
-        public async Task<ActionResult<LeumitCommimentTypesDTO>> update(int id, LeumitCommimentTypesDTO newLeumitCommimentTypesDTO)
+        [HttpPut("Update")]
+        public async Task<ActionResult<LeumitCommimentTypesDTO>> update( LeumitCommimentTypesDTO newLeumitCommimentTypesDTO)
         {
             try
             {
-            
-                if (id != newLeumitCommimentTypesDTO.Id)
-                    return Conflict();
-                await leumitCommimentTypesRepository.UpdateAsync(newLeumitCommimentTypesDTO, id);
+                await leumitCommimentTypesRepository.UpdateAsync(newLeumitCommimentTypesDTO);
                 return Ok(newLeumitCommimentTypesDTO);
             }
             catch (Exception ex)
@@ -75,7 +72,7 @@ namespace StudioUp.API.Controllers
                     return NotFound($"Training with ID {id} not found.");
                 }
                 leumitCommimentTypes.IsActive = false;
-                await leumitCommimentTypesRepository.UpdateAsync(leumitCommimentTypes, id);
+                await leumitCommimentTypesRepository.UpdateAsync(leumitCommimentTypes);
                 return NoContent();
             }
             catch (Exception ex)
