@@ -28,8 +28,13 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
+<<<<<<< HEAD
+                var x = await context.Customers.AddAsync(mapper.Map<Customer>(entity));
+
+=======
                 var mapCast = mapper.Map<Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);
+>>>>>>> f574752bd32381204e9eef425985265c4c7e9cfd
                 await context.SaveChangesAsync();
                 return entity;
             }
