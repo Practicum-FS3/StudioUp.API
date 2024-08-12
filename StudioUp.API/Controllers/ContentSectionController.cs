@@ -23,13 +23,12 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet("/GetAllContentSections")]
-        public async Task<ActionResult<IEnumerable<ContentSectionDowoladDTO>>> GetAllContentSections()
+        public async Task<ActionResult<IEnumerable<ContentSectionDTO>>> GetAllContentSections()
         {
             try
             {
                 var contentSections = await _repository.GetAllAsync();
-                //return File(contentSections.First().Image.Data, contentSections.First().Image.ContentType, contentSections.First().Image.FileName);
-                return Ok(contentSections);
+                 return Ok(contentSections);
             }
             catch (Exception ex)
             {
@@ -49,9 +48,7 @@ namespace StudioUp.API.Controllers
                 {
                     return NotFound("content section not found by ID");
                 }
-               return File(contentSection.Image.Data, contentSection.Image.ContentType, contentSection.Image.FileName);
-
-               // return Ok(contentSection);
+                return Ok(contentSection);
             }
             catch (Exception ex)
             {
@@ -62,7 +59,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet("GetContentSectionsByIdContentType/{contentTypeId}")]
-        public async Task<ActionResult<IEnumerable<ContentSectionDowoladDTO>>> GetContentSectionsByIdContentType(int contentTypeId)
+        public async Task<ActionResult<IEnumerable<ContentSectionDTO>>> GetContentSectionsByIdContentType(int contentTypeId)
         {
             try
             {
@@ -83,7 +80,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost("/CreateContentSection")]
-        public async Task<ActionResult<ContentSectionDowoladDTO>> CreateContentSection([FromForm] ContentSectionUploadDTO contentSectionDTO)
+        public async Task<ActionResult<ContentSectionDTO>> CreateContentSection([FromForm] ContentSectionManagementDTO contentSectionDTO)
         {
             if (contentSectionDTO == null)
             {
@@ -102,7 +99,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPut("/UpdateContentSection")]
-        public async Task<IActionResult> UpdateContentSection([FromForm] ContentSectionUploadDTO contentSectionDTO)
+        public async Task<IActionResult> UpdateContentSection([FromForm] ContentSectionManagementDTO contentSectionDTO)
         {
             if (contentSectionDTO == null)
             {

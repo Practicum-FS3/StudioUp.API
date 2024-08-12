@@ -11,87 +11,140 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class TrainingCustomerTypeRepository : ITrainingCustomerTypeRepository
+    public class TrainingCustomerTypeRepository : IRepository<TrainingCustomerTypeDTO>
     {
 
 
-        private readonly DataContext context;
-        private readonly IMapper mapper;
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
         public TrainingCustomerTypeRepository(DataContext context, IMapper mapper)
         {
-            this.context = context;
-            this.mapper = mapper;
+            _context = context;
+            _mapper = mapper;
 
         }
-        //הוספת אימון כולל בדיקות האם זה אפשרי
-        public async Task<DTO.TrainingCustomerTypeDTO> AddTrainingCustomerType(DTO.TrainingCustomerTypeDTO trainingCustomerTypedto)
+
+        public async Task<List<TrainingCustomerTypeDTO>> GetAllAsync()
         {
-            var trainingCustomerType = mapper.Map<Models.TrainingCustomerType>(trainingCustomerTypedto);
-
-            TrainingType trainingType = context.TrainingTypes.FirstOrDefault(t => t.ID == trainingCustomerType.TrainingTypeId);
-            trainingCustomerType.TrainingType = trainingType;
-
-            CustomerType customerType = context.CustomerTypes.FirstOrDefault(t => t.ID == trainingCustomerType.CustomerTypeID);
-            trainingCustomerType.CustomerType = customerType;
-
-            //בדיקות בשביל לראות האם אפשר להוסיף כזה סוג אימון
-            if (trainingCustomerType != null && trainingCustomerType.TrainingType != null && trainingCustomerType.CustomerType != null)
+            try
             {
-               // בדיקה האם סוג האימון בפעילות
-                if (trainingCustomerType.TrainingType.IsActive)
-                {
-                    //האם יש אפשרות לכזה לקוח
-                    if (trainingCustomerType.CustomerType.IsActive)
-                    {
-                        var allTrainingCustomerType = await GetAllTrainingCustomerTypes();
-                        foreach (var item in allTrainingCustomerType)
-                        {
-                            if(item.TrainingTypeID== trainingCustomerType.TrainingTypeId&& item.CustomerTypeID == trainingCustomerType.CustomerTypeID)
-                            {
-                                throw new Exception("כבר קיים כזה סוג אימון!!");
-                            }
-                        }
-                        var TrainingCustomerType1 = await this.context.TrainingCustomersTypes.AddAsync(mapper.Map<Models.TrainingCustomerType>(trainingCustomerType));
-                        await this.context.SaveChangesAsync();
-                        return trainingCustomerTypedto;
-                    }
-                    else {throw new Exception("Condition not met: CustomerType not active");}
-                }
-                else { throw new Exception("Condition not met: TrainingType not active"); }
+                var TrainingCustomerType = await _context.TrainingCustomersTypes.Where(t => t.IsActive).ToListAsync();
+                return _mapper.Map<List<TrainingCustomerTypeDTO>>(TrainingCustomerType);
             }
-            else {throw new Exception("לא נמצא כזה סוג אימון או לקוח, אולי זה לא פעיל!!");}
+
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while attempting to get the Training Customer Type List.", ex);
+            }
         }
+
+
+        public async Task<TrainingCustomerTypeDTO> GetByIdAsync(int id)
+        {
+            try
+            {
+                var c = await _context.TrainingCustomersTypes.Where(t => t.Id == id && t.IsActive).FirstOrDefaultAsync();
+                return _mapper.Map<TrainingCustomerTypeDTO>(c);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while attempting to get the Training Customer Type.", ex);
+            }
+        }
+
+
+
+        //הוספת אימון כולל בדיקות האם זה אפשרי
+        public async Task<TrainingCustomerTypeDTO> AddAsync(TrainingCustomerTypeDTO trainingCustomerTypedto)
+        {
+            try
+            {
+                if (trainingCustomerTypedto == null)
+                {
+                    throw new Exception("Training Customer Type cannot be null");
+                }
+                var trainingCustomerType = _mapper.Map<TrainingCustomerType>(trainingCustomerTypedto);
+
+                TrainingType trainingType = _context.TrainingTypes.FirstOrDefault(t => t.ID == trainingCustomerType.TrainingTypeId);
+                trainingCustomerType.TrainingType = trainingType;
+
+                CustomerType customerType = _context.CustomerTypes.FirstOrDefault(t => t.ID == trainingCustomerType.CustomerTypeID);
+                trainingCustomerType.CustomerType = customerType;
+
+                //בדיקות בשביל לראות האם אפשר להוסיף כזה סוג אימון
+                if (trainingCustomerType != null && trainingCustomerType.TrainingType != null && trainingCustomerType.CustomerType != null)
+                {
+                    // בדיקה האם סוג האימון בפעילות
+                    if (trainingCustomerType.TrainingType.IsActive)
+                    {
+                        //האם יש אפשרות לכזה לקוח
+                        if (trainingCustomerType.CustomerType.IsActive)
+                        {
+                            var allTrainingCustomerType = await GetAllAsync();
+                            foreach (var item in allTrainingCustomerType)
+                            {
+                                if (item.TrainingTypeID == trainingCustomerType.TrainingTypeId && item.CustomerTypeID == trainingCustomerType.CustomerTypeID)
+                                {
+                                    throw new Exception("כבר קיים כזה סוג אימון!!");
+                                }
+                            }
+                            var TrainingCustomerType1 = await _context.TrainingCustomersTypes.AddAsync(_mapper.Map<TrainingCustomerType>(trainingCustomerType));
+                            await _context.SaveChangesAsync();
+                            return trainingCustomerTypedto;
+                        }
+                        else { throw new Exception("Condition not met: CustomerType not active"); }
+                    }
+                    else { throw new Exception("Condition not met: TrainingType not active"); }
+                }
+                else { throw new Exception("לא נמצא כזה סוג אימון או לקוח, אולי זה לא פעיל!!"); }
+            }
+
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while attempting to add the Training Customer Type.", ex);
+            }
+        }
+
+
+        public async Task UpdateAsync(TrainingCustomerTypeDTO trainingCustomerTypedto)
+        {
+            try
+            {
+                var trainingCustomerType = await _context.TrainingCustomersTypes.FindAsync(trainingCustomerTypedto.ID);
+                if (trainingCustomerType == null)
+                    throw new Exception("Training Customer Type not found.");
+                _mapper.Map(trainingCustomerTypedto, trainingCustomerType);
+                _context.Entry(trainingCustomerType).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while attempting to update the Training Customer Type.", ex);
+            }
+        }
+
 
         //הפונקציה הזו הופכת את ה isActive להיות false
-        public async Task<TrainingCustomerTypeDTO> DeleteTrainingCustomerType(int id)
+        public async Task DeleteAsync(int id)
         {
-            var thisTCT = await context.TrainingCustomersTypes.FindAsync(id);
-            if (thisTCT == null)
-                return null;
-            thisTCT.IsActive = false;
-            context.Entry(thisTCT).State = EntityState.Modified;
-            await context.SaveChangesAsync();
-            return mapper.Map<TrainingCustomerTypeDTO>(thisTCT);
-        }
-        public async Task<TrainingCustomerTypeDTO> UpdateTrainingCustomerType(int id, DTO.TrainingCustomerTypeDTO trainingCustomerTypedto)
-        {
-            var trainingCustomerType = await context.TrainingCustomersTypes.FindAsync(id);
-            if (trainingCustomerType == null)
-                return null;
+            try
+            {
+                var thisTCT = await _context.TrainingCustomersTypes.FindAsync(id);
+                if (thisTCT == null || !thisTCT.IsActive)
+                    return;
+                thisTCT.IsActive = false;
+                await _context.SaveChangesAsync();
+            }
 
-            mapper.Map(trainingCustomerTypedto, trainingCustomerType);
-            context.Entry(trainingCustomerType).State = EntityState.Modified;
-            await context.SaveChangesAsync();
-            return mapper.Map<TrainingCustomerTypeDTO>(trainingCustomerType);
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while attempting to delete the Training Customer Type.", ex);
+            }
         }
-        public async Task<List<DTO.TrainingCustomerTypeDTO>> GetAllTrainingCustomerTypes()
-        {
-            var TrainingCustomerType = await context.TrainingCustomersTypes.ToListAsync();
 
-            return mapper.Map<List<DTO.TrainingCustomerTypeDTO>>(TrainingCustomerType);
 
-        }
 
         //public async Task<List<DTO.TrainingCustomerTypeDTO>> GetActiveTrainingCustomerTypes()
         //{
@@ -100,21 +153,8 @@ namespace StudioUp.Repo.Repositories
         //    return mapper.Map<List<DTO.TrainingCustomerTypeDTO>>(TrainingCustomerTypes);
         //}
 
-        public async Task<DTO.TrainingCustomerTypeDTO> GetTrainingCustomerTypeById(int id)
-        {
-            try
-            {
-                var c = await context.TrainingCustomersTypes.FirstOrDefaultAsync(t => t.Id == id);
-                var mapTrain = mapper.Map<DTO.TrainingCustomerTypeDTO>(c);
-                return mapTrain;
 
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-       
+
 
     }
 

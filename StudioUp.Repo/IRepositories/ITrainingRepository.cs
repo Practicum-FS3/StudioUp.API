@@ -14,7 +14,8 @@ namespace StudioUp.Repo.IRepositories
         public Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalender();
         public Task<TrainingDTO> GetTrainingById(int id);
         public Task<TrainingDTO> AddTraining(TrainingDTO trainingDto);
-        public Task<TrainingDTO> UpdateTraining(TrainingDTO trainingDto,int id);
+        public Task UpdateTraining(TrainingDTO trainingDto);
         public Task DeleteTraining(int id);
+
     }
 }

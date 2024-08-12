@@ -12,7 +12,7 @@
         public string Title3 { get; set; }
         public bool IsActive { get; set; }
 
-        public virtual ICollection<ContentSectionDowoladDTO> ContentSections { get; set; }
+        public virtual ICollection<ContentSectionDTO> ContentSections { get; set; }
 
     }
 }

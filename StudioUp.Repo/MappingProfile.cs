@@ -22,25 +22,26 @@ namespace StudioUp.Repo
             CreateMap<Customer, CustomerDTO>().ReverseMap();
             CreateMap<CustomerType, CustomerTypeDTO>().ReverseMap();
             CreateMap<HMO, HMODTO>().ReverseMap();
+
             CreateMap<PaymentOptionDTO,PaymentOptionDTO>().ReverseMap();
             CreateMap<SubscriptionType, SubscriptionTypeDTO>().ReverseMap();
             CreateMap<Trainer, TrainerDTO>().ReverseMap();
             CreateMap<TrainingCustomer, TrainingCustomerDTO>().ReverseMap();
             CreateMap<TrainingCustomerType, TrainingCustomerTypeDTO>().ReverseMap();
+            CreateMap<CustomerSubscriptionDTO, CustomerSubscription>().ReverseMap();
+            CreateMap<TrainingCustomer, TrainingCustomerDTO>().ReverseMap();
 
 
             CreateMap<ContentType, ContentTypeDTO>().ReverseMap();
-            //CreateMap<ContentSection, ContentSectionDowoladDTO>().ReverseMap();
-            CreateMap<ContentSection, ContentSectionDowoladDTO>()
+            CreateMap<ContentSection, ContentSectionDTO>()
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => new FileDownloadDTO
                 {
                     FileName = src.ContentTypeID.ToString() + " " + src.ID.ToString(),
-                    ContentType = "image.png", // ערך קבוע
+                    ContentType = "image/png", // ערך קבוע
                     Data = src.ImageData,
                 }));
 
-            //     CreateMap<ContentSectionUploadDTO, ContentSection>().ReverseMap();
-            CreateMap<ContentSectionUploadDTO, ContentSection>()
+            CreateMap<ContentSectionManagementDTO, ContentSection>()
              .ForMember(dest => dest.ImageData, opt => opt.MapFrom(src => ConvertIFormFileToByteArray(src.fileUploadDTO)));
 
             CreateMap<Training, TrainingDTO>().ReverseMap();
@@ -103,11 +104,14 @@ namespace StudioUp.Repo
             if (file == null)
                 return null;
 
+
             using (var memoryStream = new MemoryStream())
             {
                 file.File.CopyTo(memoryStream);
                 return memoryStream.ToArray();
             }
+
+
         }
     }
 }

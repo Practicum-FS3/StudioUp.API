@@ -1,6 +1,6 @@
 ﻿namespace StudioUp.DTO
 {
-    public class ContentSectionDowoladDTO
+    public class ContentSectionDTO
     {
         public int ID { get; set; }
         public int ContentTypeID { get; set; }

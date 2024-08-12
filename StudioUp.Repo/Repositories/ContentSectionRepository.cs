@@ -25,12 +25,12 @@ namespace StudioUp.Repo
             _logger = logger;
         }
 
-        public async Task<IEnumerable<ContentSectionDowoladDTO>> GetAllAsync()
+        public async Task<IEnumerable<ContentSectionDTO>> GetAllAsync()
         {
             try
             {
                 var cS = await _context.ContentSections.Include(cs => cs.ContentType).Where(cS => cS.IsActive).ToListAsync();
-                return _mapper.Map<IEnumerable<ContentSectionDowoladDTO>>(cS);
+                return _mapper.Map<IEnumerable<ContentSectionDTO>>(cS);
             }
             catch (Exception)
             {
@@ -39,12 +39,12 @@ namespace StudioUp.Repo
 
         }
 
-        public async Task<ContentSectionDowoladDTO> GetByIdAsync(int id)
+        public async Task<ContentSectionDTO> GetByIdAsync(int id)
         {
             try
             {
                 var contentSection = await _context.ContentSections.Include(cs => cs.ContentType).FirstOrDefaultAsync(cs => cs.ID == id && cs.IsActive);
-                return _mapper.Map<ContentSectionDowoladDTO>(contentSection);
+                return _mapper.Map<ContentSectionDTO>(contentSection);
             }
             catch (Exception)
             {
@@ -52,13 +52,14 @@ namespace StudioUp.Repo
             }
         }
 
-        public async Task<ContentSectionDowoladDTO> AddAsync(ContentSectionUploadDTO contentSection)
+        public async Task<ContentSectionDTO> AddAsync(ContentSectionManagementDTO contentSection)
         {
             try
             {
-               var c= await _context.ContentSections.AddAsync(_mapper.Map<ContentSection>(contentSection));
+                var cS=_mapper.Map<ContentSection>(contentSection);
+                var c = await _context.ContentSections.AddAsync(_mapper.Map<ContentSection>(contentSection));
                 await _context.SaveChangesAsync();
-                return _mapper.Map<ContentSectionDowoladDTO>(contentSection);
+                return _mapper.Map<ContentSectionDTO>(cS);
             }
             catch (Exception)
             {
@@ -67,7 +68,7 @@ namespace StudioUp.Repo
 
         }
 
-        public async Task UpdateAsync(ContentSectionUploadDTO contentSection)
+        public async Task UpdateAsync(ContentSectionManagementDTO contentSection)
         {
             try
             {
@@ -100,11 +101,11 @@ namespace StudioUp.Repo
             }
         }
 
-        public async Task<IEnumerable<ContentSectionDowoladDTO>> GetByContentTypeAsync(int contentTypeId)
+        public async Task<IEnumerable<ContentSectionDTO>> GetByContentTypeAsync(int contentTypeId)
         {
             try
             {
-                return _mapper.Map<IEnumerable<ContentSectionDowoladDTO>>(await _context.ContentSections
+                return _mapper.Map<IEnumerable<ContentSectionDTO>>(await _context.ContentSections
                              .Include(cs => cs.ContentType)
                              .Where(cs => cs.ContentTypeID == contentTypeId)
                              .ToListAsync());

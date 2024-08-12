@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StudioUp.DTO
 {
-    public class ContentSectionUploadDTO
+    public class ContentSectionManagementDTO
     {
         public int ID { get; set; }
         public int ContentTypeID { get; set; }
