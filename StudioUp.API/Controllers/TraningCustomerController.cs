@@ -63,6 +63,7 @@ namespace StudioUp.API.Controllers
             return Ok(trainingsCustomer);
         }
 
+
         // POST api/TraningCustomer/AddTrainingCustomer
         [HttpPost("AddTrainingCustomer")]
         public async Task<ActionResult<TrainingCustomerDTO>> Post(TrainingCustomerDTO trainingCustomer)
@@ -77,6 +78,7 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+       
 
         // PUT api/TraningCustomer/UpdateTrainingCustomer/5
         [HttpPut("UpdateTrainingCustomer/{id}")]

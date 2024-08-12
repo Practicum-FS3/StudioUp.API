@@ -15,12 +15,10 @@ namespace StudioUp.Models
         [Key]
         public int ID { get; set; }
 
-        
         [ForeignKey("AvailableTraining")]
         public int? TrainingID { get; set; }
         public virtual AvailableTraining Training { get; set; }
 
-        
         [ForeignKey("Customer")]
         public int? CustomerID { get; set; }
         public virtual Customer Customer { get; set; }

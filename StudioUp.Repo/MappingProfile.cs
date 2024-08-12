@@ -82,7 +82,8 @@ namespace StudioUp.Repo
             .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.Training.Training.TrainingCustomerType.TrainingType.Title))
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Training.Date))
             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.Training.DayOfWeek))
-            .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.Training.ParticipantsCount));
+            .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.Training.ParticipantsCount))
+            .ForMember(dest => dest.IsRegistered, opt => opt.MapFrom(src => true));
 
         }
     }

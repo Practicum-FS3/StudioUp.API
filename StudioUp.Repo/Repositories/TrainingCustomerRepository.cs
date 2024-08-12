@@ -39,6 +39,31 @@ namespace StudioUp.Repo.Repositories
 
             }
         }
+        public async Task<List<CalanderAvailableTrainingDTO>> GetAllRegisteredTrainingsDetailsAsync()
+        {
+            try
+            {
+                var startDate = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
+                var endDate = startDate.AddDays(7);
+                var trainings = await _context.TrainingCustomers.Where(x => x.IsActive
+                && x.Training.Date >= startDate && x.Training.Date < endDate)
+                      .Include(tc => tc.Customer)
+                            .ThenInclude(c => c.CustomerType)
+                       .Include(tc => tc.Training)
+                             .ThenInclude(at => at.Training)
+                                .ThenInclude(t => t.Trainer)
+                        .Include(tc => tc.Training)
+                            .ThenInclude(at => at.Training)
+                                .ThenInclude(t => t.TrainingCustomerType)
+                                    .ThenInclude(tct => tct.TrainingType)
+                        .ToListAsync();
+                return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
         public async Task<TrainingCustomerDTO> GetTraningCustomerById(int id)
         {
