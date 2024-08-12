@@ -86,6 +86,8 @@ namespace StudioUp.API
             builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
             builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
+            builder.Services.AddScoped<IInternalHomeLinksRepository,InternalHomeLinksRepository>();
+
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
