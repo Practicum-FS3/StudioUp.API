@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240804124810_create")]
-    partial class create
+    [Migration("20240807223759_CustomerFixedTraining")]
+    partial class CustomerFixedTraining
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,38 @@ namespace StudioUp.Models.Migrations
                     b.ToTable("T_AvailableTrainings");
                 });
 
+            modelBuilder.Entity("StudioUp.Models.Contact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsWatch")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("T_Contacts");
+                });
+
             modelBuilder.Entity("StudioUp.Models.ContentSection", b =>
                 {
                     b.Property<int>("ID")
@@ -76,6 +108,9 @@ namespace StudioUp.Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Section3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Section4")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("ViewInHP")
@@ -118,6 +153,9 @@ namespace StudioUp.Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title4")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -560,6 +598,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<int?>("CustomerID")
                         .HasColumnType("int");
 
+                    b.Property<int>("CustomerSubscriptionId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -569,6 +610,8 @@ namespace StudioUp.Models.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("CustomerID");
+
+                    b.HasIndex("CustomerSubscriptionId");
 
                     b.HasIndex("TrainingID");
 
@@ -745,11 +788,19 @@ namespace StudioUp.Models.Migrations
                         .WithMany()
                         .HasForeignKey("CustomerID");
 
+                    b.HasOne("StudioUp.Models.CustomerSubscription", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("CustomerSubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StudioUp.Models.AvailableTraining", "Training")
                         .WithMany()
                         .HasForeignKey("TrainingID");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Subscription");
 
                     b.Navigation("Training");
                 });

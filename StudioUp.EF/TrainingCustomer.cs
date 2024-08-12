@@ -23,6 +23,10 @@ namespace StudioUp.Models
         public int? CustomerID { get; set; }
         public virtual Customer Customer { get; set; }
         public bool Attended { get; set; }
+
+        [ForeignKey("CustomerSubscription")]
+        public int CustomerSubscriptionId { get; set; }
+        public virtual CustomerSubscription Subscription { get; set; }
         public bool IsActive { get; set; }
 
 

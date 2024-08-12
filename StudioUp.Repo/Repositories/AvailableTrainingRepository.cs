@@ -53,33 +53,7 @@ namespace StudioUp.Repo.Repositories
                 .ToListAsync();
             return _mapper.Map<IEnumerable<CalanderAvailableTrainingDTO>>(availableTrainings);
         }
-        public async Task<List<CalanderAvailableTrainingDTO>> GetAllCustomersDetailsAsync()
-        {
-            try
-            {
-                var startDate = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
-                var endDate = startDate.AddDays(7);
-                var trainings = await _context.TrainingCustomers.Where(x => x.IsActive
-                && x.Training.Date >= startDate && x.Training.Date < endDate)
-                      .Include(tc => tc.Customer)
-                            .ThenInclude(c => c.CustomerType)
-                       .Include(tc => tc.Training)
-                             .ThenInclude(at => at.Training)
-                                .ThenInclude(t => t.Trainer)
-                        .Include(tc => tc.Training)
-                            .ThenInclude(at => at.Training)
-                                .ThenInclude(t => t.TrainingCustomerType)
-                                    .ThenInclude(tct => tct.TrainingType)
-                        .ToListAsync();
-                return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "- this error in the func GetAvailableTrainingsForCustomerAsync-Repo");
-                throw;
-            }
-        }
-
+       
     public async Task<List<CalanderAvailableTrainingDTO>> GetAllTrainingsDetailsForCustomerAsync(int customerId)
         {
             try
