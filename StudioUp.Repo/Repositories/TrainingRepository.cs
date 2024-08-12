@@ -62,12 +62,12 @@ namespace StudioUp.Repo.Repositories
 
             try
             {
-               List<Training> lst = await _context.Trainings
-                .Include(t => t.TrainingCustomerType.CustomerType)
-                .Include(t => t.TrainingCustomerType.TrainingType)
-                .Include(t => t.Trainer)
-                .ToListAsync();
-            return _mapper.Map<List<CalanderTrainingDTO>>(lst);
+                List<Training> lst = await _context.Trainings
+                 .Include(t => t.TrainingCustomerType.CustomerType)
+                 .Include(t => t.TrainingCustomerType.TrainingType)
+                 .Include(t => t.Trainer)
+                 .ToListAsync();
+                return _mapper.Map<List<CalanderTrainingDTO>>(lst);
             }
             catch (Exception ex)
             {
@@ -148,6 +148,6 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-       
+
     }
 }

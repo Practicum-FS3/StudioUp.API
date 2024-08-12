@@ -63,6 +63,7 @@ namespace StudioUp.API.Controllers
             return Ok(trainingsCustomer);
         }
 
+
         // POST api/TraningCustomer/AddTrainingCustomer
         [HttpPost("AddTrainingCustomer")]
         public async Task<ActionResult<TrainingCustomerDTO>> Post(TrainingCustomerDTO trainingCustomer)
@@ -77,19 +78,7 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-        [HttpGet("GetAllRegisteredTrainingsDetails")]
-        public async Task<ActionResult<IEnumerable<CalanderAvailableTrainingDTO>>> GetAllRegisteredTrainingsDetailsAsync()
-        {
-            try
-            {
-                var trainings = await _trainingCustomerRepository.GetAllRegisteredTrainingsDetailsAsync();
-                return Ok(trainings);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+       
 
         // PUT api/TraningCustomer/UpdateTrainingCustomer/5
         [HttpPut("UpdateTrainingCustomer/{id}")]
