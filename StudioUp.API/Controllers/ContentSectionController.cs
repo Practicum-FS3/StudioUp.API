@@ -22,24 +22,24 @@ namespace StudioUp.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ContentSectionDTO>>> GetContentSections()
+        [HttpGet("/GetAllContentSections")]
+        public async Task<ActionResult<IEnumerable<ContentSectionDTO>>> GetAllContentSections()
         {
             try
             {
                 var contentSections = await _repository.GetAllAsync();
-                return Ok(contentSections);
+                 return Ok(contentSections);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in ContentSectionController/GetContentSections");
+                _logger.LogError(ex, " this error in ContentSectionController/GetAllContentSections");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ContentSectionDTO>> GetContentSection(int id)
+        [HttpGet("/GetContentSectionById/{id}")]
+        public async Task<IActionResult> GetContentSectionById(int id)
         {
             try
             {
@@ -52,14 +52,14 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in ContentSectionController/GetContentSection");
+                _logger.LogError(ex, " this error in ContentSectionController/GetContentSectionById");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
         }
 
-        [HttpGet("byContentType/{contentTypeId}")]
-        public async Task<ActionResult<IEnumerable<ContentSectionDTO>>> GetContentSectionsByContentType(int contentTypeId)
+        [HttpGet("GetContentSectionsByIdContentType/{contentTypeId}")]
+        public async Task<ActionResult<IEnumerable<ContentSectionDTO>>> GetContentSectionsByIdContentType(int contentTypeId)
         {
             try
             {
@@ -73,14 +73,14 @@ namespace StudioUp.API.Controllers
             catch (Exception ex)
             {
 
-                _logger.LogError(ex, " this error in ContentSectionController/GetContentSectionsByContentType");
+                _logger.LogError(ex, " this error in ContentSectionController/GetContentSectionsByIdContentType");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
         }
 
-        [HttpPost("upload")]
-        public async Task<ActionResult<ContentSectionDTO>> CreateContentSection([FromForm] ContentSectionDTO contentSectionDTO, IFormFile? file)
+        [HttpPost("/CreateContentSection")]
+        public async Task<ActionResult<ContentSectionDTO>> CreateContentSection([FromForm] ContentSectionManagementDTO contentSectionDTO)
         {
             if (contentSectionDTO == null)
             {
@@ -98,21 +98,16 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateContentSection(int id, ContentSectionDTO contentSectionDTO)
+        [HttpPut("/UpdateContentSection")]
+        public async Task<IActionResult> UpdateContentSection([FromForm] ContentSectionManagementDTO contentSectionDTO)
         {
             if (contentSectionDTO == null)
             {
                 return BadRequest("The content section field is null.");
             }
-            if (id != contentSectionDTO.ID)
-            {
-                return BadRequest("ID in URL does not match ID in body");
-            }
             try
             {
-                var contentSection = await _repository.GetByIdAsync(id);
-                await _repository.UpdateAsync(contentSection);
+                await _repository.UpdateAsync(contentSectionDTO);
                 return NoContent();
             }
             catch (Exception ex)
@@ -122,17 +117,12 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("/DeleteContentSection/{id}")]
         public async Task<IActionResult> DeleteContentSection(int id)
         {
             try
             {
-                var contentSection = await _repository.GetByIdAsync(id);
-                if (contentSection == null)
-                {
-                    return NotFound("content section not found by ID");
-                }
-                await _repository.DeleteAsync(contentSection);
+                await _repository.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
