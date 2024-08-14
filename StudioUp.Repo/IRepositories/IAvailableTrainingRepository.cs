@@ -17,5 +17,7 @@ namespace StudioUp.Repo.IRepositories
         Task<AvailableTrainingDTO> AddAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO);
         Task UpdateAvailableTrainingAsync(int id, AvailableTrainingDTO availableTrainingDTO);
         Task DeleteAvailableTrainingAsync(int id);
+       public Task<bool> GenerateAvailableTrainings(DateOnly startDate, DateOnly? endDate, bool isWeekEnd);
+
     }
 }
