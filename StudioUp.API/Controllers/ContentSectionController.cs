@@ -22,7 +22,7 @@ namespace StudioUp.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/GetAllContentSections")]
+        [HttpGet("GetAllContentSections")]
         public async Task<ActionResult<IEnumerable<ContentSectionDTO>>> GetAllContentSections()
         {
             try
@@ -38,7 +38,7 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpGet("/GetContentSectionById/{id}")]
+        [HttpGet("GetContentSectionById/{id}")]
         public async Task<IActionResult> GetContentSectionById(int id)
         {
             try
@@ -79,7 +79,7 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPost("/CreateContentSection")]
+        [HttpPost("CreateContentSection")]
         public async Task<ActionResult<ContentSectionDTO>> CreateContentSection([FromForm] ContentSectionManagementDTO contentSectionDTO)
         {
             if (contentSectionDTO == null)
@@ -98,7 +98,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut("/UpdateContentSection")]
+        [HttpPut("UpdateContentSection")]
         public async Task<IActionResult> UpdateContentSection([FromForm] ContentSectionManagementDTO contentSectionDTO)
         {
             if (contentSectionDTO == null)
@@ -117,7 +117,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpDelete("/DeleteContentSection/{id}")]
+        [HttpDelete("DeleteContentSection/{id}")]
         public async Task<IActionResult> DeleteContentSection(int id)
         {
             try

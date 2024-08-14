@@ -16,8 +16,8 @@ namespace StudioUp.API.Controllers
         {
             this.leumitCommimentsRepository = leumitCommimentsRepository;
         }
-        [HttpGet("GetAll")]
-        public async Task<List<LeumitCommitmentsDTO>> getAllLeumitCommitments()
+        [HttpGet("GetAllLeumitCommitments")]
+        public async Task<List<LeumitCommitmentsDTO>> GetAllLeumitCommitments()
         {
             try
             {
@@ -28,8 +28,8 @@ namespace StudioUp.API.Controllers
                 throw exeption;
             }
         }
-        [HttpGet("GetById/{id}")]
-        public async Task<LeumitCommitmentsDTO> getLeumitCommitmentsById(string id)
+        [HttpGet("GetLeumitCommitmentById/{id}")]
+        public async Task<LeumitCommitmentsDTO> GetLeumitCommitmentById(string id)
         {
             try
             {
@@ -40,8 +40,8 @@ namespace StudioUp.API.Controllers
                 throw exeption;
             }
         }
-        [HttpPut("Update")]
-        public async Task<ActionResult<LeumitCommitmentsDTO>> update( LeumitCommitmentsDTO newLeumitCommiments)
+        [HttpPut("UpdateLeumitCommitment")]
+        public async Task<ActionResult<LeumitCommitmentsDTO>> UpdateLeumitCommitment( LeumitCommitmentsDTO newLeumitCommiments)
         {
            
             try
@@ -54,8 +54,8 @@ namespace StudioUp.API.Controllers
                 throw ex;
             }
         }
-        [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult> delete(string id)
+        [HttpDelete("DeleteLeumitCommitment/{id}")]
+        public async Task<ActionResult> DeleteLeumitCommitment(string id)
         {         
             try
             {
@@ -75,14 +75,14 @@ namespace StudioUp.API.Controllers
             }
         }
         [HttpPost]
-        [Route("Add")]
+        [Route("AddLeumitCommitment")]
         //לבדוק את טיפוס ההחזרה
-        public async Task<ActionResult<LeumitCommitmentsDTO>> add(LeumitCommitmentsDTO leumitCommimentsDTO)
+        public async Task<ActionResult<LeumitCommitmentsDTO>> AddLeumitCommitment(LeumitCommitmentsDTO leumitCommimentsDTO)
         {
             try
             {
                 await leumitCommimentsRepository.AddAsync(leumitCommimentsDTO);
-                return CreatedAtAction(nameof(add), leumitCommimentsDTO);
+                return CreatedAtAction(nameof(AddLeumitCommitment), leumitCommimentsDTO);
             }
             catch (Exception ex)
             {

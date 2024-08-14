@@ -57,8 +57,8 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPut("PutCustomerType")]
-        public async Task<IActionResult> PutCustomerType(CustomerTypeDTO customerType)
+        [HttpPut("AddCustomerType")]
+        public async Task<IActionResult> AddCustomerType(CustomerTypeDTO customerType)
         {
             if (customerType == null)
             {
@@ -79,8 +79,8 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPost("PostCustomerType")]
-        public async Task<ActionResult<CustomerType>> PostCustomerType(CustomerTypeDTO customerType)
+        [HttpPost("UpdateCustomerType")]
+        public async Task<ActionResult<CustomerType>> UpdateCustomerType(CustomerTypeDTO customerType)
         {
             try
             {

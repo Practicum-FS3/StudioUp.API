@@ -36,8 +36,8 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost]
-        [Route("Add")]
-        public async Task<ActionResult<HMODTO>> add(HMODTO hmo)
+        [Route("AddHMO")]
+        public async Task<ActionResult<HMODTO>> AddHMO(HMODTO hmo)
         {
             if (hmo == null)
             {
@@ -57,7 +57,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> delete(int id)
+        public async Task<IActionResult> DeleteHMO(int id)
         {
             try
             {
@@ -73,8 +73,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<HMODTO>> getById(int id)
+        [HttpGet("GetHMOById/{id}")]
+        public async Task<ActionResult<HMODTO>> GetHMOById(int id)
         {
             try
             {
@@ -93,8 +93,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut("Update")]
-        public async Task<IActionResult> update(HMODTO hmo)
+        [HttpPut("UpdateHMO")]
+        public async Task<IActionResult> UpdateHMO(HMODTO hmo)
         {
             if (hmo == null)
             {

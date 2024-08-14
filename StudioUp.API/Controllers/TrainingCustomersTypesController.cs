@@ -92,8 +92,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPost("addTrainingCustomerType")]
-        public async Task<ActionResult<TrainingCustomerTypeDTO>> addTrainingCustomerType(TrainingCustomerTypeDTO trainingCustomerTypedto)
+        [HttpPost("AddTrainingCustomerType")]
+        public async Task<ActionResult<TrainingCustomerTypeDTO>> AddTrainingCustomerType(TrainingCustomerTypeDTO trainingCustomerTypedto)
         {
             try
             {

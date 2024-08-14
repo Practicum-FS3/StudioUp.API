@@ -37,7 +37,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpGet("GetPaymentOptionById/{id}")]
-        public async Task<ActionResult<PaymentOptionDTO>> GetPaymentOption(int id)
+        public async Task<ActionResult<PaymentOptionDTO>> GetPaymentOptionById(int id)
         {
             try
             {
@@ -57,8 +57,8 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPut("PutPaymentOption")]
-        public async Task<IActionResult> PutPaymentOption(PaymentOptionDTO paymentOption)
+        [HttpPut("UpdatePaymentOption")]
+        public async Task<IActionResult> UpdatePaymentOption(PaymentOptionDTO paymentOption)
         {
             if (paymentOption == null)
             {
@@ -79,8 +79,8 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPost("PostPaymentOption")]
-        public async Task<ActionResult<PaymentOptionDTO>> PostPaymentOption(PaymentOptionDTO paymentOption)
+        [HttpPost("CreatePaymentOption")]
+        public async Task<ActionResult<PaymentOptionDTO>> CreatePaymentOption(PaymentOptionDTO paymentOption)
         {
             if (paymentOption == null)
             {

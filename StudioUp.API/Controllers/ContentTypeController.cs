@@ -19,7 +19,7 @@ namespace StudioUp.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/GetAllContentType")]
+        [HttpGet("GetAllContentType")]
         public async Task<ActionResult<IEnumerable<ContentTypeDTO>>> GetAllContentType()
         {
             try
@@ -72,7 +72,7 @@ namespace StudioUp.API.Controllers
             }
 
         }
-        [HttpGet("/GetByContentTypeId/{id}")]
+        [HttpGet("GetByContentTypeId/{id}")]
         public async Task<ActionResult<ContentTypeDTO>> GetByContentTypeId(int id)
         {
             try
@@ -94,7 +94,7 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPost("/CreateContentType")]
+        [HttpPost("CreateContentType")]
         public async Task<ActionResult<ContentTypeDTO>> CreateContentType(ContentTypeDTO contentTypeDTO)
         {
             if (contentTypeDTO == null)
@@ -114,7 +114,7 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPut("/UpdateContentType")]
+        [HttpPut("UpdateContentType")]
         public async Task<ActionResult> UpdateContentType(ContentTypeDTO contentTypeDTO)
         {
             if (contentTypeDTO == null)
@@ -134,7 +134,7 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpDelete("/DeleteContentType/{id}")]
+        [HttpDelete("DeleteContentType/{id}")]
         public async Task<IActionResult> DeleteContentType(int id)
         {
             try

@@ -38,7 +38,7 @@ namespace StudioUp.API.Controllers
 
         // GET: api/AvailableTraining/forCalander
 
-        [HttpGet("forCalander")]
+        [HttpGet("GetAvailableTrainingsCalender")]
         public async Task<ActionResult<IEnumerable<AvailableTrainingDTO>>> GetAvailableTrainingsCalender()
         {
             var availableTrainingsDTO = await _availableTrainingRepository.GetAllAvailableTrainingsAsyncForCalander();
@@ -46,7 +46,7 @@ namespace StudioUp.API.Controllers
         }
 
         //[HttpGet("{id}")]
-        [HttpGet("GetById/{id}")]
+        [HttpGet("GetByIdAvailableTraining/{id}")]
         public async Task<ActionResult<AvailableTrainingDTO>> GetByIdAvailableTraining(int id)
         {
             try
@@ -64,7 +64,7 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message} ");
             }
         }
-        [HttpPost("Add")]
+        [HttpPost("CreateAvailableTraining")]
         public async Task<ActionResult<AvailableTrainingDTO>> CreateAvailableTraining([FromBody] AvailableTrainingDTO availableTrainingDTO)
         {
             if (availableTrainingDTO == null)
@@ -83,20 +83,17 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> UpdateAvailableTraining(int id, [FromBody] AvailableTrainingDTO availableTrainingDTO)
+        [HttpPut("UpdateAvailableTraining}")]
+        public async Task<IActionResult> UpdateAvailableTraining([FromBody] AvailableTrainingDTO availableTrainingDTO)
         {
             if (availableTrainingDTO == null)
             {
                 return BadRequest("AvailableTrainingDTO object is null");
             }
-            if (id != availableTrainingDTO.Id)
-            {
-                return BadRequest("ID in URL does not match ID in body");
-            }
+
             try
             {
-                await _availableTrainingRepository.UpdateAvailableTrainingAsync(id, availableTrainingDTO);
+                await _availableTrainingRepository.UpdateAvailableTrainingAsync(availableTrainingDTO);
                 return NoContent();
             }
             catch (Exception ex)
@@ -106,7 +103,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("DeleteAvailableTraining/{id}")]
         public async Task<IActionResult> DeleteAvailableTraining(int id)
         {
             try

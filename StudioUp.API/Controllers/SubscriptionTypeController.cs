@@ -37,7 +37,7 @@ namespace StudioUp.API.Controllers
 
 
         [HttpGet("GetSubscriptionTypeById/{id}")]
-        public async Task<ActionResult<SubscriptionTypeDTO>> GetSubscriptionType(int id)
+        public async Task<ActionResult<SubscriptionTypeDTO>> GetSubscriptionTypeById(int id)
         {
             try
             {
@@ -55,8 +55,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut("PutSubscriptionType")]
-        public async Task<ActionResult<SubscriptionTypeDTO>> PutSubscriptionType(SubscriptionTypeDTO subscriptionType)
+        [HttpPut("UpdateSubscriptionType")]
+        public async Task<ActionResult<SubscriptionTypeDTO>> UpdateSubscriptionType(SubscriptionTypeDTO subscriptionType)
         {
             if (subscriptionType == null)
             {
@@ -75,8 +75,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPost("PostSubscriptionType")]
-        public async Task<ActionResult<SubscriptionTypeDTO>> PostSubscriptionType(SubscriptionTypeDTO subscriptionType)
+        [HttpPost("CreateSubscriptionType")]
+        public async Task<ActionResult<SubscriptionTypeDTO>> CreateSubscriptionType(SubscriptionTypeDTO subscriptionType)
         {
             if (subscriptionType == null)
             {
