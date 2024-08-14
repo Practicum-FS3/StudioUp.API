@@ -85,8 +85,6 @@ namespace StudioUp.API
             builder.Services.AddScoped<IHMORepository, HMORepository>();
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
             builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
-            builder.Services.AddScoped<IRepository<CustomerTypeDTO>, CustomerTypeRepository>();
-            builder.Services.AddScoped<IRepository<TrainingType>, TrainigTypeRepository>();
             builder.Services.AddScoped<ICustomerTypeRepository, CustomerTypeRepository>();
             builder.Services.AddScoped<IRepository<SubscriptionTypeDTO>, SubscriptionTypeRepository>();
             builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
@@ -103,7 +101,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
-            builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
+          //  builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();

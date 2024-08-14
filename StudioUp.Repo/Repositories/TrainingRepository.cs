@@ -49,7 +49,7 @@ namespace StudioUp.Repo.Repositories
                  .Include(t => t.TrainingCustomerType.TrainingType)
                  .Include(t => t.Trainer)
                  .ToListAsync();
-                return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
+                return _mapper.Map<List<CalanderTrainingDTO>>(lst);
             }
 
             catch (Exception ex)
@@ -75,7 +75,7 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public async Task<TrainingPostDTO> AddTraining(TrainingPostDTO trainingDto)
+        public async Task<TrainingDTO> AddTraining(TrainingDTO trainingDto)
         {
             try
             {

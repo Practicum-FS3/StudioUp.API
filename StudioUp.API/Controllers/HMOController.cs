@@ -43,7 +43,7 @@ namespace StudioUp.API.Controllers
             try
             {
                 var newHMO = await _hmoService.AddAsync(hmo);
-                return CreatedAtAction(nameof(GetById), new { id = newHMO.ID }, newHMO);
+                return CreatedAtAction(nameof(AddHMO), new { id = newHMO.ID }, newHMO);
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace StudioUp.API.Controllers
             }
             try
             {
-                await HMOService.UpdateAsync(hmo);
+                await _hmoService.UpdateAsync(hmo);
                 return NoContent();
             }
             catch (Exception ex)

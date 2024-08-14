@@ -95,24 +95,15 @@ namespace StudioUp.Repo.Repository
             }
         }
 
-        public async Task<bool> UpdateAsync(HMODTO hmo)
+        public async Task<bool> UpdateAsync(HMODTO hmoDTO)
         {
-            var h = await _context.HMOs.FirstOrDefaultAsync(h => h.ID == hmo.ID);
-            if (h == null)
-            {
-                var existingHMO = await _context.HMOs.FirstOrDefaultAsync(h => h.ID == hmo.ID && h.IsActive);
-                if (existingHMO == null)
-                {
-                    throw new Exception($"HMO with ID {hmo.ID} does not exist or is inactive.");
-                }
+            try { 
+           HMO hmo = _mapper.Map<HMO>(hmoDTO); 
 
-            _context.HMOs.Update(h);
+            _context.HMOs.Update(hmo);
             await _context.SaveChangesAsync();
-            return true;
-        }
-                _mapper.Map(hmo, existingHMO);
-                await _context.SaveChangesAsync();
                 return true;
+               
             }
             catch (Exception ex)
             {
