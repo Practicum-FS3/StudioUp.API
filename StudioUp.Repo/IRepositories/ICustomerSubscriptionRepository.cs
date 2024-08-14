@@ -14,4 +14,5 @@ namespace StudioUp.Repo.IRepositories
         Task DeleteCustomerSubscriptionAsync(int id);
         Task<List<CustomerSubscriptionDTO>> GetCustomerSubscriptionsByCustomerIdAsync(int customerId);
     }
+
 }

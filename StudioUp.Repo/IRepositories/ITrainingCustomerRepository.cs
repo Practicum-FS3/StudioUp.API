@@ -13,6 +13,8 @@ namespace StudioUp.Repo.IRepositories
         Task<List<TrainingCustomerDTO>> GetAllTrainingCustomers();
         Task<TrainingCustomerDTO> GetTrainingCustomerById(int id);
         Task<List<TrainingCustomerDTO>> GetTrainingCustomerByCustomerId(int id);
+     
+        Task<List<CalanderAvailableTrainingDTO>> GetAllRegisteredTrainingsDetailsAsync();
 
         Task<List<TrainingCustomerDTO>> GetTrainingCustomerByTrainingId(int id);
         Task<TrainingCustomerDTO> AddTrainingCustomer(TrainingCustomerDTO trainingCustomer);

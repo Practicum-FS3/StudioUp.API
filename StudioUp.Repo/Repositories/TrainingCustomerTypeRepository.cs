@@ -143,7 +143,17 @@ namespace StudioUp.Repo.Repositories
                 throw new Exception("An error occurred while attempting to delete the Training Customer Type.", ex);
             }
         }
+            mapper.Map(trainingCustomerTypedto, trainingCustomerType);
+            context.Entry(trainingCustomerType).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return mapper.Map<TrainingCustomerTypePostComand>(trainingCustomerType);
+        }
+        public async Task<List<TrainingCustomerTypeDTO>> GetAllTrainingCustomerTypes()
+        {
+            var TrainingCustomerType = await context.TrainingCustomersTypes.Include(a => a.TrainingType).Include(a => a.CustomerType).ToListAsync();
 
+
+            return mapper.Map<List<TrainingCustomerTypeDTO>>(TrainingCustomerType);
 
 
         //public async Task<List<DTO.TrainingCustomerTypeDTO>> GetActiveTrainingCustomerTypes()

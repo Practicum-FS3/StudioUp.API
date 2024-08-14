@@ -69,7 +69,7 @@ namespace StudioUp.API.Controllers
                 var leumitCommimentTypes = await leumitCommimentTypesRepository.GetByIdAsync(id);
                 if (leumitCommimentTypes == null)
                 {
-                    return NotFound($"Training with ID {id} not found.");
+                    return NotFound($"LeumitCommimentType with ID {id} not found.");
                 }
                 leumitCommimentTypes.IsActive = false;
                 await leumitCommimentTypesRepository.UpdateAsync(leumitCommimentTypes);
@@ -77,9 +77,12 @@ namespace StudioUp.API.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                return StatusCode(500, "Internal server error");
             }
         }
+
+
+
         [HttpPost]
         [Route("AddLeumitCommitmentType")]
      

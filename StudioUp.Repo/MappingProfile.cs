@@ -44,6 +44,9 @@ namespace StudioUp.Repo
             CreateMap<ContentSectionManagementDTO, ContentSection>()
              .ForMember(dest => dest.ImageData, opt => opt.MapFrom(src => ConvertIFormFileToByteArray(src.fileUploadDTO)));
 
+            CreateMap<TrainingCustomerType, TrainingCustomerTypeDTO>()
+               .ForMember(dest => dest.TrainingCustomerName, opt => opt.MapFrom(src => src.TrainingType.Title + " " + src.CustomerType.Title));
+            CreateMap<TrainingCustomerTypePostComand, TrainingCustomerType>().ReverseMap();
             CreateMap<Training, TrainingDTO>().ReverseMap();
             CreateMap<TrainingType, TrainingTypeDTO>().ReverseMap();
             CreateMap<FileUpload, FileUploadDTO>().ReverseMap();
@@ -111,6 +114,8 @@ namespace StudioUp.Repo
                 return memoryStream.ToArray();
             }
 
+            .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.Training.ParticipantsCount))
+            .ForMember(dest => dest.IsRegistered, opt => opt.MapFrom(src => true));
 
         }
     }
