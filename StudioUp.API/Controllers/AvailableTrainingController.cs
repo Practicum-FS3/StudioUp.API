@@ -120,7 +120,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut("UpdateAvailableTraining}")]
+        [HttpPut("UpdateAvailableTraining")]
         public async Task<IActionResult> UpdateAvailableTraining([FromBody] AvailableTrainingDTO availableTrainingDTO)
         {
             if (availableTrainingDTO == null)
