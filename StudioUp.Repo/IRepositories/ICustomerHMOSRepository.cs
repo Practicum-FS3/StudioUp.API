@@ -12,7 +12,7 @@ namespace StudioUp.Repo.IRepositories
         public Task<IEnumerable<CustomerHMOSDTO>> GetAllAsync();
         public Task<CustomerHMOSDTO> GetByIdAsync(int id);
         public Task<int> AddAsync(CustomerHMOSDTO customerHMOSDTO);
-        public Task UpdateAsync(int id, CustomerHMOSDTO customerHMOSDTO);
-        public Task<bool> DeleteAsync(int id);
+        public Task UpdateAsync(CustomerHMOSDTO customerHMOSDTO);
+        public Task DeleteAsync(int id);
     }
 }

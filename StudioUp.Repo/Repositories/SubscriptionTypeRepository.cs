@@ -18,46 +18,42 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly ILogger<SubscriptionTypeRepository> _logger;
-
-
-        public SubscriptionTypeRepository(DataContext context, IMapper mapper, ILogger<SubscriptionTypeRepository> logger)
+        public SubscriptionTypeRepository(DataContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _logger = logger;
         }
-
         public async Task<List<SubscriptionTypeDTO>> GetAllAsync()
         {
+
             try
             {
-                var s = await _context.SubscriptionTypes.ToListAsync();
-                return _mapper.Map<List<SubscriptionTypeDTO>>(s);
-            }
-            catch (Exception ex)
+                var x = await _context.SubscriptionTypes.Where(y => y.IsActive).ToListAsync();
+                return _mapper.Map<List<SubscriptionTypeDTO>>(x);
+                          }
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
                 throw;
             }
 
         }
-
         public async Task<SubscriptionTypeDTO> GetByIdAsync(int id)
         {
             try
             {
                 var s = await _context.SubscriptionTypes.FindAsync(id);
-                return _mapper.Map<SubscriptionTypeDTO>(s);
+                if (s.IsActive)
+                      return _mapper.Map<SubscriptionTypeDTO>(s);
+                else
+                    throw new Exception($"cant find SubscriptionType by ID {id}");
+               
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
                 throw;
             }
 
         }
-
         public async Task<SubscriptionTypeDTO> AddAsync(SubscriptionTypeDTO subscriptionType)
         {
             try
@@ -66,14 +62,12 @@ namespace StudioUp.Repo.Repositories
                 await _context.SaveChangesAsync();
                 return subscriptionType;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
                 throw;
             }
 
         }
-
         public async Task UpdateAsync(SubscriptionTypeDTO subscriptionTypeDto)
         {
             try
@@ -81,39 +75,30 @@ namespace StudioUp.Repo.Repositories
                 _context.SubscriptionTypes.Update(_mapper.Map<SubscriptionType>(subscriptionTypeDto));
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
                 throw;
             }
 
         }
-
-        public async Task<bool> DeleteSubscription(int id)
+        public async Task DeleteAsync(int id)
         {
             try
             {
                 var subscriptionType = await _context.SubscriptionTypes.FindAsync(id);
-                if (subscriptionType == null)
+                if (subscriptionType == null||subscriptionType.IsActive==false)
                 {
-                    throw new Exception($"cant find subscription by ID {id}"); 
+                    throw new Exception($"cant find subscription by ID {id}");
                 }
-                _context.SubscriptionTypes.Remove(subscriptionType);
-                    await _context.SaveChangesAsync();
-                return true;
-                
+               subscriptionType.IsActive=false;
+                await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
                 throw;
             }
-           
+
         }
 
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

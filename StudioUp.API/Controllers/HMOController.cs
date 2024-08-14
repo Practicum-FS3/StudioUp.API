@@ -33,7 +33,8 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<HMODTO>> Add(HMODTO hmo)
+        [Route("AddHMO")]
+        public async Task<ActionResult<HMODTO>> AddHMO(HMODTO hmo)
         {
             if (hmo == null)
             {
@@ -42,7 +43,7 @@ namespace StudioUp.API.Controllers
             try
             {
                 var newHMO = await _hmoService.AddAsync(hmo);
-                return CreatedAtAction(nameof(GetById), new { id = newHMO.ID }, newHMO);
+                return CreatedAtAction(nameof(AddHMO), new { id = newHMO.ID }, newHMO);
             }
             catch (Exception ex)
             {
@@ -51,8 +52,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> DeleteHMO(int id)
         {
             try
             {
@@ -66,10 +67,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<HMODTO>> GetById(int id)
+        [HttpGet("GetHMOById/{id}")]
+        public async Task<ActionResult<HMODTO>> GetHMOById(int id)
         {
             try
             {
@@ -87,20 +86,16 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(HMODTO hmo)
+        [HttpPut("UpdateHMO")]
+        public async Task<IActionResult> UpdateHMO(HMODTO hmo)
         {
             if (hmo == null)
             {
-                return BadRequest("The HMO field is null.");
+                return BadRequest("The hmo field is null.");
             }
             try
             {
-                var isUpdated = await _hmoService.UpdateAsync(hmo);
-                if (!isUpdated)
-                {
-                    return NotFound("HMO not found.");
-                }
+                await _hmoService.UpdateAsync(hmo);
                 return NoContent();
             }
             catch (Exception ex)

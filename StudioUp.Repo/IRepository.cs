@@ -14,5 +14,6 @@ namespace StudioUp.Repo
         Task<T> AddAsync(T t);
         Task UpdateAsync(T t);
         Task DeleteAsync(int id);
-    }
+/*        Task AddAsync(Func<object, object> map, TrainingTypeDTO trainingTypeDto);
+*/    }
 }

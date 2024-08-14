@@ -11,13 +11,14 @@ namespace StudioUp.Repo.IRepositories
     public interface ITrainingCustomerRepository
     {
         Task<List<TrainingCustomerDTO>> GetAllTrainingCustomers();
-        Task<TrainingCustomerDTO> GetTraningCustomerById(int id);
-        Task<List<TrainingCustomerDTO>> GetTraningCustomerByCustomerId(int id);
+        Task<TrainingCustomerDTO> GetTrainingCustomerById(int id);
+        Task<List<TrainingCustomerDTO>> GetTrainingCustomerByCustomerId(int id);
+     
         Task<List<CalanderAvailableTrainingDTO>> GetAllRegisteredTrainingsDetailsAsync();
 
-        Task<List<TrainingCustomerDTO>> GetTraningCustomerByTraningId(int id);
-        Task<TrainingCustomerDTO> AddTraningCustomer(TrainingCustomerDTO trainingCustomer);
-        Task<bool> UpdateTrainingCustomers(TrainingCustomerDTO trainingCustomer);       
-        Task<bool> DeleteTraningCustomer(int id);
+        Task<List<TrainingCustomerDTO>> GetTrainingCustomerByTrainingId(int id);
+        Task<TrainingCustomerDTO> AddTrainingCustomer(TrainingCustomerDTO trainingCustomer);
+        Task UpdateTrainingCustomer(TrainingCustomerDTO trainingCustomer);       
+        Task DeleteTrainingCustomer(int id);
     }
 }

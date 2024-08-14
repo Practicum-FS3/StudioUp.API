@@ -17,7 +17,7 @@ namespace StudioUp.Repo.IRepositories
         Task<AvailableTrainingDTO> GetAvailableTrainingByTrainingIdAsync(int id);
         Task<List<CalanderAvailableTrainingDTO>> GetAllTrainingsDetailsForCustomerAsync(int customerId);
         Task<AvailableTrainingDTO> AddAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO);
-        Task UpdateAvailableTrainingAsync(int id, AvailableTrainingDTO availableTrainingDTO);
+        Task UpdateAvailableTrainingAsync( AvailableTrainingDTO availableTrainingDTO);
         Task DeleteAvailableTrainingAsync(int id);
     }
 }

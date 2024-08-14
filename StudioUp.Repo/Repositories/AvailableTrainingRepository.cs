@@ -184,16 +184,12 @@ namespace StudioUp.Repo.Repositories
                 throw;
             }
         }
-        public async Task UpdateAvailableTrainingAsync(int id, AvailableTrainingDTO availableTrainingDTO)
+        public async Task UpdateAvailableTrainingAsync(AvailableTrainingDTO availableTrainingDTO)
         {
             try
             {
-                var availableTraining = await _context.AvailableTraining.FindAsync(id);
-                if (availableTraining == null)
-                {
-                    throw new Exception($"cant find availableTraining by ID {id}");
-                }
-                _mapper.Map(availableTrainingDTO, availableTraining);
+                var availableTraining = _mapper.Map<AvailableTraining>(availableTrainingDTO);
+               
                 _context.Entry(availableTraining).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
@@ -225,13 +221,13 @@ namespace StudioUp.Repo.Repositories
 
     }
 
-    //TODO - find a place
-    public static class DateTimeExtensions
-    {
-        public static DateTime StartOfWeek(this DateTime dt, DayOfWeek startOfWeek)
-        {
-            int diff = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
-            return dt.AddDays(-1 * diff).Date;
-        }
-    }
+    ////TODO - find a place
+    //public static class DateTimeExtensions
+    //{
+    //    public static DateTime StartOfWeek(this DateTime dt, DayOfWeek startOfWeek)
+    //    {
+    //        int diff = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
+    //        return dt.AddDays(-1 * diff).Date;
+    //    //}
+    //}
 }

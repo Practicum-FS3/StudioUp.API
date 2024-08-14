@@ -11,7 +11,7 @@ namespace StudioUp.Repo.IRepositories
     {
         Task<List<LeumitCommitmentsDTO>> GetAllAsync();
         Task<LeumitCommitmentsDTO> GetByIdAsync(string id);
-        Task<LeumitCommitmentsDTO> UpdateAsync(LeumitCommitmentsDTO leumitCommitmentsDTO, string id);
+        Task<LeumitCommitmentsDTO> UpdateAsync(LeumitCommitmentsDTO leumitCommitmentsDTO);
         Task AddAsync(LeumitCommitmentsDTO leumitCommitmentsDTO);
         Task<bool> DeleteAsync(string id);
 

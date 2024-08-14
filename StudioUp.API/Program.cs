@@ -18,24 +18,20 @@ namespace StudioUp.API
 {
     public class Program
     {
+
         public static void Main(string[] args)
         {
             // Early init of NLog to allow startup and exception logging, before host is built
             var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
             logger.Debug("init main");
-
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-
                 // Configure services
                 ConfigureServices(builder);
-
                 var app = builder.Build();
-
                 // Configure middleware
                 ConfigureMiddleware(app);
-
                 app.Run();
             }
             catch (Exception exception)
@@ -50,6 +46,7 @@ namespace StudioUp.API
                 NLog.LogManager.Shutdown();
             }
         }
+
 
         private static void ConfigureServices(WebApplicationBuilder builder)
         {
@@ -78,27 +75,38 @@ namespace StudioUp.API
             // Repositories
             builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
             builder.Services.AddScoped<IContentTypeRepository, ContentTypeRepository>();
-            builder.Services.AddAutoMapper(typeof(MappingProfile)); 
-
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainingTypeRepository>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
+            // בדוגמה הזו, המימוש של ICustomerSubscriptionRepository הוא CustomerSubscriptionRepository
+            builder.Services.AddScoped<ICustomerSubscriptionRepository, CustomerSubscriptionRepository>();
             builder.Services.AddScoped<IContactRepository, ContactRepository>();
             builder.Services.AddScoped<IHMORepository, HMORepository>();
             builder.Services.AddScoped<IAvailableTrainingRepository, AvailableTrainingRepository>();
             builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
-            builder.Services.AddScoped<IRepository<CustomerTypeDTO>, CustomerTypeRepository>();
-            builder.Services.AddScoped<IRepository<TrainingType>, TrainigTypeRepository>();
+            builder.Services.AddScoped<ICustomerTypeRepository, CustomerTypeRepository>();
             builder.Services.AddScoped<IRepository<SubscriptionTypeDTO>, SubscriptionTypeRepository>();
             builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
+            builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainingTypeRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
+            builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
+            builder.Services.AddScoped<IRepository<TrainingCustomerTypeDTO>, TrainingCustomerTypeRepository>();
             builder.Services.AddScoped<ICustomerHMOSRepository, CustomerHMOSRepository>();
             builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
             builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
+            builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
             builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
-            builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
+          //  builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
 
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
            // builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
