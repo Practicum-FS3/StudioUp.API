@@ -17,6 +17,8 @@ namespace StudioUp.Repo
         {
 
             CreateMap<AvailableTraining, AvailableTrainingDTO>().ReverseMap();
+            CreateMap<InternalHomeLinks, InternalHomeLinksDTO>().ReverseMap();
+
             CreateMap<Customer, CustomerDTO>().ReverseMap();
             CreateMap<CustomerType, CustomerTypeDTO>().ReverseMap();
             CreateMap<HMO, HMODTO>().ReverseMap();

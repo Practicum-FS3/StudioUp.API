@@ -95,11 +95,11 @@ namespace StudioUp.Repo.Repositories
             try
 
             {
-                Training training = await _context.Trainings
+                 training = await _context.Trainings
                                .Include(t => t.TrainingCustomerType)
                                .Include(t => t.Trainer)
                                .FirstOrDefaultAsync(t => t.ID == id);
-                return _mapper.Map<TrainingDTO>(training);
+                //return _mapper.Map<TrainingDTO>(training);
             }
             catch (Exception ex)
             {
