@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudioUp.Models;
 
@@ -11,9 +12,11 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240811112419_internalHomeLinks")]
+    partial class internalHomeLinks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,38 +50,6 @@ namespace StudioUp.Models.Migrations
                     b.HasIndex("TrainingId");
 
                     b.ToTable("T_AvailableTrainings");
-                });
-
-            modelBuilder.Entity("StudioUp.Models.Contact", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsWatch")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("T_Contacts");
                 });
 
             modelBuilder.Entity("StudioUp.Models.ContentSection", b =>
@@ -585,7 +556,7 @@ namespace StudioUp.Models.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Minutes")
+                    b.Property<int>("Minute")
                         .HasColumnType("int");
 
                     b.Property<int?>("ParticipantsCount")
@@ -620,9 +591,6 @@ namespace StudioUp.Models.Migrations
                     b.Property<int?>("CustomerID")
                         .HasColumnType("int");
 
-                    b.Property<int>("CustomerSubscriptionId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -632,8 +600,6 @@ namespace StudioUp.Models.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("CustomerID");
-
-                    b.HasIndex("CustomerSubscriptionId");
 
                     b.HasIndex("TrainingID");
 
@@ -810,19 +776,11 @@ namespace StudioUp.Models.Migrations
                         .WithMany()
                         .HasForeignKey("CustomerID");
 
-                    b.HasOne("StudioUp.Models.CustomerSubscription", "Subscription")
-                        .WithMany()
-                        .HasForeignKey("CustomerSubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("StudioUp.Models.AvailableTraining", "Training")
                         .WithMany()
                         .HasForeignKey("TrainingID");
 
                     b.Navigation("Customer");
-
-                    b.Navigation("Subscription");
 
                     b.Navigation("Training");
                 });

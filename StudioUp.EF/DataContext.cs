@@ -45,9 +45,13 @@ namespace StudioUp.Models
         public DbSet<LeumitCommitments> LeumitCommitments { get; set; }
         public DbSet<LeumitCommimentTypes> LeumitCommimentTypes { get; set; }
         public DbSet<CustomerSubscription> CustomerSubscriptions { get; set; }
+        public DbSet<InternalHomeLinks> InternalHomeLinks { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
+
         }
 
     }

@@ -14,45 +14,40 @@ namespace StudioUp.Repo.Repositories
 {
     public class TrainerRepository : ITrainerRepository
     {
-
-
         private readonly DataContext context;
         private readonly IMapper mapper;
-        private readonly ILogger<TrainerRepository> _logger;
-
-
-        public TrainerRepository(DataContext context, IMapper mapper, ILogger<TrainerRepository> logger)
+        public TrainerRepository(DataContext context, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
-            _logger = logger;
         }
         public async Task<List<TrainerDTO>> GetAllTrainers()
         {
             try
             {
-                var trainers = await context.Trainers.ToListAsync();
-                return mapper.Map<List<TrainerDTO>>(trainers);
+                var x = await context.Trainers.Where(y => y.IsActive).ToListAsync();
+                return mapper.Map<List<TrainerDTO>>(x);
+
+
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "- this error in the func GetAllTrainers-Repo");
                 throw;
             }
         }
-
         public async Task<TrainerDTO> GetTrainerById(int id)
         {
             try
             {
                 var c = await context.Trainers.FirstOrDefaultAsync(t => t.ID == id);
-                var mapTrain = mapper.Map<TrainerDTO>(c);
-                return mapTrain;
-
+                if (c.IsActive)
+                    return mapper.Map<TrainerDTO>(c);
+                else
+                    throw new Exception($"cant find trainer  by ID {id}");
+               
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func GetTrainerById-Repo");
                 throw;
             }
         }
@@ -64,9 +59,8 @@ namespace StudioUp.Repo.Repositories
                 await this.context.SaveChangesAsync();
                 return t;
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func AddTrainer-Repo");
                 throw;
             }
         }
@@ -84,29 +78,25 @@ namespace StudioUp.Repo.Repositories
                 context.Trainers.Update(mapper.Map<Trainer>(trainer));
                 await context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func UpdateTrainer-Repo");
                 throw;
             }
-
         }
         public async Task DeleteTrainer(int id)
         {
             try
             {
                 var c = await context.Trainers.FirstOrDefaultAsync(t => t.ID == id);
-                if (c == null)
+                if (c == null||c.IsActive==false)
                 {
-                    _logger.LogError($"Not found trainre with ID: {id}");
+                    throw new($"Not found trainre with ID: {id}");
                 }
-                var mapT = mapper.Map<Trainer>(c);
-                context.Trainers.Remove(c);
+                c.IsActive = false;
                 await context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch 
             {
-                _logger.LogError(ex, "- this error in the func DeleteTrainer-Repo");
                 throw;
 
             }

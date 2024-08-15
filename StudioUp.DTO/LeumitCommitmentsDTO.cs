@@ -16,7 +16,7 @@ namespace StudioUp.DTO
         public int CustomerId { get; set; }
         public string CommitmentTz { get; set; }
         public DateOnly BirthDate { get; set; }
-        public int FileUploadId { get; set; }
+        public int? FileUploadId { get; set; }
         public DateOnly Validity { get; set; }
         public bool IsActive { get; set; }
     }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo;
+using StudioUp.Repo.IRepositories;
 
 namespace StudioUp.API.Controllers
 {
@@ -10,18 +11,18 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class CustomerTypeController : ControllerBase
     {
-        private readonly IRepository<CustomerTypeDTO> _repository;
+        private readonly ICustomerTypeRepository _repository;
         private readonly ILogger<CustomerTypeController> _logger;
 
 
-        public CustomerTypeController(IRepository<CustomerTypeDTO> repsitory, ILogger<CustomerTypeController> logger)
+        public CustomerTypeController(ICustomerTypeRepository repsitory, ILogger<CustomerTypeController> logger)
         {
             _repository = repsitory;
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerTypeDTO>>> GetCustomerTypes()
+        [HttpGet("GetAllCustomerTypes")]
+        public async Task<ActionResult<IEnumerable<CustomerType>>> GetAllCustomerTypes()
         {
             try
             {
@@ -36,8 +37,8 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CustomerTypeDTO>> GetCustomerType(int id)
+        [HttpGet("GetCustomerTypeById/{id}")]
+        public async Task<ActionResult<CustomerType>> GetCustomerTypeById(int id)
         {
             try
             {
@@ -56,17 +57,14 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerType(int id, CustomerTypeDTO customerType)
+        [HttpPut("AddCustomerType")]
+        public async Task<IActionResult> AddCustomerType(CustomerTypeDTO customerType)
         {
             if (customerType == null)
             {
                 return BadRequest("The content field is null.");
             }
-            if (id != customerType.ID)
-            {
-                return BadRequest("ID in URL does not match ID in body");
-            }
+
             try
             {
                 await _repository.UpdateAsync(customerType);
@@ -81,28 +79,26 @@ namespace StudioUp.API.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<ActionResult<CustomerType>> PostCustomerType(CustomerTypeDTO customerType)
+        [HttpPost("UpdateCustomerType")]
+        public async Task<ActionResult<CustomerType>> UpdateCustomerType(CustomerTypeDTO customerType)
         {
-            if (customerType == null)
-            {
-                return BadRequest("The content field is null.");
-            }
             try
             {
-                await _repository.AddAsync(customerType);
-                return CreatedAtAction(nameof(GetCustomerType), new { id = customerType.ID }, customerType);
-
+                var c = await _repository.AddAsync(customerType);
+                if (c == null)
+                {
+                    return BadRequest("customer field is null.");
+                }
+                return Ok(c);
             }
             catch (Exception ex)
             {
-
-                _logger.LogError(ex, " this error in CustomerTypeController/PostCustomerType");
+                _logger.LogError(ex, " this error in CustomerController/AddCustomer");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteCustomerType/{id}")]
         public async Task<IActionResult> DeleteCustomerType(int id)
         {
             try

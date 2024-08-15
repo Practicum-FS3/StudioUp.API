@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudioUp.Models;
 
@@ -11,9 +12,11 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240815090702_update-cus-fix-trng")]
+    partial class updatecusfixtrng
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -367,31 +370,6 @@ namespace StudioUp.Models.Migrations
                     b.ToTable("T_HMOs");
                 });
 
-            modelBuilder.Entity("StudioUp.Models.InternalHomeLinks", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsExternal")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Link")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("InternalHomeLinks");
-                });
-
             modelBuilder.Entity("StudioUp.Models.LeumitCommimentTypes", b =>
                 {
                     b.Property<int>("Id")
@@ -585,7 +563,7 @@ namespace StudioUp.Models.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Minutes")
+                    b.Property<int>("Minute")
                         .HasColumnType("int");
 
                     b.Property<int?>("ParticipantsCount")
