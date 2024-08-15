@@ -51,6 +51,7 @@ namespace StudioUp.Models
         {
             optionsBuilder.EnableSensitiveDataLogging();
             //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
+
         }
 
     }
