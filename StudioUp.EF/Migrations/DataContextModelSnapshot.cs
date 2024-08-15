@@ -560,7 +560,7 @@ namespace StudioUp.Models.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Minute")
+                    b.Property<int>("Minutes")
                         .HasColumnType("int");
 
                     b.Property<int?>("ParticipantsCount")

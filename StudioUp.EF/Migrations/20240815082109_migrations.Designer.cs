@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240805201535_migr")]
-    partial class migr
+    [Migration("20240815082109_migrations")]
+    partial class migrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -563,7 +563,7 @@ namespace StudioUp.Models.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Minute")
+                    b.Property<int>("Minutes")
                         .HasColumnType("int");
 
                     b.Property<int?>("ParticipantsCount")
@@ -598,6 +598,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<int?>("CustomerID")
                         .HasColumnType("int");
 
+                    b.Property<int>("CustomerSubscriptionId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -607,6 +610,8 @@ namespace StudioUp.Models.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("CustomerID");
+
+                    b.HasIndex("CustomerSubscriptionId");
 
                     b.HasIndex("TrainingID");
 
@@ -783,11 +788,19 @@ namespace StudioUp.Models.Migrations
                         .WithMany()
                         .HasForeignKey("CustomerID");
 
+                    b.HasOne("StudioUp.Models.CustomerSubscription", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("CustomerSubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StudioUp.Models.AvailableTraining", "Training")
                         .WithMany()
                         .HasForeignKey("TrainingID");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Subscription");
 
                     b.Navigation("Training");
                 });
