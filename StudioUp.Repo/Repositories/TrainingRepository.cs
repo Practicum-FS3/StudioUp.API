@@ -62,6 +62,7 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
+
                 Training training = await _context.Trainings.Where(t => t.ID == id && t.IsActive)
                                                   .Include(t => t.TrainingCustomerType)
                                                   .Include(t => t.Trainer)
