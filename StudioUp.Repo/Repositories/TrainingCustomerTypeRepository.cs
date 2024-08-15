@@ -143,7 +143,14 @@ namespace StudioUp.Repo.Repositories
                 throw new Exception("An error occurred while attempting to delete the Training Customer Type.", ex);
             }
         }
+         
+        public async Task<List<TrainingCustomerTypeDTO>> GetAllTrainingCustomerTypes()
+        {
+            var TrainingCustomerType = await _context.TrainingCustomersTypes.Include(a => a.TrainingType).Include(a => a.CustomerType).ToListAsync();
 
+
+            return _mapper.Map<List<TrainingCustomerTypeDTO>>(TrainingCustomerType);
+            }
 
 
         //public async Task<List<DTO.TrainingCustomerTypeDTO>> GetActiveTrainingCustomerTypes()

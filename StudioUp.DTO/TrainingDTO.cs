@@ -33,6 +33,7 @@ namespace StudioUp.DTO
 
         
         public int TrainingCustomerTypeId { get; set; }
+        public string TrainingCustomerTypeName { get; set; }
         public int ParticipantsCount { get; set; }
         public bool IsActive { get; set; }
 

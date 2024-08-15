@@ -22,7 +22,7 @@ namespace StudioUp.Repo.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<TrainingDTO>> GetAllTrainings()
+        public async Task<List<TrainingDTO>> GetAllTrainings()
         {
             try
             {
@@ -30,7 +30,7 @@ namespace StudioUp.Repo.Repositories
                               .Include(t => t.TrainingCustomerType)
                               .Include(t => t.Trainer)
                               .ToListAsync();
-                return _mapper.Map<IEnumerable<TrainingDTO>>(lst);
+                return _mapper.Map<List<TrainingDTO>>(lst);
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace StudioUp.Repo.Repositories
         }
 
 
-        public async Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalender()
+        public async Task<List<CalanderTrainingDTO>> GetAllTrainingsCalender()
         {
             try
             {
@@ -49,7 +49,7 @@ namespace StudioUp.Repo.Repositories
                  .Include(t => t.TrainingCustomerType.TrainingType)
                  .Include(t => t.Trainer)
                  .ToListAsync();
-                return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
+                return _mapper.Map<List<CalanderTrainingDTO>>(lst);
             }
 
             catch (Exception ex)

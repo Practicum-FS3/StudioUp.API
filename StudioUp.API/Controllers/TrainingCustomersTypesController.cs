@@ -92,8 +92,8 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPost("addTrainingCustomerType")]
-        public async Task<ActionResult<TrainingCustomerTypeDTO>> addTrainingCustomerType(TrainingCustomerTypeDTO trainingCustomerTypedto)
+        [HttpPost("AddTrainingCustomerType")]
+        public async Task<ActionResult<TrainingCustomerTypeDTO>> AddTrainingCustomerType(TrainingCustomerTypeDTO trainingCustomerTypedto)
         {
             try
             {
@@ -137,7 +137,6 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error:{ex.Message}");
             }
         }
-
 
     }
 }

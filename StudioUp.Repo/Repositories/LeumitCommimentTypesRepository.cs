@@ -56,6 +56,8 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
+
+
         public async Task<List<LeumitCommimentTypesDTO>> GetAllAsync()
         {
             try
@@ -79,7 +81,7 @@ namespace StudioUp.Repo.Repositories
                                           .FirstOrDefaultAsync(l => l.Id == id && l.IsActive);
                 if (entity == null)
                 {
-                    throw new Exception($"LeumitCommitmentType with ID {id} does not exist or is inactive.");
+                    return null;
                 }
                 return mapper.Map<LeumitCommimentTypesDTO>(entity);
             }
@@ -89,20 +91,20 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        public async Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO, int id)
+        public async Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO lc)
         {
             try
             {
                 var existingEntity = await context.LeumitCommimentTypes
-                                                  .FirstOrDefaultAsync(l => l.Id == id && l.IsActive);
+                                                  .FirstOrDefaultAsync(l => l.Id == lc.Id && l.IsActive);
                 if (existingEntity == null)
                 {
-                    throw new Exception($"LeumitCommitmentType with ID {id} does not exist or is inactive.");
+                    return null;
                 }
 
-                mapper.Map(leumitCommimentTypesDTO, existingEntity);
+                mapper.Map(lc, existingEntity);
                 await context.SaveChangesAsync();
-                return leumitCommimentTypesDTO;
+                return lc;
             }
             catch (Exception exception)
             {

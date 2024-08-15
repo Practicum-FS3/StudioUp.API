@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
@@ -15,44 +16,70 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        public FileUploadRepository(DataContext context, IMapper mapper)
+        private readonly ILogger<FileUploadRepository> _logger;
+
+        public FileUploadRepository(DataContext context, IMapper mapper, ILogger<FileUploadRepository> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
         public async Task<FileDownloadDTO> GetFileAsync(int id)
         {
-            var file = await _context.Files.FindAsync(id);
-            if (file == null || !file.IsActive)
-                return null;           
-            return _mapper.Map<FileDownloadDTO>(file);
-        }
-        public async Task<int> AddFileAsync(IFormFile file)
-        {
-            using (var memoryStream = new MemoryStream())
+            try
             {
-                await file.CopyToAsync(memoryStream);
-                var fileUpload = new FileUpload
-                {
-                    FileName = file.FileName,
-                    Data = memoryStream.ToArray(),
-                    ContentType = file.ContentType,
-                    IsActive = true
-                };
-                _context.Files.Add(fileUpload);
-                await _context.SaveChangesAsync();
-                return fileUpload.Id;
+                var file = await _context.Files.FindAsync(id);
+                if (file == null || !file.IsActive)
+                    return null;
+                return _mapper.Map<FileDownloadDTO>(file);
             }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
-        public async Task<bool> DeleteFileAsync(int id)
+        public async Task<FileDownloadDTO> AddFileAsync(IFormFile file)
         {
-            var fileUpload = await _context.Files.FindAsync(id);
-            fileUpload.IsActive = false;
-            if (fileUpload == null)
-                return false;
-            _context.Files.Update(fileUpload);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream);
+                    var fileUpload = new FileUpload
+                    {
+                        FileName = file.FileName,
+                        Data = memoryStream.ToArray(),
+                        ContentType = file.ContentType,
+                        IsActive = true
+                    };
+                    _context.Files.Add(fileUpload);
+                    await _context.SaveChangesAsync();
+                    return _mapper.Map<FileDownloadDTO>(fileUpload);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+        public async Task DeleteFileAsync(int id)
+        {
+            try
+            {
+                var fileUpload = await _context.Files.FindAsync(id);
+                fileUpload.IsActive = false;
+                if (fileUpload == null)
+                    throw new Exception("File not found by id");
+               // _context.Files.Update(fileUpload);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
     }
 }

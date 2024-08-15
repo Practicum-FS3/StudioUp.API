@@ -79,7 +79,7 @@ namespace StudioUp.Repo.Repositories
                                           .FirstOrDefaultAsync(l => l.Id == id && l.IsActive);
                 if (entity == null)
                 {
-                    throw new Exception($"LeumitCommitment with ID {id} does not exist or is inactive.");
+                    return null;
                 }
                 return mapper.Map<LeumitCommitmentsDTO>(entity);
             }
@@ -89,20 +89,20 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
-        public async Task<LeumitCommitmentsDTO> UpdateAsync(LeumitCommitmentsDTO leumitCommitmentsDTO, string id)
+        public async Task<LeumitCommitmentsDTO> UpdateAsync(LeumitCommitmentsDTO lc)
         {
             try
             {
                 var existingEntity = await context.LeumitCommitments
-                                                  .FirstOrDefaultAsync(l => l.Id == id && l.IsActive);
+                                                  .FirstOrDefaultAsync(l => l.Id == lc.Id && l.IsActive);
                 if (existingEntity == null)
                 {
-                    throw new Exception($"LeumitCommitment with ID {id} does not exist or is inactive.");
+                    return null;
                 }
 
-                mapper.Map(leumitCommitmentsDTO, existingEntity);
+                mapper.Map(lc, existingEntity);
                 await context.SaveChangesAsync();
-                return leumitCommitmentsDTO;
+                return lc;
             }
             catch (Exception exception)
             {

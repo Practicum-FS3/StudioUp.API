@@ -97,8 +97,12 @@ namespace StudioUp.API
             builder.Services.AddScoped<ICustomerHMOSRepository, CustomerHMOSRepository>();
             builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
             builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
+            builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
             builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
+          //  builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
