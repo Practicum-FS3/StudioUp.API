@@ -45,6 +45,9 @@ namespace StudioUp.Models
         public DbSet<LeumitCommitments> LeumitCommitments { get; set; }
         public DbSet<LeumitCommimentTypes> LeumitCommimentTypes { get; set; }
         public DbSet<CustomerSubscription> CustomerSubscriptions { get; set; }
+
+        public DbSet<CustomerFixedTraining> CustomerFixedTrainings { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableSensitiveDataLogging();

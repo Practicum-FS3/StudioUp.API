@@ -426,6 +426,30 @@ namespace StudioUp.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "T_CustomerFixedTrainings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerId = table.Column<int>(type: "int", nullable: true),
+                    TrainingId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_T_CustomerFixedTrainings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_T_CustomerFixedTrainings_T_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "T_Customers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_T_CustomerFixedTrainings_T_Trainings_TrainingId",
+                        column: x => x.TrainingId,
+                        principalTable: "T_Trainings",
+                        principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "T_TrainingsCustomers",
                 columns: table => new
                 {
@@ -466,6 +490,16 @@ namespace StudioUp.Models.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_T_AvailableTrainings_TrainingId",
                 table: "T_AvailableTrainings",
+                column: "TrainingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_T_CustomerFixedTrainings_CustomerId",
+                table: "T_CustomerFixedTrainings",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_T_CustomerFixedTrainings_TrainingId",
+                table: "T_CustomerFixedTrainings",
                 column: "TrainingId");
 
             migrationBuilder.CreateIndex(
@@ -570,6 +604,9 @@ namespace StudioUp.Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "T_Contacts");
+
+            migrationBuilder.DropTable(
+                name: "T_CustomerFixedTrainings");
 
             migrationBuilder.DropTable(
                 name: "T_CustomerHMOS");
