@@ -46,7 +46,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("TrainingId");
 
-                    b.ToTable("T_AvailableTrainings", (string)null);
+                    b.ToTable("T_AvailableTrainings");
                 });
 
             modelBuilder.Entity("StudioUp.Models.Contact", b =>
@@ -78,7 +78,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("T_Contacts", (string)null);
+                    b.ToTable("T_Contacts");
                 });
 
             modelBuilder.Entity("StudioUp.Models.ContentSection", b =>
@@ -117,7 +117,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("ContentTypeID");
 
-                    b.ToTable("ContentSections", (string)null);
+                    b.ToTable("ContentSections");
                 });
 
             modelBuilder.Entity("StudioUp.Models.ContentType", b =>
@@ -157,7 +157,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("ContentTypes", (string)null);
+                    b.ToTable("ContentTypes");
                 });
 
             modelBuilder.Entity("StudioUp.Models.Customer", b =>
@@ -215,7 +215,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("SubscriptionTypeId");
 
-                    b.ToTable("T_Customers", (string)null);
+                    b.ToTable("T_Customers");
                 });
 
             modelBuilder.Entity("StudioUp.Models.CustomerHMOS", b =>
@@ -247,7 +247,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("HMOID");
 
-                    b.ToTable("T_CustomerHMOS", (string)null);
+                    b.ToTable("T_CustomerHMOS");
                 });
 
             modelBuilder.Entity("StudioUp.Models.CustomerSubscription", b =>
@@ -276,7 +276,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("SubscriptionTypeId");
 
-                    b.ToTable("T_CustomerSubscription", (string)null);
+                    b.ToTable("T_CustomerSubscription");
                 });
 
             modelBuilder.Entity("StudioUp.Models.CustomerType", b =>
@@ -297,7 +297,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("T_CustomerTypes", (string)null);
+                    b.ToTable("T_CustomerTypes");
                 });
 
             modelBuilder.Entity("StudioUp.Models.FileUpload", b =>
@@ -325,7 +325,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Files", (string)null);
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("StudioUp.Models.HMO", b =>
@@ -364,7 +364,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("T_HMOs", (string)null);
+                    b.ToTable("T_HMOs");
                 });
 
             modelBuilder.Entity("StudioUp.Models.LeumitCommimentTypes", b =>
@@ -386,7 +386,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("T_LeumitCommimentTypes", (string)null);
+                    b.ToTable("T_LeumitCommimentTypes");
                 });
 
             modelBuilder.Entity("StudioUp.Models.LeumitCommitments", b =>
@@ -426,7 +426,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("FileUploadId");
 
-                    b.ToTable("T_LeumitCommitments", (string)null);
+                    b.ToTable("T_LeumitCommitments");
                 });
 
             modelBuilder.Entity("StudioUp.Models.LoginModel", b =>
@@ -447,7 +447,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Login", (string)null);
+                    b.ToTable("Login");
                 });
 
             modelBuilder.Entity("StudioUp.Models.PaymentOption", b =>
@@ -468,7 +468,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("T_PaymentOptions", (string)null);
+                    b.ToTable("T_PaymentOptions");
                 });
 
             modelBuilder.Entity("StudioUp.Models.SubscriptionType", b =>
@@ -500,7 +500,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("T_SubscriptionTypes", (string)null);
+                    b.ToTable("T_SubscriptionTypes");
                 });
 
             modelBuilder.Entity("StudioUp.Models.Trainer", b =>
@@ -540,7 +540,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("T_Trainers", (string)null);
+                    b.ToTable("T_Trainers");
                 });
 
             modelBuilder.Entity("StudioUp.Models.Training", b =>
@@ -578,7 +578,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("TrainingCustomerTypeId");
 
-                    b.ToTable("T_Trainings", (string)null);
+                    b.ToTable("T_Trainings");
                 });
 
             modelBuilder.Entity("StudioUp.Models.TrainingCustomer", b =>
@@ -612,7 +612,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("TrainingID");
 
-                    b.ToTable("T_TrainingsCustomers", (string)null);
+                    b.ToTable("T_TrainingsCustomers");
                 });
 
             modelBuilder.Entity("StudioUp.Models.TrainingCustomerType", b =>
@@ -638,7 +638,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasIndex("TrainingTypeId");
 
-                    b.ToTable("T_TrainingCustomerTypes", (string)null);
+                    b.ToTable("T_TrainingCustomerTypes");
                 });
 
             modelBuilder.Entity("StudioUp.Models.TrainingType", b =>
@@ -659,7 +659,7 @@ namespace StudioUp.Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("T_TrainigTypes", (string)null);
+                    b.ToTable("T_TrainigTypes");
                 });
 
             modelBuilder.Entity("StudioUp.Models.AvailableTraining", b =>
