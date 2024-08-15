@@ -14,97 +14,64 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly ILogger<TrainingRepository> _logger;
 
 
-        public TrainingRepository(DataContext context, IMapper mapper, ILogger<TrainingRepository> logger)
+        public TrainingRepository(DataContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _logger = logger;
         }
 
-        public async Task<IEnumerable<TrainingDTO>> GetAllTrainings()
+        public async Task<List<TrainingDTO>> GetAllTrainings()
         {
             try
             {
-                List<Training> lst = await _context.Trainings
+                var lst = await _context.Trainings.Where(t => t.IsActive)
                               .Include(t => t.TrainingCustomerType)
                               .Include(t => t.Trainer)
                               .ToListAsync();
-                return _mapper.Map<IEnumerable<TrainingDTO>>(lst);
+                return _mapper.Map<List<TrainingDTO>>(lst);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetAllTrainings-Repo");
-                throw;
+                throw new Exception("An error occurred while attempting to get the Trainings List.", ex);
             }
 
         }
 
 
-        public async Task<IEnumerable<CalanderTrainingDTO>> GetAllTrainingsCalender()
+        public async Task<List<CalanderTrainingDTO>> GetAllTrainingsCalender()
         {
-
             try
             {
-               List<Training> lst = await _context.Trainings
-                .Include(t => t.TrainingCustomerType.CustomerType)
-                .Include(t => t.TrainingCustomerType.TrainingType)
-                .Include(t => t.Trainer)
-                .ToListAsync();
-            return _mapper.Map<IEnumerable<CalanderTrainingDTO>>(lst);
+                List<Training> lst = await _context.Trainings.Where(t => t.IsActive)
+                 .Include(t => t.TrainingCustomerType.CustomerType)
+                 .Include(t => t.TrainingCustomerType.TrainingType)
+                 .Include(t => t.Trainer)
+                 .ToListAsync();
+                return _mapper.Map<List<CalanderTrainingDTO>>(lst);
             }
+
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetAllTrainingsCalender-Repo");
-                throw;
+                throw new Exception("An error occurred while attempting to get the Trainings Calender List.", ex);
             }
         }
 
         public async Task<TrainingDTO> GetTrainingById(int id)
         {
-            Training training= await _context.Trainings
-                .Include(t => t.TrainingCustomerType)
-                .Include(t => t.Trainer)
-                .FirstOrDefaultAsync(t => t.ID == id);
-            return _mapper.Map<TrainingDTO>(training);
-        }
-
-     
-
-        public async Task AddTraining(TrainingPostDTO trainingPostDto)
-        {        
-            Training training = _mapper.Map<Training>(trainingPostDto);
-           
-            _context.Trainings.Add(training);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateTraining(TrainingPostDTO trainingPostDto, int id)
-        {
-            //Training training=_context.Trainings.FirstOrDefault(t => t.ID == id);
-            //_mapper.Map(trainingPostDto, training);
-            //_context.Trainings.Update(training);
-            //await _context.SaveChangesAsync();
-            var training = await _context.Trainings.FindAsync(id);
-
-            // אם לא נמצא אובייקט מתאים, החזר שגיאה
-            if (training == null)
-
             try
-
             {
-                 training = await _context.Trainings
-                               .Include(t => t.TrainingCustomerType)
-                               .Include(t => t.Trainer)
-                               .FirstOrDefaultAsync(t => t.ID == id);
-                //return _mapper.Map<TrainingDTO>(training);
+
+                Training training = await _context.Trainings.Where(t => t.ID == id && t.IsActive)
+                                                  .Include(t => t.TrainingCustomerType)
+                                                  .Include(t => t.Trainer)
+                                                  .FirstOrDefaultAsync();
+                return _mapper.Map<TrainingDTO>(training);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func GetTrainingById-Repo");
-                throw;
+                throw new Exception("An error occurred while attempting to get the Training", ex);
             }
 
         }
@@ -113,32 +80,36 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
+                if (trainingDto == null)
+                {
+                    throw new Exception("Training cannot be null");
+                }
                 Training training = _mapper.Map<Training>(trainingDto);
-                _context.Trainings.Add(training);
+                training.IsActive = true;
+                var newtraining = await _context.Trainings.AddAsync(training);
                 await _context.SaveChangesAsync();
+                trainingDto.ID = newtraining.Entity.ID;
                 return trainingDto;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func AddTraining-Repo");
-                throw;
+                throw new Exception("An error occurred while attempting to add the Training.", ex);
             }
         }
 
-        public async Task<TrainingDTO> UpdateTraining(TrainingDTO trainingDto, int id)
+        public async Task UpdateTraining(TrainingDTO trainingDto)
         {
             try
             {
-                Training training = await _context.Trainings.FirstOrDefaultAsync(t => t.ID == id);
+                Training training = await _context.Trainings.FindAsync(trainingDto.ID);
+                if (training == null)
+                    throw new Exception("Training not found.");
                 _mapper.Map(trainingDto, training);
-                _context.Trainings.Update(training);
                 await _context.SaveChangesAsync();
-                return trainingDto;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func UpdateTraining-Repo");
-                throw;
+                throw new Exception("An error occurred while attempting to update the Training.", ex);
             }
 
         }
@@ -148,21 +119,20 @@ namespace StudioUp.Repo.Repositories
             try
             {
                 var training = await _context.Trainings.FindAsync(id);
-                if (training == null)
+                if (training == null || !training.IsActive)
                 {
-
+                    return;
                 }
-                _context.Trainings.Remove(training);
+                training.IsActive = false;
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "- this error in the func UpdateTraining-Repo");
-                throw;
+                throw new Exception("An error occurred while attempting to delete the Training.", ex);
             }
 
         }
 
-       
+
     }
 }

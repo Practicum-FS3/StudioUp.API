@@ -6,7 +6,6 @@ using StudioUp.Repo.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
@@ -15,42 +14,45 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext context;
         private readonly IMapper mapper;
+
         public LeumitCommimentRepository(DataContext context, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
-
         }
+
         public async Task AddAsync(LeumitCommitmentsDTO leumitCommitmentsDTO)
         {
             try
             {
-                context.LeumitCommitments.Add(mapper.Map<LeumitCommitments>(leumitCommitmentsDTO));
+                var entity = mapper.Map<LeumitCommitments>(leumitCommitmentsDTO);
+                entity.IsActive = true;
+                context.LeumitCommitments.Add(entity);
                 await context.SaveChangesAsync();
             }
-            catch (Exception exeption)
+            catch (Exception exception)
             {
-                throw exeption;
+                throw new Exception("Error adding LeumitCommitment", exception);
             }
-
         }
 
         public async Task<bool> DeleteAsync(string id)
         {
             try
             {
-                var LeumitCommitments = await context.LeumitCommitments.FirstOrDefaultAsync(l => l.Id == id);
-                if (LeumitCommitments == null)
+                var entity = await context.LeumitCommitments.FirstOrDefaultAsync(l => l.Id == id && l.IsActive);
+                if (entity == null)
                 {
                     return false;
                 }
-                context.LeumitCommitments.Remove(LeumitCommitments);
+
+                entity.IsActive = false;
                 await context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception exeption)
+            catch (Exception exception)
             {
-                throw exeption;
+                throw new Exception("Error deleting LeumitCommitment", exception);
             }
         }
 
@@ -58,15 +60,14 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var arr = await context.LeumitCommitments.ToListAsync();
-
-                return mapper.Map<List<LeumitCommitmentsDTO>>(arr);
-
+                var activeEntities = await context.LeumitCommitments
+                                                  .Where(l => l.IsActive)
+                                                  .ToListAsync();
+                return mapper.Map<List<LeumitCommitmentsDTO>>(activeEntities);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                throw ex;
-
+                throw new Exception("Error retrieving all LeumitCommitments", exception);
             }
         }
 
@@ -74,33 +75,39 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var LeumitCommitments = await context.LeumitCommitments.FirstOrDefaultAsync(l => l.Id == id);
-                return mapper.Map<LeumitCommitmentsDTO>(LeumitCommitments);
-
+                var entity = await context.LeumitCommitments
+                                          .FirstOrDefaultAsync(l => l.Id == id && l.IsActive);
+                if (entity == null)
+                {
+                    return null;
+                }
+                return mapper.Map<LeumitCommitmentsDTO>(entity);
             }
-            catch (Exception exeption)
+            catch (Exception exception)
             {
-                throw exeption;
+                throw new Exception("Error retrieving LeumitCommitment by ID", exception);
             }
         }
-        
 
-        public async Task<LeumitCommitmentsDTO> UpdateAsync(LeumitCommitmentsDTO leumitCommitmentsDTO,string id)
+        public async Task<LeumitCommitmentsDTO> UpdateAsync(LeumitCommitmentsDTO lc)
         {
-          
             try
             {
-                context.LeumitCommitments.Update(mapper.Map<LeumitCommitments>(leumitCommitmentsDTO));
+                var existingEntity = await context.LeumitCommitments
+                                                  .FirstOrDefaultAsync(l => l.Id == lc.Id && l.IsActive);
+                if (existingEntity == null)
+                {
+                    return null;
+                }
+
+                mapper.Map(lc, existingEntity);
                 await context.SaveChangesAsync();
-                return leumitCommitmentsDTO;
+                return lc;
             }
-            catch (Exception exeption)
+            catch (Exception exception)
             {
-                throw exeption;
+                throw new Exception("Error updating LeumitCommitment", exception);
             }
-
         }
-
-    
     }
 }

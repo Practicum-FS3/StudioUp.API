@@ -8,7 +8,7 @@ namespace StudioUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LeumitCommitmentsController: ControllerBase
+    public class LeumitCommitmentsController : ControllerBase
     {
         private readonly ILeumitCommimentsRepository leumitCommimentsRepository;
 
@@ -16,8 +16,8 @@ namespace StudioUp.API.Controllers
         {
             this.leumitCommimentsRepository = leumitCommimentsRepository;
         }
-        [HttpGet("GetAll")]
-        public async Task<List<LeumitCommitmentsDTO>> getAllLeumitCommitments()
+        [HttpGet("GetAllLeumitCommitments")]
+        public async Task<List<LeumitCommitmentsDTO>> GetAllLeumitCommitments()
         {
             try
             {
@@ -28,28 +28,35 @@ namespace StudioUp.API.Controllers
                 throw exeption;
             }
         }
-        [HttpGet("GetById/{id}")]
-        public async Task<LeumitCommitmentsDTO> getLeumitCommitmentsById(string id)
+        [HttpGet("GetLeumitCommitmentById/{id}")]
+        public async Task<ActionResult<LeumitCommitmentsDTO>> GetLeumitCommitmentById(string id)
         {
             try
             {
-                return await leumitCommimentsRepository.GetByIdAsync(id);
+                var leumitCommiment = await leumitCommimentsRepository.GetByIdAsync(id);
+                if (leumitCommiment == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+                return leumitCommiment;
             }
             catch (Exception exeption)
             {
                 throw exeption;
             }
         }
-        [HttpPut("Update/{id}")]
-        public async Task<ActionResult<LeumitCommitmentsDTO>> update(string id, LeumitCommitmentsDTO newLeumitCommiments)
+        [HttpPut("UpdateLeumitCommitment")]
+        public async Task<ActionResult<LeumitCommitmentsDTO>> UpdateLeumitCommitment(LeumitCommitmentsDTO newLeumitCommiments)
         {
-           
+
             try
             {
-
-                if (id != newLeumitCommiments.Id)
-                    return Conflict();
-                await leumitCommimentsRepository.UpdateAsync(newLeumitCommiments, id);
+                var leumitCommiment = await leumitCommimentsRepository.UpdateAsync(newLeumitCommiments);
+                if (leumitCommiment == null)
+                {
+                    return NotFound($"Training with ID {newLeumitCommiments.Id} not found.");
+                }
+              
                 return Ok(newLeumitCommiments);
             }
             catch (Exception ex)
@@ -57,14 +64,20 @@ namespace StudioUp.API.Controllers
                 throw ex;
             }
         }
-        [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult> delete(string id)
-        {         
+        [HttpDelete("DeleteLeumitCommitment/{id}")]
+        public async Task<ActionResult> DeleteLeumitCommitment(string id)
+        {
             try
             {
-                if (!await leumitCommimentsRepository.DeleteAsync(id))
-                    return Conflict();
+                var leumitCommiment = await leumitCommimentsRepository.GetByIdAsync(id);
+                if (leumitCommiment == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+                leumitCommiment.IsActive = false;
+                await leumitCommimentsRepository.UpdateAsync(leumitCommiment);
                 return NoContent();
+
             }
             catch (Exception ex)
             {
@@ -72,14 +85,14 @@ namespace StudioUp.API.Controllers
             }
         }
         [HttpPost]
-        [Route("Add")]
+        [Route("AddLeumitCommitment")]
         //לבדוק את טיפוס ההחזרה
-        public async Task<ActionResult<LeumitCommitmentsDTO>> add(LeumitCommitmentsDTO leumitCommimentsDTO)
+        public async Task<ActionResult<LeumitCommitmentsDTO>> AddLeumitCommitment(LeumitCommitmentsDTO leumitCommimentsDTO)
         {
             try
             {
                 await leumitCommimentsRepository.AddAsync(leumitCommimentsDTO);
-                return CreatedAtAction(nameof(add), leumitCommimentsDTO);
+                return CreatedAtAction(nameof(AddLeumitCommitment), leumitCommimentsDTO);
             }
             catch (Exception ex)
             {

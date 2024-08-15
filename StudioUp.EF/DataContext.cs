@@ -27,7 +27,7 @@ namespace StudioUp.Models
     
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<PaymentOption> PaymentOptions { get; set; }
-
+        public DbSet<Contact> Contacts { get; set; }
         public DbSet<SubscriptionType> SubscriptionTypes { get; set; }
         public DbSet<TrainingType> TrainingTypes { get; set; }
         public DbSet<HMO> HMOs { get; set; }
@@ -49,6 +49,7 @@ namespace StudioUp.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.EnableSensitiveDataLogging();
             //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
         }
 

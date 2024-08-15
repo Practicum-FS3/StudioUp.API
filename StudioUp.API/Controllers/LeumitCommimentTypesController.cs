@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
@@ -14,13 +15,14 @@ namespace StudioUp.API.Controllers
     public class LeumitCommimentTypesController: ControllerBase
     {
         private readonly ILeumitCommimentTypesRepository leumitCommimentTypesRepository;
-
+     
         public LeumitCommimentTypesController(ILeumitCommimentTypesRepository leumitCommimentTypesRepository)
         {
             this.leumitCommimentTypesRepository = leumitCommimentTypesRepository;
+          
         }
-        [HttpGet("GetAll")]
-        public async Task<List<LeumitCommimentTypesDTO>> getAllLeumitCommitments()
+        [HttpGet("GetAllLeumitCommitments")]
+        public async Task<List<LeumitCommimentTypesDTO>> GetAllLeumitCommitments()
         {
             try
             {
@@ -31,13 +33,16 @@ namespace StudioUp.API.Controllers
                 throw exeption;
             }
         }
-        [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<LeumitCommimentTypesDTO>> getLeumitCommitmentsById(string id)
+        [HttpGet("GetLeumitCommitmentTypesById/{id}")]
+        public async Task<ActionResult<LeumitCommimentTypesDTO>> GetLeumitCommitmentTypesById(int id)
         {
             try
             {
-
                 LeumitCommimentTypesDTO leumitCommimentTypesDTO = await leumitCommimentTypesRepository.GetByIdAsync(id);
+                if (leumitCommimentTypesDTO == null)
+                {
+                    return NotFound($"LeumitCommimentType with ID {id} not found.");
+                }
                 return Ok(leumitCommimentTypesDTO);
             }
             catch (Exception exeption)
@@ -45,15 +50,17 @@ namespace StudioUp.API.Controllers
                 throw exeption;
             }
         }
-        [HttpPut("Update/{id}")]
-        public async Task<ActionResult<LeumitCommimentTypesDTO>> update(string id, LeumitCommimentTypesDTO newLeumitCommimentTypesDTO)
+        [HttpPut("UpdateLeumitCommitmentType")]
+        public async Task<ActionResult<LeumitCommimentTypesDTO>> UpdateLeumitCommitmentType( LeumitCommimentTypesDTO newLeumitCommimentTypesDTO)
         {
             try
             {
-            
-                if (id != newLeumitCommimentTypesDTO.Id)
-                    return Conflict();
-                await leumitCommimentTypesRepository.UpdateAsync(newLeumitCommimentTypesDTO, id);
+                var leumitCommiment =  await leumitCommimentTypesRepository.UpdateAsync(newLeumitCommimentTypesDTO);
+                if (leumitCommiment == null)
+                {
+                    return NotFound($"Training with ID {newLeumitCommimentTypesDTO.Id} not found.");
+                }
+                
                 return Ok(newLeumitCommimentTypesDTO);
             }
             catch (Exception ex)
@@ -62,29 +69,37 @@ namespace StudioUp.API.Controllers
             }
 
         }
-        [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult>delete(string id)
+        [HttpDelete("DeleteLeumitCommitmentType/{id}")]
+        public async Task<ActionResult> DeleteLeumitCommitmentType(int id)
         {
             try
             {
-                if(!await leumitCommimentTypesRepository.DeleteAsync(id))
-                    return Conflict();
+                var leumitCommimentTypes = await leumitCommimentTypesRepository.GetByIdAsync(id);
+                if (leumitCommimentTypes == null)
+                {
+                    return NotFound($"LeumitCommimentType with ID {id} not found.");
+                }
+                leumitCommimentTypes.IsActive = false;
+                await leumitCommimentTypesRepository.UpdateAsync(leumitCommimentTypes);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                throw ex;
+                return StatusCode(500, "Internal server error");
             }
         }
+
+
+
         [HttpPost]
-        [Route("Add")]
-        //לבדוק את טיפוס ההחזרה
-        public async Task<ActionResult<LeumitCommimentTypesDTO>> add(LeumitCommimentTypesDTO leumitCommimentTypesDTO)
+        [Route("AddLeumitCommitmentType")]
+     
+        public async Task<ActionResult<LeumitCommimentTypesDTO>> AddLeumitCommitmentType(LeumitCommimentTypesDTO leumitCommimentTypesDTO)
         {
             try
             {
                 await leumitCommimentTypesRepository.AddAsync(leumitCommimentTypesDTO);
-                return CreatedAtAction(nameof(add), leumitCommimentTypesDTO);
+                return CreatedAtAction(nameof(AddLeumitCommitmentType), leumitCommimentTypesDTO);
             }
             catch (Exception ex)
             {

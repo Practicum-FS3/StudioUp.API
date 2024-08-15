@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace StudioUp.DTO
 {
-    public class LeumitCommimentTypesDTO
+    public class TrainingCustomerTypePostComand//post put
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
+        public int ID { get; set; }
+        public int CustomerTypeID { get; set; }
+        public int TrainingTypeID { get; set; }
         public bool IsActive { get; set; }
+
+
     }
 }
