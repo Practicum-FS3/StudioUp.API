@@ -3,25 +3,22 @@ using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo;
-using StudioUp.Repo.IRepositories;
-
 namespace StudioUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class SubscriptionTypeController : ControllerBase
     {
-        private readonly IRepository<SubscriptionType> _repository;
+        private readonly IRepository<SubscriptionTypeDTO> _repository;
         private readonly ILogger<SubscriptionTypeController> _logger;
 
 
-        public SubscriptionTypeController(IRepository<SubscriptionType> repsitory, ILogger<SubscriptionTypeController> logger)
+        public SubscriptionTypeController(IRepository<SubscriptionTypeDTO> repsitory, ILogger<SubscriptionTypeController> logger)
         {
             _repository = repsitory;
             _logger = logger;
         }
-
-        [HttpGet]
+        [HttpGet("GetSubscriptionTypes")]
         public async Task<ActionResult<IEnumerable<SubscriptionType>>> GetSubscriptionTypes()
         {
             try
@@ -39,8 +36,8 @@ namespace StudioUp.API.Controllers
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SubscriptionType>> GetSubscriptionType(int id)
+        [HttpGet("GetSubscriptionTypeById/{id}")]
+        public async Task<ActionResult<SubscriptionTypeDTO>> GetSubscriptionTypeById(int id)
         {
             try
             {
@@ -58,31 +55,28 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        //public async Task<ActionResult<SubscriptionTypeDTO>> PutSubscriptionType(int id, SubscriptionTypeDTO subscriptionTypeDto)
-        //{
-        //    if (subscriptionType == null)
-        //    {
-        //        return BadRequest("The subscriptionType field is null.");
-        //    }
-        //    if (id != subscriptionType.ID)
-        //    {
-        //        return BadRequest("ID in URL does not match ID in body");
-        //    }
-        //    try
-        //    {
-        //        await _repository.UpdateAsync(subscriptionType);
-        //        return NoContent();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, " this error in SubscriptionTypeController/PutSubscriptionType");
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-        //}
+        [HttpPut("UpdateSubscriptionType")]
+        public async Task<ActionResult<SubscriptionTypeDTO>> UpdateSubscriptionType(SubscriptionTypeDTO subscriptionType)
+        {
+            if (subscriptionType == null)
+            {
+                return BadRequest("The subscriptionType field is null.");
+            }
+          
+            try
+            {
+                await _repository.UpdateAsync(subscriptionType);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in SubscriptionTypeController/PutSubscriptionType");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
-        [HttpPost]
-        public async Task<ActionResult<SubscriptionType>> PostSubscriptionType(SubscriptionType subscriptionType)
+        [HttpPost("CreateSubscriptionType")]
+        public async Task<ActionResult<SubscriptionTypeDTO>> CreateSubscriptionType(SubscriptionTypeDTO subscriptionType)
         {
             if (subscriptionType == null)
             {
@@ -100,7 +94,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteSubscriptionType/{id}")]
         public async Task<IActionResult> DeleteSubscriptionType(int id)
         {
              try

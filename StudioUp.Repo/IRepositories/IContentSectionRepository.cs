@@ -8,9 +8,9 @@ namespace StudioUp.Repo
     {
         Task<IEnumerable<ContentSectionDTO>> GetAllAsync();
         Task<ContentSectionDTO> GetByIdAsync(int id);
-        Task<ContentSectionDTO> AddAsync(ContentSectionDTO contentSection);
-        Task UpdateAsync(ContentSectionDTO contentSection);
-        Task DeleteAsync(ContentSectionDTO contentSection);
+        Task<ContentSectionDTO> AddAsync(ContentSectionManagementDTO contentSection);
+        Task UpdateAsync(ContentSectionManagementDTO contentSection);
+        Task DeleteAsync(int ID);
         Task<IEnumerable<ContentSectionDTO>> GetByContentTypeAsync(int contentTypeId); // הוספת פונקציה חדשה
     }
 }

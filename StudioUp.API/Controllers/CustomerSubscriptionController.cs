@@ -5,7 +5,6 @@ using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 namespace StudioUp.API.Controllers
 {
     [Route("api/[controller]")]
@@ -13,88 +12,116 @@ namespace StudioUp.API.Controllers
     public class CustomerSubscriptionsController : ControllerBase
     {
         private readonly ICustomerSubscriptionRepository _repository;
+        private readonly ILogger<CustomerSubscriptionsController> _logger;
 
-        public CustomerSubscriptionsController(ICustomerSubscriptionRepository repository)
+        public CustomerSubscriptionsController(ICustomerSubscriptionRepository repository, ILogger<CustomerSubscriptionsController> logger)
         {
             _repository = repository;
+            _logger= logger;    
         }
-
-        [HttpGet]
+        [HttpGet("GetAllCustomerSubscriptions")]
         public async Task<ActionResult<IEnumerable<CustomerSubscriptionDTO>>> GetAllCustomerSubscriptions()
         {
-            var subscriptions = await _repository.GetAllCustomerSubscriptionsAsync();
-            return Ok(subscriptions);
-        }
-
-        [HttpGet("customer/{customerId}")]
-        public async Task<ActionResult<IEnumerable<CustomerSubscriptionDTO>>> GetCustomerSubscriptionsByCustomerId(int customerId)
-        {
-            var subscriptions = await _repository.GetCustomerSubscriptionsByCustomerIdAsync(customerId);
-            if (subscriptions == null || !subscriptions.Any())
+            try
             {
-                return NotFound();
+                var subscriptions = await _repository.GetAllCustomerSubscriptionsAsync();
+                return Ok(subscriptions);
             }
-            return Ok(subscriptions);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in CustomerSubscriptionsController/GetAllCustomerSubscriptions");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetCustomerSubscriptionsByCustomerId/{customerId}")]
+        public async Task<ActionResult<CustomerSubscriptionDTO>> GetCustomerSubscriptionsByCustomerId(int customerId)
+        {
+            try
+            {
+                var subscriptions = await _repository.GetCustomerSubscriptionsByCustomerIdAsync(customerId);
+                if (subscriptions == null)
+                {
+                    return NotFound();
+                }
+                return Ok(subscriptions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in CustomerSubscriptionsController/GetCustomerSubscriptionsByCustomerId");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("GetCustomerSubscriptionById/{id}")]
         public async Task<ActionResult<CustomerSubscriptionDTO>> GetCustomerSubscriptionById(int id)
         {
-            var subscription = await _repository.GetCustomerSubscriptionByIdAsync(id);
-            if (subscription == null)
+            try
             {
-                return NotFound();
+                var subscription = await _repository.GetCustomerSubscriptionByIdAsync(id);
+                if (subscription == null)
+                {
+                    return NotFound();
+                }
+                return Ok(subscription);
             }
-            return Ok(subscription);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in CustomerSubscriptionsController/GetCustomerSubscriptionById");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
-
-        [HttpPost]
+            [HttpPost("AddCustomerSubscription")]
         public async Task<ActionResult> AddCustomerSubscription(CustomerSubscriptionDTO subscriptionDTO)
         {
-            var subscription = new CustomerSubscription
+            try
             {
-                CustomerID = subscriptionDTO.CustomerID,
-                SubscriptionTypeId = subscriptionDTO.SubscriptionTypeId,
-                StartDate = subscriptionDTO.StartDate
-            };
+                var s = await _repository.AddCustomerSubscriptionAsync(subscriptionDTO);
+                if (s == null)
+                {
+                    return BadRequest("customerSubscription field is null.");
+                }
+                return Ok(s);
 
-            await _repository.AddCustomerSubscriptionAsync(subscription);
-            return CreatedAtAction(nameof(GetCustomerSubscriptionById), new { id = subscription.ID }, subscription);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCustomerSubscription(int id, CustomerSubscriptionDTO subscriptionDTO)
-        {
-            if (id != subscriptionDTO.ID)
-            {
-                return BadRequest();
             }
-
-            var subscription = new CustomerSubscription
+            catch (Exception ex)
             {
-                ID = subscriptionDTO.ID,
-                CustomerID = subscriptionDTO.CustomerID,
-                SubscriptionTypeId = subscriptionDTO.SubscriptionTypeId,
-                StartDate = subscriptionDTO.StartDate
-            };
+                _logger.LogError(ex, " this error in CustomerSubscriptionsController/AddCustomerSubscription");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPut("UpdateCustomerSubscription")]
+        public async Task<IActionResult> UpdateCustomerSubscription(CustomerSubscriptionDTO subscriptionDTO)
+        {
+            if (subscriptionDTO == null)
+            {
+                return BadRequest("The content  field is null.");
+            }
 
             try
             {
-                await _repository.UpdateCustomerSubscriptionAsync(subscription);
+                await _repository.UpdateCustomerSubscriptionAsync(subscriptionDTO);
+                return NoContent();
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                return NotFound();
+                _logger.LogError(ex, " this error in CustomerSubscriptionsController/UpdateCustomerSubscription");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
-            return NoContent();
         }
-
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteCustomerSubscription/{id}")]
         public async Task<IActionResult> DeleteCustomerSubscription(int id)
         {
-            await _repository.DeleteCustomerSubscriptionAsync(id);
-            return NoContent();
+            try
+            {
+                await _repository.DeleteCustomerSubscriptionAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in CustomerSubscriptionsController/DeleteCustomerSubscription");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }
