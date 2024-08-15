@@ -13,6 +13,7 @@ namespace StudioUp.DTO
         public int TrainerID { get; set; }
         public string TrainerName { get; set; }
         public string CustomerTypeName { get; set; }
+        public int TrainingTypeId {  get; set; }
         public string TrainingTypeName { get; set; }
         public int DayOfWeek { get; set; }
         public string Hour { get; set; }
