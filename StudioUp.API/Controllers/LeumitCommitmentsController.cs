@@ -8,7 +8,7 @@ namespace StudioUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LeumitCommitmentsController: ControllerBase
+    public class LeumitCommitmentsController : ControllerBase
     {
         private readonly ILeumitCommimentsRepository leumitCommimentsRepository;
 
@@ -29,11 +29,16 @@ namespace StudioUp.API.Controllers
             }
         }
         [HttpGet("GetLeumitCommitmentById/{id}")]
-        public async Task<LeumitCommitmentsDTO> GetLeumitCommitmentById(string id)
+        public async Task<ActionResult<LeumitCommitmentsDTO>> GetLeumitCommitmentById(string id)
         {
             try
             {
-                return await leumitCommimentsRepository.GetByIdAsync(id);
+                var leumitCommiment = await leumitCommimentsRepository.GetByIdAsync(id);
+                if (leumitCommiment == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+                return leumitCommiment;
             }
             catch (Exception exeption)
             {
@@ -41,12 +46,17 @@ namespace StudioUp.API.Controllers
             }
         }
         [HttpPut("UpdateLeumitCommitment")]
-        public async Task<ActionResult<LeumitCommitmentsDTO>> UpdateLeumitCommitment( LeumitCommitmentsDTO newLeumitCommiments)
+        public async Task<ActionResult<LeumitCommitmentsDTO>> UpdateLeumitCommitment(LeumitCommitmentsDTO newLeumitCommiments)
         {
-           
+
             try
             {
-                await leumitCommimentsRepository.UpdateAsync(newLeumitCommiments);
+                var leumitCommiment = await leumitCommimentsRepository.UpdateAsync(newLeumitCommiments);
+                if (leumitCommiment == null)
+                {
+                    return NotFound($"Training with ID {newLeumitCommiments.Id} not found.");
+                }
+              
                 return Ok(newLeumitCommiments);
             }
             catch (Exception ex)
@@ -56,7 +66,7 @@ namespace StudioUp.API.Controllers
         }
         [HttpDelete("DeleteLeumitCommitment/{id}")]
         public async Task<ActionResult> DeleteLeumitCommitment(string id)
-        {         
+        {
             try
             {
                 var leumitCommiment = await leumitCommimentsRepository.GetByIdAsync(id);
