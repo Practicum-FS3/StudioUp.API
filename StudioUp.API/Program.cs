@@ -79,7 +79,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainingTypeRepository>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            // αγεβξδ δζε, δξιξεω ωμ ICustomerSubscriptionRepository δεΰ CustomerSubscriptionRepository
+            // Γ‘Γ£Γ₯Γ’Γ®Γ€ Γ€Γ¦Γ₯, Γ€Γ®Γ©Γ®Γ₯ΓΉ ΓΉΓ¬ ICustomerSubscriptionRepository Γ€Γ₯Γ  CustomerSubscriptionRepository
             builder.Services.AddScoped<ICustomerSubscriptionRepository, CustomerSubscriptionRepository>();
             builder.Services.AddScoped<IContactRepository, ContactRepository>();
             builder.Services.AddScoped<IHMORepository, HMORepository>();
@@ -93,6 +93,7 @@ namespace StudioUp.API
 
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
             builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
+            builder.Services.AddScoped<IInternalHomeLinksRepository,InternalHomeLinksRepository>();
             builder.Services.AddScoped<IRepository<TrainingCustomerTypeDTO>, TrainingCustomerTypeRepository>();
             builder.Services.AddScoped<ICustomerHMOSRepository, CustomerHMOSRepository>();
             builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
