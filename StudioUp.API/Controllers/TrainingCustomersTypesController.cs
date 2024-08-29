@@ -117,7 +117,7 @@ namespace StudioUp.API.Controllers
 
         //שימו לב!!! זה בכוונה על עדכון ולא מחיקה!! נא לא לשנות את זה
         //הפונקציה לא מוחקת בפועל את השיעור אלא רק הופכת את ה isActive להיות false
-        [HttpPut("DeleteTrainingCustomerType/{id}")]
+        [HttpDelete("DeleteTrainingCustomerType/{id}")]
         public async Task<IActionResult> DeleteTrainingCustomerType(int id)
         {
             try
