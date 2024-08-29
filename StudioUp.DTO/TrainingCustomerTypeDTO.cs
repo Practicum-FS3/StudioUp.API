@@ -11,7 +11,7 @@ namespace StudioUp.DTO
         public int ID { get; set; }
         public int CustomerTypeID { get; set; }
         public int TrainingTypeID { get; set; }
-        public string TrainingCustomerName { get; set; }
+        public string TrainingCustomerTypeName { get; set; }
         public bool IsActive { get; set; }
 
 

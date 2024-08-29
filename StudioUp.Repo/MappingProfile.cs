@@ -46,7 +46,7 @@ namespace StudioUp.Repo
              .ForMember(dest => dest.ImageData, opt => opt.MapFrom(src => ConvertIFormFileToByteArray(src.fileUploadDTO)));
 
             CreateMap<TrainingCustomerType, TrainingCustomerTypeDTO>()
-               .ForMember(dest => dest.TrainingCustomerName, opt => opt.MapFrom(src => src.TrainingType.Title + " " + src.CustomerType.Title));
+               .ForMember(dest => dest.TrainingCustomerTypeName, opt => opt.MapFrom(src => src.TrainingType.Title + " " + src.CustomerType.Title));
             CreateMap<TrainingCustomerTypePostComand, TrainingCustomerType>().ReverseMap();
             CreateMap<Training, TrainingDTO>().ReverseMap();
             CreateMap<TrainingType, TrainingTypeDTO>().ReverseMap();

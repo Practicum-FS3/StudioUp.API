@@ -11,10 +11,10 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class TrainingCustomersTypesController : Controller
     {
-        private readonly IRepository<TrainingCustomerTypeDTO> _repository;
+        private readonly ITrainingCustomerTypesRepository _repository;
         private readonly ILogger<TrainingCustomersTypesController> _logger;
 
-        public TrainingCustomersTypesController(IRepository<TrainingCustomerTypeDTO> repsitory, ILogger<TrainingCustomersTypesController> logger)
+        public TrainingCustomersTypesController(ITrainingCustomerTypesRepository repsitory, ILogger<TrainingCustomersTypesController> logger)
         {
             _repository = repsitory;
             _logger = logger;
@@ -69,7 +69,7 @@ namespace StudioUp.API.Controllers
 
         //עדכון רגיל של אימון
         [HttpPut("UpdateTrainingCustomerType")]
-        public async Task<ActionResult<TrainingCustomerTypeDTO>> UpdateTrainingCustomerType([FromBody] TrainingCustomerTypeDTO trainingCustomerTypedto)
+        public async Task<ActionResult<TrainingCustomerTypePostComand>> UpdateTrainingCustomerType([FromBody] TrainingCustomerTypePostComand trainingCustomerTypedto)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace StudioUp.API.Controllers
         }
 
         [HttpPost("AddTrainingCustomerType")]
-        public async Task<ActionResult<TrainingCustomerTypeDTO>> AddTrainingCustomerType(TrainingCustomerTypeDTO trainingCustomerTypedto)
+        public async Task<ActionResult<TrainingCustomerTypePostComand>> AddTrainingCustomerType(TrainingCustomerTypePostComand trainingCustomerTypedto)
         {
             try
             {
@@ -115,9 +115,9 @@ namespace StudioUp.API.Controllers
             }
         }
 
-
+        //שימו לב!!! זה בכוונה על עדכון ולא מחיקה!! נא לא לשנות את זה
         //הפונקציה לא מוחקת בפועל את השיעור אלא רק הופכת את ה isActive להיות false
-        [HttpDelete("DeleteTrainingCustomerType/{id}")]
+        [HttpPut("DeleteTrainingCustomerType/{id}")]
         public async Task<IActionResult> DeleteTrainingCustomerType(int id)
         {
             try
