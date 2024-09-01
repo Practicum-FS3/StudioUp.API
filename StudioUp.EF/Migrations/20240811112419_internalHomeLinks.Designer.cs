@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240804100130_1.0.0.0")]
-    partial class _1000
+    [Migration("20240811112419_internalHomeLinks")]
+    partial class internalHomeLinks
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,6 +78,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<string>("Section3")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Section4")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("ViewInHP")
                         .HasColumnType("bit");
 
@@ -118,6 +121,9 @@ namespace StudioUp.Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title4")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -330,6 +336,31 @@ namespace StudioUp.Models.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("T_HMOs");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.InternalHomeLinks", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsExternal")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Link")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("InternalHomeLinks");
                 });
 
             modelBuilder.Entity("StudioUp.Models.LeumitCommimentTypes", b =>

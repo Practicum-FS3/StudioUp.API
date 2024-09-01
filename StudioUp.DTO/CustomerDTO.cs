@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace StudioUp.DTO
     public class CustomerDTO
     {
         public int Id { get; set; }
+        public string Tz { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int CustomerTypeId { get; set; }

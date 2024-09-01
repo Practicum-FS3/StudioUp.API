@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240804180814_1.0.0.1")]
-    partial class _1001
+    [Migration("20240815092354_update-cus-fix-trng")]
+    partial class updatecusfixtrng
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,38 @@ namespace StudioUp.Models.Migrations
                     b.HasIndex("TrainingId");
 
                     b.ToTable("T_AvailableTrainings");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.Contact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsWatch")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("T_Contacts");
                 });
 
             modelBuilder.Entity("StudioUp.Models.ContentSection", b =>
@@ -187,6 +219,29 @@ namespace StudioUp.Models.Migrations
                     b.HasIndex("SubscriptionTypeId");
 
                     b.ToTable("T_Customers");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.CustomerFixedTraining", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TrainingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("TrainingId");
+
+                    b.ToTable("T_CustomerFixedTrainings");
                 });
 
             modelBuilder.Entity("StudioUp.Models.CustomerHMOS", b =>
@@ -566,6 +621,9 @@ namespace StudioUp.Models.Migrations
                     b.Property<int?>("CustomerID")
                         .HasColumnType("int");
 
+                    b.Property<int>("CustomerSubscriptionId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -575,6 +633,8 @@ namespace StudioUp.Models.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("CustomerID");
+
+                    b.HasIndex("CustomerSubscriptionId");
 
                     b.HasIndex("TrainingID");
 
@@ -677,6 +737,21 @@ namespace StudioUp.Models.Migrations
                     b.Navigation("SubscriptionType");
                 });
 
+            modelBuilder.Entity("StudioUp.Models.CustomerFixedTraining", b =>
+                {
+                    b.HasOne("StudioUp.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("StudioUp.Models.Training", "Training")
+                        .WithMany()
+                        .HasForeignKey("TrainingId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Training");
+                });
+
             modelBuilder.Entity("StudioUp.Models.CustomerHMOS", b =>
                 {
                     b.HasOne("StudioUp.Models.Customer", "Customer")
@@ -751,11 +826,19 @@ namespace StudioUp.Models.Migrations
                         .WithMany()
                         .HasForeignKey("CustomerID");
 
+                    b.HasOne("StudioUp.Models.CustomerSubscription", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("CustomerSubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StudioUp.Models.AvailableTraining", "Training")
                         .WithMany()
                         .HasForeignKey("TrainingID");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Subscription");
 
                     b.Navigation("Training");
                 });

@@ -12,7 +12,7 @@ namespace StudioUp.Repo.IRepositories
     {
         Task<List<LeumitCommimentTypesDTO>> GetAllAsync();
         Task<LeumitCommimentTypesDTO> GetByIdAsync(int id);
-        Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO,int id);
+        Task<LeumitCommimentTypesDTO> UpdateAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO);
         Task AddAsync(LeumitCommimentTypesDTO leumitCommimentTypesDTO);
         Task<bool> DeleteAsync(int id);
     }

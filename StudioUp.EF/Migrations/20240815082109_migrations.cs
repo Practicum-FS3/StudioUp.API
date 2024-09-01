@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudioUp.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class _1000 : Migration
+    public partial class migrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,6 +24,7 @@ namespace StudioUp.Models.Migrations
                     Title1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title4 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -59,6 +60,23 @@ namespace StudioUp.Models.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Login", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "T_Contacts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsWatch = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_T_Contacts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,6 +200,7 @@ namespace StudioUp.Models.Migrations
                     Section1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Section2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Section3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Section4 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     ViewInHP = table.Column<bool>(type: "bit", nullable: false),
@@ -365,7 +384,7 @@ namespace StudioUp.Models.Migrations
                     TrainerID = table.Column<int>(type: "int", nullable: true),
                     DayOfWeek = table.Column<int>(type: "int", nullable: false),
                     Hour = table.Column<int>(type: "int", nullable: false),
-                    Minute = table.Column<int>(type: "int", nullable: false),
+                    Minutes = table.Column<int>(type: "int", nullable: false),
                     ParticipantsCount = table.Column<int>(type: "int", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -415,6 +434,7 @@ namespace StudioUp.Models.Migrations
                     TrainingID = table.Column<int>(type: "int", nullable: true),
                     CustomerID = table.Column<int>(type: "int", nullable: true),
                     Attended = table.Column<bool>(type: "bit", nullable: false),
+                    CustomerSubscriptionId = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -425,6 +445,12 @@ namespace StudioUp.Models.Migrations
                         column: x => x.TrainingID,
                         principalTable: "T_AvailableTrainings",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_T_TrainingsCustomers_T_CustomerSubscription_CustomerSubscriptionId",
+                        column: x => x.CustomerSubscriptionId,
+                        principalTable: "T_CustomerSubscription",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_T_TrainingsCustomers_T_Customers_CustomerID",
                         column: x => x.CustomerID,
@@ -523,6 +549,11 @@ namespace StudioUp.Models.Migrations
                 column: "CustomerID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_T_TrainingsCustomers_CustomerSubscriptionId",
+                table: "T_TrainingsCustomers",
+                column: "CustomerSubscriptionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_T_TrainingsCustomers_TrainingID",
                 table: "T_TrainingsCustomers",
                 column: "TrainingID");
@@ -538,10 +569,10 @@ namespace StudioUp.Models.Migrations
                 name: "Login");
 
             migrationBuilder.DropTable(
-                name: "T_CustomerHMOS");
+                name: "T_Contacts");
 
             migrationBuilder.DropTable(
-                name: "T_CustomerSubscription");
+                name: "T_CustomerHMOS");
 
             migrationBuilder.DropTable(
                 name: "T_LeumitCommitments");
@@ -562,10 +593,19 @@ namespace StudioUp.Models.Migrations
                 name: "T_AvailableTrainings");
 
             migrationBuilder.DropTable(
-                name: "T_Customers");
+                name: "T_CustomerSubscription");
 
             migrationBuilder.DropTable(
                 name: "T_Trainings");
+
+            migrationBuilder.DropTable(
+                name: "T_Customers");
+
+            migrationBuilder.DropTable(
+                name: "T_Trainers");
+
+            migrationBuilder.DropTable(
+                name: "T_TrainingCustomerTypes");
 
             migrationBuilder.DropTable(
                 name: "T_HMOs");
@@ -575,12 +615,6 @@ namespace StudioUp.Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "T_SubscriptionTypes");
-
-            migrationBuilder.DropTable(
-                name: "T_Trainers");
-
-            migrationBuilder.DropTable(
-                name: "T_TrainingCustomerTypes");
 
             migrationBuilder.DropTable(
                 name: "T_CustomerTypes");
