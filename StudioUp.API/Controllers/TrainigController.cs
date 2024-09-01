@@ -84,7 +84,7 @@ namespace StudioUp.API.Controllers
 
         // POST: api/Training
         [HttpPost("AddTraining")]
-        public async Task<IActionResult> AddTraining([FromBody] TrainingDTO trainingDTO)
+        public async Task<IActionResult> AddTraining([FromBody] TrainingPostDTO trainingDTO)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace StudioUp.API.Controllers
                 }
                 var training = await _trainingRepository.AddTraining(trainingDTO);
                 training.IsActive = true;
-                return CreatedAtAction(nameof(GetAllTrainings), new { id = training.ID }, training);
+                return CreatedAtAction(nameof(GetAllTrainings), new { id = 0 }, training);
             }
             catch (Exception ex)
             {

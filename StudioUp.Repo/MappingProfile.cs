@@ -73,8 +73,13 @@ namespace StudioUp.Repo
 
 
             CreateMap<Training, TrainingDTO>()
-                .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour.ToString("D2")))
-                .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => src.Minute.ToString("D2")));
+                  .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Trainer.FirstName + " " + src.Trainer.LastName))
+                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Hour, src.Minute)))
+                  .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.CustomerType.Title))
+                  .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title))
+                  .ForMember(dest => dest.TrainingCustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title+" "+ src.TrainingCustomerType.CustomerType.Title));
+
+
             CreateMap<TrainingDTO, Training>()
                 .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => int.Parse(src.Hour)))
                 .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => int.Parse(src.Minute)));
