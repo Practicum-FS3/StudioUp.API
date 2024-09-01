@@ -101,13 +101,13 @@ namespace StudioUp.Repo.Repositories
                 var registeredTrainingCustomer = await _context.TrainingCustomers
                     .Where(t =>
                         t.Customer.Id == customerId &&
-                        t.Training.Date >= startDate &&
-                        t.Training.Date < endDate)
+                        DateOnly.FromDateTime(t.Training.Date )>= startDate &&
+                     DateOnly.FromDateTime(t.Training.Date )< endDate)
                     .Select(t => new CalanderAvailableTrainingDTO
                     {
                         TrainingId = t.Training.TrainingId,
                         TrainerName = $"{t.Training.Training.Trainer.FirstName} {t.Training.Training.Trainer.LastName}",
-                        Date = t.Training.Date,
+                        Date = DateOnly.FromDateTime(t.Training.Date),
                         DayOfWeek = t.Training.Training.DayOfWeek,
                         Time = $"{t.Training.Training.Hour}:{t.Training.Training.Minute}",
                         CustomerTypeName = t.Training.Training.TrainingCustomerType.CustomerType.Title,
@@ -121,8 +121,8 @@ namespace StudioUp.Repo.Repositories
 
                 var availableTrainingLst = await _context.AvailableTraining
                     .Where(x =>
-                        x.Date >= startDate &&
-                        x.Date < endDate &&
+                       DateOnly.FromDateTime(x.Date) >= startDate &&
+                       DateOnly.FromDateTime(x.Date) < endDate &&
                         x.Training.TrainingCustomerType.CustomerType.ID == customerTypeId
                         &&
                       !registeredTrainingCustomer.Select(t=> t.TrainingId).Contains(x.TrainingId)
@@ -131,7 +131,7 @@ namespace StudioUp.Repo.Repositories
                     {
                         TrainingId = t.TrainingId,
                         TrainerName = $"{t.Training.Trainer.FirstName} {t.Training.Trainer.LastName}",
-                        Date = t.Date,
+                        Date = DateOnly.FromDateTime(t.Date),
                         DayOfWeek = t.Training.DayOfWeek,
                         Time = $"{t.Training.Hour}:{t.Training.Minute}",
                         CustomerTypeName = t.Training.TrainingCustomerType.CustomerType.Title,
@@ -329,12 +329,16 @@ namespace StudioUp.Repo.Repositories
 
             var trainingsListInCurrentDay = allTrainingsList.FindAll(training => (DayOfWeek)training.DayOfWeek == targetDate.DayOfWeek);
             //availableTrainings that are set for the same date
-            var availableTrainingsListInCurrentDay = allAvailableTrainingsList.FindAll(availableTraining => DateOnly.FromDateTime(availableTraining.Date) == targetDate);
+            var availableTrainingsListInCurrentDay = allAvailableTrainingsList.FindAll(availableTraining => DateOnly.FromDateTime( availableTraining.Date )== targetDate);
 
             foreach (TrainingDTO currentTraining in trainingsListInCurrentDay)
             {
                 //Specific training date and time
-                DateTime currentDateTime = new DateTime(targetDate.Year, targetDate.Month, targetDate.Day, currentTraining.Hour, currentTraining.Minute, 0);
+                DateTime currentDateTime = new DateTime(targetDate.Year,
+                    targetDate.Month, 
+                    targetDate.Day, 
+                   int.Parse( currentTraining.Hour),
+               int.Parse(     currentTraining.Minute), 0);
 
                
                 // Check if there is already an AvailableTraining entry for the current date and time
@@ -342,10 +346,11 @@ namespace StudioUp.Repo.Repositories
                 // entries for the same training session at the same date and time.
                 var currentAvailableTraining = allAvailableTrainingsList.FirstOrDefault(at =>
                 at.TrainingId == currentTraining.ID &&
-                DateOnly.FromDateTime(at.Date) == targetDate &&
+              DateOnly.FromDateTime(  at.Date )== targetDate &&
                 at.Date.Hour == currentDateTime.Hour &&
                 at.Date.Minute == currentDateTime.Minute);
 
+      
 
                 // If there is no existing AvailableTraining for this date and time, create a new one
                 if (currentAvailableTraining == null)
