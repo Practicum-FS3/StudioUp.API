@@ -27,7 +27,7 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var startDate = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
+                var startDate = DateTime.Now.StartOfWeek(DayOfWeek.Sunday);
                 var endDate = startDate.AddDays(7);
                 var trainings = await _context.TrainingCustomers.Where(x => x.CustomerID == customerId
                     && x.Training.Date >= startDate && x.Training.Date <= endDate
@@ -201,6 +201,7 @@ namespace StudioUp.Repo.Repositories
                 var queryTraininigs = _context.Trainings.AsQueryable();
 
                 DateOnly todayDate = DateOnly.FromDateTime(DateTime.Now);
+              //  DateOnly todayDate = DateOnly.FromDateTime(DateTime.Now);
                 DateTime todayDateTime = DateTime.Now;
 
                 if (filter.StratDate.HasValue && filter.EndDate.HasValue && filter.StratDate.Value > filter.EndDate.Value)
@@ -233,42 +234,42 @@ namespace StudioUp.Repo.Repositories
                     // אימונים בעבר בלבד, ללא תאריכים מוגדרים
                     else if (filter.Past.Value && !filter.Future.Value && !filter.StratDate.HasValue && !filter.EndDate.HasValue)
                     {
-                        query = query.Where(x => x.Training.Date <= todayDate);
+                        query = query.Where(x => x.Training.Date <= todayDateTime);
                     }
                     // אימונים בעבר בלבד בטווח תאריכים מוגדר
                     else if (filter.Past.Value && !filter.Future.Value && filter.StratDate.HasValue && filter.EndDate.HasValue)
                     {
-                        query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value && x.Training.Date <= todayDate);
+                        query = query.Where(x => DateOnly.FromDateTime(x.Training.Date )>= filter.StratDate.Value && DateOnly.FromDateTime(x.Training.Date) <= filter.EndDate.Value && x.Training.Date <= todayDateTime);
                     }
                     // אימונים בעבר בלבד מהתחלה מוגדרת
                     else if (filter.Past.Value && !filter.Future.Value && filter.StratDate.HasValue)
                     {
-                        query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= todayDate);
+                        query = query.Where(x => DateOnly.FromDateTime(x.Training.Date) >=  filter.StratDate.Value && x.Training.Date <= todayDateTime);
                     }
                     // אימונים בעבר בלבד עד תאריך סיום מוגדר
                     else if (filter.Past.Value && !filter.Future.Value && filter.EndDate.HasValue)
                     {
-                        query = query.Where(x => x.Training.Date <= filter.EndDate.Value && x.Training.Date <= todayDate);
+                        query = query.Where(x => DateOnly.FromDateTime(x.Training.Date) <= filter.EndDate.Value && x.Training.Date <= todayDateTime);
                     }
                     // אימונים בעתיד בלבד, ללא תאריכים מוגדרים
                     else if (filter.Future.Value && !filter.Past.Value && !filter.StratDate.HasValue && !filter.EndDate.HasValue)
                     {
-                        query = query.Where(x => x.Training.Date >= todayDate);
+                        query = query.Where(x => x.Training.Date >= todayDateTime);
                     }
                     // אימונים בעתיד בלבד בטווח תאריכים מוגדר
                     else if (filter.Future.Value && !filter.Past.Value && filter.StratDate.HasValue && filter.EndDate.HasValue)
                     {
-                        query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date <= filter.EndDate.Value && x.Training.Date >= todayDate);
+                        query = query.Where(x => DateOnly.FromDateTime(x.Training.Date) >= filter.StratDate.Value && DateOnly.FromDateTime( x.Training.Date )<= filter.EndDate.Value && x.Training.Date >= todayDateTime);
                     }
                     // אימונים בעתיד בלבד מהתחלה מוגדרת
                     else if (filter.Future.Value && !filter.Past.Value && filter.StratDate.HasValue)
                     {
-                        query = query.Where(x => x.Training.Date >= filter.StratDate.Value && x.Training.Date >= todayDate);
+                        query = query.Where(x => DateOnly.FromDateTime( x.Training.Date )>= filter.StratDate.Value && x.Training.Date >= todayDateTime);
                     }
                     // אימונים בעתיד בלבד עד תאריך סיום מוגדר
                     else if (filter.Future.Value && !filter.Past.Value && filter.EndDate.HasValue)
                     {
-                        query = query.Where(x => x.Training.Date <= filter.EndDate.Value && x.Training.Date >= todayDate);
+                        query = query.Where(x => DateOnly.FromDateTime(x.Training.Date )<= filter.EndDate.Value && x.Training.Date >= todayDateTime);
                     }
                     
 
@@ -278,13 +279,13 @@ namespace StudioUp.Repo.Repositories
                     if (filter.Past.Value && !filter.Future.Value)
                     {
                         query = query.Where(x =>
-                            x.Training.Date <= todayDate // אימונים היום ולפני היום
+                            x.Training.Date <= todayDateTime // אימונים היום ולפני היום
                         );
                     }
                     else if (filter.Future.Value && !filter.Past.Value)
                     {
                         query = query.Where(x =>
-                            x.Training.Date >= todayDate // אימונים היום ואחרי היום
+                            x.Training.Date >= todayDateTime // אימונים היום ואחרי היום
                         );
                     }
 
@@ -294,8 +295,8 @@ namespace StudioUp.Repo.Repositories
                     if (filter.Past.Value && !filter.Future.Value)
                     {
                         results = results.Where(x =>
-                            x.Training.Date < todayDate || // אימונים לפני היום
-                            (x.Training.Date == todayDate &&
+                            x.Training.Date < todayDateTime || // אימונים לפני היום
+                            (x.Training.Date == todayDateTime &&
                             (x.Training.Training.Hour < todayDateTime.Hour || // שעות קטנות מהשעה הנוכחית
                             (x.Training.Training.Hour == todayDateTime.Hour && x.Training.Training.Minute <= todayDateTime.Minute)) // שעות שוות ודקות קטנות או שוות
                         )).ToList();
@@ -303,8 +304,8 @@ namespace StudioUp.Repo.Repositories
                     else if (filter.Future.Value && !filter.Past.Value)
                     {
                         results = results.Where(x =>
-                            x.Training.Date > todayDate || // אימונים אחרי היום
-                            (x.Training.Date == todayDate &&
+                            x.Training.Date > todayDateTime || // אימונים אחרי היום
+                            (x.Training.Date == todayDateTime &&
                             (x.Training.Training.Hour > todayDateTime.Hour || // שעות גדולות מהשעה הנוכחית
                             (x.Training.Training.Hour == todayDateTime.Hour && x.Training.Training.Minute > todayDateTime.Minute)) // שעות שוות ודקות גדולות
                         )).ToList();
@@ -325,18 +326,18 @@ namespace StudioUp.Repo.Repositories
         {
             if (startDate.HasValue && endDate.HasValue)
             {
-                query = query.Where(x => x.Training.Date >= startDate.Value && x.Training.Date <= endDate.Value);
-                if (isPast) query = query.Where(x => x.Training.Date <= DateOnly.FromDateTime(DateTime.Now));
+                query = query.Where(x => DateOnly.FromDateTime(x.Training.Date) >= startDate.Value && DateOnly.FromDateTime( x.Training.Date )<= endDate.Value);
+                if (isPast) query = query.Where(x => x.Training.Date <= DateTime.Now);
             }
             else if (startDate.HasValue)
             {
-                query = query.Where(x => x.Training.Date >= startDate.Value);
-                if (isPast) query = query.Where(x => x.Training.Date <= DateOnly.FromDateTime(DateTime.Now));
+                query = query.Where(x => DateOnly.FromDateTime( x.Training.Date )>= startDate.Value);
+                if (isPast) query = query.Where(x => x.Training.Date <= DateTime.Now);
             }
             else if (endDate.HasValue)
             {
-                query = query.Where(x => x.Training.Date <= endDate.Value);
-                if (isPast) query = query.Where(x => x.Training.Date <= DateOnly.FromDateTime(DateTime.Now));
+                query = query.Where(x => DateOnly.FromDateTime( x.Training.Date) <= endDate.Value);
+                if (isPast) query = query.Where(x => DateOnly.FromDateTime( x.Training.Date) <= DateOnly.FromDateTime(DateTime.Now));
             }
         }
 
@@ -347,17 +348,20 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var trainings = await _context.TrainingCustomers.Where(x => x.IsActive)
-                    .Include(tc => tc.Customer)
-                        .ThenInclude(c => c.CustomerType)
-                    .Include(tc => tc.Training)
-                        .ThenInclude(at => at.Training)
-                            .ThenInclude(t => t.Trainer)
-                    .Include(tc => tc.Training)
-                        .ThenInclude(at => at.Training)
-                            .ThenInclude(t => t.TrainingCustomerType)
-                                .ThenInclude(tct => tct.TrainingType)
-                    .Where(ct => ct.IsActive).ToListAsync();
+                var startDate = DateTime.Now.StartOfWeek(DayOfWeek.Sunday);
+                var endDate = startDate.AddDays(7);
+                var trainings = await _context.TrainingCustomers.Where(x => x.IsActive
+                && x.Training.Date >= startDate && x.Training.Date < endDate)
+                      .Include(tc => tc.Customer)
+                            .ThenInclude(c => c.CustomerType)
+                       .Include(tc => tc.Training)
+                             .ThenInclude(at => at.Training)
+                                .ThenInclude(t => t.Trainer)
+                        .Include(tc => tc.Training)
+                            .ThenInclude(at => at.Training)
+                                .ThenInclude(t => t.TrainingCustomerType)
+                                    .ThenInclude(tct => tct.TrainingType)
+                        .ToListAsync();
 
                 return _mapper.Map<List<CalanderAvailableTrainingDTO>>(trainings);
             }

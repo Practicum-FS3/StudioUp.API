@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NLog.Filters;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 using StudioUp.Repo.Repositories;
+using System.Collections.Generic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StudioUp.API.Controllers
 {
@@ -13,11 +16,13 @@ namespace StudioUp.API.Controllers
     public class AvailableTrainingController : ControllerBase
     {
         private readonly IAvailableTrainingRepository _availableTrainingRepository;
+        private readonly ITrainingRepository _trainingRepository;
         private readonly ILogger<AvailableTrainingController> _logger;
 
-        public AvailableTrainingController(IAvailableTrainingRepository availableTrainingRepository, ILogger<AvailableTrainingController> logger)
+        public AvailableTrainingController(IAvailableTrainingRepository availableTrainingRepository,ITrainingRepository trainingRepository, ILogger<AvailableTrainingController> logger)
         {
             _availableTrainingRepository = availableTrainingRepository;
+            _trainingRepository= trainingRepository;
             _logger = logger;
         }
 
@@ -154,6 +159,28 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+
+
+
+        [HttpGet("GenerateAvailableTrainings")]
+        public async Task<bool> GenerateAvailableTrainings( DateOnly startDate, DateOnly? endDate, bool isWeekEnd)
+        {
+            try
+            {
+             return await _availableTrainingRepository.GenerateAvailableTrainings(startDate,endDate,isWeekEnd);
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in AvailableTrainingController/GenerateAvailableTrainings");
+                return false;
+            }
+        }
+
+
+
 
     }
 }
