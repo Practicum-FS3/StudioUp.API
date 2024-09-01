@@ -11,6 +11,7 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 
@@ -41,7 +42,10 @@ namespace StudioUp.Repo.Repositories
             {
                 //Fetch Rtainings` data from server
                 allTrainingsList = (await _trainingRepository.GetAllTrainings()).ToList();
-                allAvailableTrainingsList = (await GetAllAvailableTrainingsAsync()).ToList();
+                var allAvailableTrainingsList = await _context.AvailableTraining
+                .Include(at => at.Training) // Include the related Training entity
+                  .ToListAsync();
+              
             }
             catch (Exception ex)
             {
@@ -191,7 +195,8 @@ namespace StudioUp.Repo.Repositories
                 if (endDate.HasValue)
                 {
                     // Range contains the total number of days between startDate and endDate
-                                  
+                    range = (endDate.Value.DayNumber - startDate.DayNumber) + 1;
+
 
                     if (range > 30)
                     {
@@ -205,7 +210,8 @@ namespace StudioUp.Repo.Repositories
                 {
                     if (startDate.DayOfWeek != DayOfWeek.Saturday)
                     {
-                        range = (DayOfWeek.Saturday - startDate.DayOfWeek + 7) % 7;
+                        range = ((int)DayOfWeek.Saturday - (int)startDate.DayOfWeek + 7) % 7;
+
                     }
 
                 }
@@ -214,7 +220,7 @@ namespace StudioUp.Repo.Repositories
                 // Generate elements in indevedual function(GenerateAvailableTrainingsForDay )
                 for (int i = 1; i <= range; i++)
                 {
-                    GenerateAvailableTrainingsForDay(CalaulateDate(startDate, i));
+                    await GenerateAvailableTrainingsForDay(CalaulateDate(startDate, i));
                 }
                 // Return status
 
@@ -238,24 +244,31 @@ namespace StudioUp.Repo.Repositories
 
        
         //Generate availableTrainings for single day
-        public async void GenerateAvailableTrainingsForDay(DateOnly targetDate)
+        public async Task GenerateAvailableTrainingsForDay(DateOnly targetDate)
+
         {
-            var trainingsListInCurrentDay = allTrainingsList.FindAll(training => (DayOfWeek)training.DayOfWeek == DateTime.Now.DayOfWeek);
-            var availableTrainingsListInCurrentDay = allAvailableTrainingsList.FindAll(availableTraining => availableTraining.Date == DateOnly.FromDateTime(DateTime.Now));
-            ////  Check if its a correct rule
-            //if (trainingsListInCurrentDay.Count == availableTrainingsListInCurrentDay.Count)
-            //{
-            //    // Logging a message with a variable
-            //    _logger.LogWarning($"Lessons for {targetDate.ToString("yyyy-MM-dd")} were already defined.");
-            //    return;
-            //}
+
+            var trainingsListInCurrentDay = allTrainingsList.FindAll(training => (DayOfWeek)training.DayOfWeek == targetDate.DayOfWeek);
+            //availableTrainings that are set for the same date
+            var availableTrainingsListInCurrentDay = allAvailableTrainingsList.FindAll(availableTraining => DateOnly.FromDateTime(availableTraining.Date) == targetDate);
 
             foreach (TrainingDTO currentTraining in trainingsListInCurrentDay)
             {
-                //Validate searching for exist AvailableTraining in current date
-                AvailableTrainingDTO currentAvailableTraining = availableTrainingsListInCurrentDay.FirstOrDefault(availableTraining => availableTraining.TrainingId == currentTraining.ID);
+                //Specific training date and time
+                DateTime currentDateTime = new DateTime(targetDate.Year, targetDate.Month, targetDate.Day, currentTraining.Hour, currentTraining.Minute, 0);
 
-                //AvailableTraining for currentDate wasnt realloc yet
+               
+                // Check if there is already an AvailableTraining entry for the current date and time
+                // with the same TrainingId. This ensures that the system does not create duplicate 
+                // entries for the same training session at the same date and time.
+                var currentAvailableTraining = allAvailableTrainingsList.FirstOrDefault(at =>
+                at.TrainingId == currentTraining.ID &&
+                DateOnly.FromDateTime(at.Date) == targetDate &&
+                at.Date.Hour == currentDateTime.Hour &&
+                at.Date.Minute == currentDateTime.Minute);
+
+
+                // If there is no existing AvailableTraining for this date and time, create a new one
                 if (currentAvailableTraining == null)
                 {
                     //Setup and initialization of AvailableTraining 
@@ -263,17 +276,18 @@ namespace StudioUp.Repo.Repositories
                     {
                         TrainingId = currentTraining.ID,
                         //Type of dateTimeOnly
-                        Date = targetDate,
+                        Date = currentDateTime,
                         ParticipantsCount = currentTraining.ParticipantsCount,
                         IsActive = true
                     };
+                    // Convert to DTO and add to the database asynchronously
                     var newAvailableTrainingDTO = _mapper.Map<AvailableTrainingDTO>(newAvailableTraining);
                     await AddAvailableTrainingAsync(newAvailableTrainingDTO);
                 }
                 else
                 {
-                    //Was already defined
-                     _logger.LogWarning($"LessonId: {currentTraining.ID} for {targetDate.ToString("yyyy-MM-dd")} was already defined.");
+                    // Log that the training for this date is already defined
+                    _logger.LogWarning($"LessonId: {currentTraining.ID} for {targetDate.ToString("yyyy-MM-dd")} was already defined.");
 
                 }
             }

@@ -130,8 +130,8 @@ namespace StudioUp.API.Controllers
 
 
 
-        [HttpDelete("GenerateAvailableTrainings")]
-        public async Task<bool> GenerateAvailableTrainings([FromBody] DateOnly startDate, DateOnly? endDate, bool isWeekEnd)
+        [HttpGet("GenerateAvailableTrainings")]
+        public async Task<bool> GenerateAvailableTrainings( DateOnly startDate, DateOnly? endDate, bool isWeekEnd)
         {
             try
             {
