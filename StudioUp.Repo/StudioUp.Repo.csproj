@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="IRepositories\ITrainingCustomerTypeRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\StudioUp.EF\StudioUp.Models.csproj" />
   </ItemGroup>
 

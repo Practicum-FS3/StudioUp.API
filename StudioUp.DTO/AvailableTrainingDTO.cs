@@ -11,7 +11,7 @@ namespace StudioUp.DTO
     {
         public int Id { get; set; }
         public int TrainingId { get; set; }
-        public DateOnly Date { get; set; }
+        public DateTime Date { get; set; }
         public int ParticipantsCount { get; set; }
         public bool IsActive { get; set; }
 

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NLog.Filters;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 using StudioUp.Repo.Repositories;
+using System.Collections.Generic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StudioUp.API.Controllers
 {
@@ -13,11 +16,13 @@ namespace StudioUp.API.Controllers
     public class AvailableTrainingController : ControllerBase
     {
         private readonly IAvailableTrainingRepository _availableTrainingRepository;
+        private readonly ITrainingRepository _trainingRepository;
         private readonly ILogger<AvailableTrainingController> _logger;
 
-        public AvailableTrainingController(IAvailableTrainingRepository availableTrainingRepository, ILogger<AvailableTrainingController> logger)
+        public AvailableTrainingController(IAvailableTrainingRepository availableTrainingRepository,ITrainingRepository trainingRepository, ILogger<AvailableTrainingController> logger)
         {
             _availableTrainingRepository = availableTrainingRepository;
+            _trainingRepository= trainingRepository;
             _logger = logger;
         }
 
@@ -38,7 +43,7 @@ namespace StudioUp.API.Controllers
 
         // GET: api/AvailableTraining/forCalander
 
-        [HttpGet("forCalander")]
+        [HttpGet("GetAvailableTrainingsCalender")]
         public async Task<ActionResult<IEnumerable<AvailableTrainingDTO>>> GetAvailableTrainingsCalender()
         {
             var availableTrainingsDTO = await _availableTrainingRepository.GetAllAvailableTrainingsAsyncForCalander();
@@ -46,7 +51,7 @@ namespace StudioUp.API.Controllers
         }
 
         //[HttpGet("{id}")]
-        [HttpGet("GetById/{id}")]
+        [HttpGet("GetByIdAvailableTraining/{id}")]
         public async Task<ActionResult<AvailableTrainingDTO>> GetByIdAvailableTraining(int id)
         {
             try
@@ -64,7 +69,44 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message} ");
             }
         }
-        [HttpPost("Add")]
+
+        [HttpGet("GetByTrainingIdForCalander/{id}")]
+        public async Task<ActionResult<CalanderAvailableTrainingDTO>> GetByTrainingIdAvailableTrainingForCalander(int id)
+        {
+            try
+            {
+                var availableTrainingDTO = await _availableTrainingRepository.GetAvailableByTrainingIdForCalander(id);
+
+                if (availableTrainingDTO == null)
+                {
+                    return NotFound($"Training with ID {id} not found.");
+                }
+
+                return Ok(availableTrainingDTO);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in AvailableTrainingController/GetAvailableTrainingsForCustomerAsync");
+                return StatusCode(500, $"Internal server error: {ex.Message} ");
+            }
+        }
+
+        [HttpGet("GetAllTrainingsDetailsForCustomerAsync/{id}")]
+        public async Task<ActionResult<IEnumerable<CalanderAvailableTrainingDTO>>> GetAllTrainingsDetailsForCustomerAsync(int id)
+        {
+            try
+            {
+                var trainings = await _availableTrainingRepository.GetAllTrainingsDetailsForCustomerAsync(id);
+                return Ok(trainings);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in AvailableTrainingController/GetAvailableTrainingsForCustomer");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("CreateAvailableTraining")]
         public async Task<ActionResult<AvailableTrainingDTO>> CreateAvailableTraining([FromBody] AvailableTrainingDTO availableTrainingDTO)
         {
             if (availableTrainingDTO == null)
@@ -83,20 +125,17 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> UpdateAvailableTraining(int id, [FromBody] AvailableTrainingDTO availableTrainingDTO)
+        [HttpPut("UpdateAvailableTraining")]
+        public async Task<IActionResult> UpdateAvailableTraining([FromBody] AvailableTrainingDTO availableTrainingDTO)
         {
             if (availableTrainingDTO == null)
             {
                 return BadRequest("AvailableTrainingDTO object is null");
             }
-            if (id != availableTrainingDTO.Id)
-            {
-                return BadRequest("ID in URL does not match ID in body");
-            }
+
             try
             {
-                await _availableTrainingRepository.UpdateAvailableTrainingAsync(id, availableTrainingDTO);
+                await _availableTrainingRepository.UpdateAvailableTrainingAsync(availableTrainingDTO);
                 return NoContent();
             }
             catch (Exception ex)
@@ -106,7 +145,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("DeleteAvailableTraining/{id}")]
         public async Task<IActionResult> DeleteAvailableTraining(int id)
         {
             try
@@ -120,6 +159,28 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+
+
+
+        [HttpGet("GenerateAvailableTrainings")]
+        public async Task<bool> GenerateAvailableTrainings( DateOnly startDate, DateOnly? endDate, bool isWeekEnd)
+        {
+            try
+            {
+             return await _availableTrainingRepository.GenerateAvailableTrainings(startDate,endDate,isWeekEnd);
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in AvailableTrainingController/GenerateAvailableTrainings");
+                return false;
+            }
+        }
+
+
+
 
     }
 }

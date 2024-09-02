@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudioUp.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class migr : Migration
+    public partial class migrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -384,7 +384,7 @@ namespace StudioUp.Models.Migrations
                     TrainerID = table.Column<int>(type: "int", nullable: true),
                     DayOfWeek = table.Column<int>(type: "int", nullable: false),
                     Hour = table.Column<int>(type: "int", nullable: false),
-                    Minute = table.Column<int>(type: "int", nullable: false),
+                    Minutes = table.Column<int>(type: "int", nullable: false),
                     ParticipantsCount = table.Column<int>(type: "int", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -434,6 +434,7 @@ namespace StudioUp.Models.Migrations
                     TrainingID = table.Column<int>(type: "int", nullable: true),
                     CustomerID = table.Column<int>(type: "int", nullable: true),
                     Attended = table.Column<bool>(type: "bit", nullable: false),
+                    CustomerSubscriptionId = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -444,6 +445,12 @@ namespace StudioUp.Models.Migrations
                         column: x => x.TrainingID,
                         principalTable: "T_AvailableTrainings",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_T_TrainingsCustomers_T_CustomerSubscription_CustomerSubscriptionId",
+                        column: x => x.CustomerSubscriptionId,
+                        principalTable: "T_CustomerSubscription",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_T_TrainingsCustomers_T_Customers_CustomerID",
                         column: x => x.CustomerID,
@@ -542,6 +549,11 @@ namespace StudioUp.Models.Migrations
                 column: "CustomerID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_T_TrainingsCustomers_CustomerSubscriptionId",
+                table: "T_TrainingsCustomers",
+                column: "CustomerSubscriptionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_T_TrainingsCustomers_TrainingID",
                 table: "T_TrainingsCustomers",
                 column: "TrainingID");
@@ -563,9 +575,6 @@ namespace StudioUp.Models.Migrations
                 name: "T_CustomerHMOS");
 
             migrationBuilder.DropTable(
-                name: "T_CustomerSubscription");
-
-            migrationBuilder.DropTable(
                 name: "T_LeumitCommitments");
 
             migrationBuilder.DropTable(
@@ -584,10 +593,19 @@ namespace StudioUp.Models.Migrations
                 name: "T_AvailableTrainings");
 
             migrationBuilder.DropTable(
-                name: "T_Customers");
+                name: "T_CustomerSubscription");
 
             migrationBuilder.DropTable(
                 name: "T_Trainings");
+
+            migrationBuilder.DropTable(
+                name: "T_Customers");
+
+            migrationBuilder.DropTable(
+                name: "T_Trainers");
+
+            migrationBuilder.DropTable(
+                name: "T_TrainingCustomerTypes");
 
             migrationBuilder.DropTable(
                 name: "T_HMOs");
@@ -597,12 +615,6 @@ namespace StudioUp.Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "T_SubscriptionTypes");
-
-            migrationBuilder.DropTable(
-                name: "T_Trainers");
-
-            migrationBuilder.DropTable(
-                name: "T_TrainingCustomerTypes");
 
             migrationBuilder.DropTable(
                 name: "T_CustomerTypes");
