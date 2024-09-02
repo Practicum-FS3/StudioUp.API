@@ -51,7 +51,7 @@ namespace StudioUp.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.EnableSensitiveDataLogging();
             //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
 
         }
