@@ -48,6 +48,7 @@ namespace StudioUp.Models
 
         public DbSet<CustomerFixedTraining> CustomerFixedTrainings { get; set; }
         public DbSet<InternalHomeLinks> InternalHomeLinks { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //optionsBuilder.EnableSensitiveDataLogging();

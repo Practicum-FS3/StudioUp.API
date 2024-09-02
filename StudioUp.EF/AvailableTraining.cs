@@ -15,7 +15,7 @@ namespace StudioUp.Models
         [ForeignKey("Trainings")]
         public int TrainingId { get; set; }
         public virtual Training Training { get; set; }
-        public DateOnly Date {  get; set; }
+        public DateTime Date {  get; set; }
         //public int Tonnage { get; set; }
         public int ParticipantsCount { get; set; }
         public bool IsActive { get; set; }
