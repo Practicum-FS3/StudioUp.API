@@ -106,6 +106,7 @@ namespace StudioUp.API.Controllers
             }
         }
 
+       
         [HttpPost("CreateAvailableTraining")]
         public async Task<ActionResult<AvailableTrainingDTO>> CreateAvailableTraining([FromBody] AvailableTrainingDTO availableTrainingDTO)
         {
