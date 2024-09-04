@@ -12,10 +12,12 @@ namespace StudioUp.API.Controllers
     public class FileUploadController : ControllerBase
     {
         private readonly IFileUploadRepository _fileUploadRepository;
+        private readonly ILogger<FileUploadController> _logger;
 
-        public FileUploadController(IFileUploadRepository fileUploadRepository)
+        public FileUploadController(IFileUploadRepository fileUploadRepository, ILogger<FileUploadController> logger)
         {
             _fileUploadRepository = fileUploadRepository;
+            _logger = logger;
         }
 
         [HttpGet("{id}")]
@@ -46,7 +48,6 @@ namespace StudioUp.API.Controllers
 
                 var fileId = await SaveFileAsync(fileUploadDTO.File);
 
-                // Fetch the uploaded file data to return
                 var fileResult = await _fileUploadRepository.GetFileAsync(fileId);
                 if (fileResult == null)
                     return NotFound("File not found.");
@@ -60,7 +61,6 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        // POST: api/fileupload/uploadfileandreturnid
         [HttpPost("UploadFileAndReturnId")]
         public async Task<ActionResult> UploadFileAndReturnId([FromForm] FileUploadDTO fileUploadDTO)
         {
@@ -80,7 +80,6 @@ namespace StudioUp.API.Controllers
             }
         }
 
-        // Internal method to validate the file
         private (bool IsValid, string ErrorMessage) ValidateFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -98,47 +97,25 @@ namespace StudioUp.API.Controllers
             return (true, null);
         }
 
-        // Internal method to save the file
         private async Task<int> SaveFileAsync(IFormFile file)
         {
-            // Call the repository or service to save the file and get the ID
             return await _fileUploadRepository.AddFileAsync(file);
         }
 
-
-        //[HttpPost("UploadFile")]
-        //public async Task<ActionResult> UploadFile([FromForm] FileUploadDTO fileUploadDTO)
-        //{
-        //    try
-        //    {
-        //        if (fileUploadDTO.File == null || fileUploadDTO.File.Length == 0)
-        //            return BadRequest("File not selected");
-
-        //        var permittedExtensions = new[] { ".pdf", ".png", ".jpg" };
-        //        var extension = Path.GetExtension(fileUploadDTO.File.FileName).ToLowerInvariant();
-        //        if (string.IsNullOrEmpty(extension) || !permittedExtensions.Contains(extension))
-        //            return BadRequest("Invalid file type");
-        //        const long maxFileSize = 2 * 1024 * 1024;
-        //        if (fileUploadDTO.File.Length > maxFileSize)
-        //            return BadRequest("File size exceeds the limit of 2 MB");
-        //        var result = await _fileUploadRepository.AddFileAsync(fileUploadDTO.File);
-        //        //return File(result.Data, result.ContentType, result.FileName);
-        //        return Ok(new { id = result });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, " this error in FileUploadController/UploadFile");
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-
-        //}
         [HttpDelete("DeleteFile/{id}")]
         public async Task<IActionResult> DeleteFile(int id)
         {
-            var result = await _fileUploadRepository.DeleteFileAsync(id);
-            if (!result)
-                return NotFound("File not found ");
-            return Ok(new { Message = "File deleted successfully" });
+            try
+            {
+                await _fileUploadRepository.DeleteFileAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in FileUploadController/DeleteFile");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+
+            }
         }
     }
 }
