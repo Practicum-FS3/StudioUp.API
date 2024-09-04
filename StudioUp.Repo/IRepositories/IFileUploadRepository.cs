@@ -12,6 +12,6 @@ namespace StudioUp.Repo.IRepositories
     {
         Task<FileDownloadDTO> GetFileAsync(int id);
         Task<int> AddFileAsync(IFormFile file);
-        Task<bool> DeleteFileAsync(int id);
+        Task DeleteFileAsync(int id);
     }
 }

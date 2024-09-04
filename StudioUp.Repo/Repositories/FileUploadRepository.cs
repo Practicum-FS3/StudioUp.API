@@ -22,37 +22,60 @@ namespace StudioUp.Repo.Repositories
         }
         public async Task<FileDownloadDTO> GetFileAsync(int id)
         {
-            var file = await _context.Files.FindAsync(id);
-            if (!file.IsActive) 
-                return null;           
-            return _mapper.Map<FileDownloadDTO>(file);
+            try
+            {
+                var file = await _context.Files.FindAsync(id);
+                if (file == null || !file.IsActive)
+                    return null;
+                return _mapper.Map<FileDownloadDTO>(file);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
         public async Task<int> AddFileAsync(IFormFile file)
         {
-            using (var memoryStream = new MemoryStream())
+            try
             {
-                await file.CopyToAsync(memoryStream);
-                var fileUpload = new FileUpload
+                using (var memoryStream = new MemoryStream())
                 {
-                    FileName = file.FileName,
-                    Data = memoryStream.ToArray(),
-                    ContentType = file.ContentType,
-                    IsActive = true
-                };
-                _context.Files.Add(fileUpload);
-                await _context.SaveChangesAsync();
-                return fileUpload.Id;
+                    await file.CopyToAsync(memoryStream);
+                    var fileUpload = new FileUpload
+                    {
+                        FileName = file.FileName,
+                        Data = memoryStream.ToArray(),
+                        ContentType = file.ContentType,
+                        IsActive = true
+                    };
+                    _context.Files.Add(fileUpload);
+                    await _context.SaveChangesAsync();
+                    //return _mapper.Map<FileDownloadDTO>(fileUpload);
+                    return fileUpload.Id;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
-        public async Task<bool> DeleteFileAsync(int id)
+        public async Task DeleteFileAsync(int id)
         {
-            var fileUpload = await _context.Files.FindAsync(id);
-            fileUpload.IsActive = false;
-            if (fileUpload == null)
-                return false;
-            _context.Files.Update(fileUpload);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                var fileUpload = await _context.Files.FindAsync(id);
+                fileUpload.IsActive = false;
+                if (fileUpload == null)
+                    throw new Exception("File not found by id");
+                // _context.Files.Update(fileUpload);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
     }
 }
