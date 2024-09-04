@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudioUp.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class updatecusfixtrng : Migration
+    public partial class migrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,6 +46,22 @@ namespace StudioUp.Models.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Files", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InternalHomeLinks",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Link = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsExternal = table.Column<bool>(type: "bit", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InternalHomeLinks", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -410,7 +426,7 @@ namespace StudioUp.Models.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TrainingId = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ParticipantsCount = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -423,6 +439,31 @@ namespace StudioUp.Models.Migrations
                         principalTable: "T_Trainings",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "T_CustomerFixedTrainings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerId = table.Column<int>(type: "int", nullable: true),
+                    TrainingId = table.Column<int>(type: "int", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_T_CustomerFixedTrainings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_T_CustomerFixedTrainings_T_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "T_Customers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_T_CustomerFixedTrainings_T_Trainings_TrainingId",
+                        column: x => x.TrainingId,
+                        principalTable: "T_Trainings",
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -466,6 +507,16 @@ namespace StudioUp.Models.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_T_AvailableTrainings_TrainingId",
                 table: "T_AvailableTrainings",
+                column: "TrainingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_T_CustomerFixedTrainings_CustomerId",
+                table: "T_CustomerFixedTrainings",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_T_CustomerFixedTrainings_TrainingId",
+                table: "T_CustomerFixedTrainings",
                 column: "TrainingId");
 
             migrationBuilder.CreateIndex(
@@ -566,10 +617,16 @@ namespace StudioUp.Models.Migrations
                 name: "ContentSections");
 
             migrationBuilder.DropTable(
+                name: "InternalHomeLinks");
+
+            migrationBuilder.DropTable(
                 name: "Login");
 
             migrationBuilder.DropTable(
                 name: "T_Contacts");
+
+            migrationBuilder.DropTable(
+                name: "T_CustomerFixedTrainings");
 
             migrationBuilder.DropTable(
                 name: "T_CustomerHMOS");

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
-using StudioUp.Models.Migrations;
+//using StudioUp.Models.Migrations;
 using StudioUp.Repo.IRepositories;
 
 namespace StudioUp.API.Controllers

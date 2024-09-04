@@ -12,8 +12,8 @@ using StudioUp.Models;
 namespace StudioUp.Models.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240815090702_update-cus-fix-trng")]
-    partial class updatecusfixtrng
+    [Migration("20240903103444_migrations")]
+    partial class migrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,8 +33,8 @@ namespace StudioUp.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -221,6 +221,32 @@ namespace StudioUp.Models.Migrations
                     b.ToTable("T_Customers");
                 });
 
+            modelBuilder.Entity("StudioUp.Models.CustomerFixedTraining", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("TrainingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("TrainingId");
+
+                    b.ToTable("T_CustomerFixedTrainings");
+                });
+
             modelBuilder.Entity("StudioUp.Models.CustomerHMOS", b =>
                 {
                     b.Property<int>("ID")
@@ -368,6 +394,31 @@ namespace StudioUp.Models.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("T_HMOs");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.InternalHomeLinks", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsExternal")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Link")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("InternalHomeLinks");
                 });
 
             modelBuilder.Entity("StudioUp.Models.LeumitCommimentTypes", b =>
@@ -712,6 +763,21 @@ namespace StudioUp.Models.Migrations
                     b.Navigation("PaymentOption");
 
                     b.Navigation("SubscriptionType");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.CustomerFixedTraining", b =>
+                {
+                    b.HasOne("StudioUp.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("StudioUp.Models.Training", "Training")
+                        .WithMany()
+                        .HasForeignKey("TrainingId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Training");
                 });
 
             modelBuilder.Entity("StudioUp.Models.CustomerHMOS", b =>
