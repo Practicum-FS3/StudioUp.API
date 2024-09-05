@@ -18,15 +18,20 @@ namespace StudioUp.Repo
         {
 
             CreateMap<AvailableTraining, AvailableTrainingDTO>().ReverseMap();
+            CreateMap<InternalHomeLinks, InternalHomeLinksDTO>().ReverseMap();
+
             CreateMap<Contact, ContactDTO>().ReverseMap();
             CreateMap<Customer, CustomerDTO>().ReverseMap();
             CreateMap<CustomerType, CustomerTypeDTO>().ReverseMap();
             CreateMap<HMO, HMODTO>().ReverseMap();
-
-            CreateMap<PaymentOptionDTO,PaymentOptionDTO>().ReverseMap();
+            CreateMap<PaymentOption, PaymentOptionDTO>().ReverseMap();
             CreateMap<SubscriptionType, SubscriptionTypeDTO>().ReverseMap();
+            CreateMap<Models.SubscriptionType, SubscriptionTypeDTO>().ReverseMap();
             CreateMap<Trainer, TrainerDTO>().ReverseMap();
-            CreateMap<TrainingCustomer, TrainingCustomerDTO>().ReverseMap();
+            CreateMap<TrainingCustomer, TrainingCustomerDTO>()
+                .ForMember(dest => dest.TrainingDate, opt => opt.MapFrom(src => src.Training.Date))
+                .ForMember(dest => dest.TrainingName, opt => opt.MapFrom(src => src.Training.Training.TrainingCustomerType.TrainingType.Title))
+                .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Training.Training.Trainer.FirstName + " " + src.Training.Training.Trainer.LastName));
             CreateMap<TrainingCustomerType, TrainingCustomerTypeDTO>().ReverseMap();
             CreateMap<CustomerSubscriptionDTO, CustomerSubscription>().ReverseMap();
             CreateMap<TrainingCustomer, TrainingCustomerDTO>().ReverseMap();
@@ -45,7 +50,7 @@ namespace StudioUp.Repo
              .ForMember(dest => dest.ImageData, opt => opt.MapFrom(src => ConvertIFormFileToByteArray(src.fileUploadDTO)));
 
             CreateMap<TrainingCustomerType, TrainingCustomerTypeDTO>()
-               .ForMember(dest => dest.TrainingCustomerName, opt => opt.MapFrom(src => src.TrainingType.Title + " " + src.CustomerType.Title));
+               .ForMember(dest => dest.TrainingCustomerTypeName, opt => opt.MapFrom(src => src.TrainingType.Title + " " + src.CustomerType.Title));
             CreateMap<TrainingCustomerTypePostComand, TrainingCustomerType>().ReverseMap();
             CreateMap<Training, TrainingDTO>().ReverseMap();
             CreateMap<TrainingType, TrainingTypeDTO>().ReverseMap();
@@ -64,45 +69,33 @@ namespace StudioUp.Repo
 
 
 
+
             CreateMap<AvailableTraining, CalanderAvailableTrainingDTO>()
-            .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Training.Trainer.FirstName + " " + src.Training.Trainer.LastName))
-            .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.DayOfWeek))
-            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Training.Hour, src.Training.Minute)))
-            .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.Training.TrainingCustomerType.CustomerType.Title))
-            .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.Training.TrainingCustomerType.TrainingType.Title));
+             .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Training.Trainer.FirstName + " " + src.Training.Trainer.LastName))
+             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.DayOfWeek))
+             .ForMember(dest => dest.Time, opt => opt.MapFrom(src => $"{src.Training.Hour:00}:{src.Training.Minute:00}"))
+             .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.Training.TrainingCustomerType.CustomerType.Title))
+             .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.Training.TrainingCustomerType.TrainingType.Title));
 
 
-            CreateMap<Training, TrainingDTO>()
-                .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour.ToString("D2")))
-                .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => src.Minute.ToString("D2")));
-            CreateMap<TrainingDTO, Training>()
-                .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => int.Parse(src.Hour)))
-                .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => int.Parse(src.Minute)));
-            CreateMap<TrainingPostDTO, Training>()
-                 .ForMember(dest => dest.ID, opt => opt.Ignore())
-                 .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => int.Parse(src.Hour)))
-                 .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => int.Parse(src.Minute)));
-            CreateMap<Training, TrainingPostDTO>()
-                .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour.ToString("D2")))
-                .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => src.Minute.ToString("D2")));
-            CreateMap<TrainingDTO, TrainingPostDTO>()
-                .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour))
-                .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => src.Minute));
-            CreateMap<TrainingPostDTO, TrainingDTO>()
-                .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour))
-                .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => src.Minute));
-
-
+            CreateMap<Training, TrainingDTO>().ReverseMap();
 
             CreateMap<TrainingCustomer, CalanderAvailableTrainingDTO>()
             .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Training.Training.Trainer != null ? $"{src.Training.Training.Trainer.FirstName} {src.Training.Training.Trainer.LastName}" : string.Empty))
-            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Training.Training.Hour, src.Training.Training.Minute)))
+            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => $"{src.Training.Training.Hour:00}:{src.Training.Training.Minute:00}"))
             .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.Customer.CustomerType.Title))
             .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.Training.Training.TrainingCustomerType.TrainingType.Title))
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Training.Date))
             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.Training.DayOfWeek))
             .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.Training.ParticipantsCount))
              .ForMember(dest => dest.IsRegistered, opt => opt.MapFrom(src => true));
+        
+
+        CreateMap<DateTime, DateOnly>()
+             .ConvertUsing(src => DateOnly.FromDateTime(src));
+            CreateMap<DateOnly, DateTime>()
+                .ConvertUsing(src => src.ToDateTime(TimeOnly.MinValue));
+
         }
         private byte[] ConvertIFormFileToByteArray(FileUploadDTO file)
         {

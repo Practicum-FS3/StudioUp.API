@@ -27,8 +27,9 @@ namespace StudioUp.Repo.Repositories
             try
             {
                 var lst = await _context.Trainings.Where(t => t.IsActive)
-                              .Include(t => t.TrainingCustomerType)
-                              .Include(t => t.Trainer)
+                              .Include(t => t.TrainingCustomerType.CustomerType)
+                 .Include(t => t.TrainingCustomerType.TrainingType)
+                 .Include(t => t.Trainer)
                               .ToListAsync();
                 return _mapper.Map<List<TrainingDTO>>(lst);
             }
@@ -62,10 +63,12 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
+
                 Training training = await _context.Trainings.Where(t => t.ID == id && t.IsActive)
-                                                  .Include(t => t.TrainingCustomerType)
-                                                  .Include(t => t.Trainer)
-                                                  .FirstOrDefaultAsync();
+                 .Include(t => t.TrainingCustomerType.CustomerType)
+                 .Include(t => t.TrainingCustomerType.TrainingType)
+                 .Include(t => t.Trainer)
+                 .FirstOrDefaultAsync();
                 return _mapper.Map<TrainingDTO>(training);
             }
             catch (Exception ex)
@@ -75,7 +78,7 @@ namespace StudioUp.Repo.Repositories
 
         }
 
-        public async Task<TrainingDTO> AddTraining(TrainingDTO trainingDto)
+        public async Task<TrainingPostDTO> AddTraining(TrainingPostDTO trainingDto)
         {
             try
             {
@@ -87,7 +90,7 @@ namespace StudioUp.Repo.Repositories
                 training.IsActive = true;
                 var newtraining = await _context.Trainings.AddAsync(training);
                 await _context.SaveChangesAsync();
-                trainingDto.ID = newtraining.Entity.ID;
+                training.ID = newtraining.Entity.ID;
                 return trainingDto;
             }
             catch (Exception ex)

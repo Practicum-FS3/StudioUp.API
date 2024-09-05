@@ -79,7 +79,7 @@ namespace StudioUp.Repo.Repositories
                                           .FirstOrDefaultAsync(l => l.Id == id && l.IsActive);
                 if (entity == null)
                 {
-                    throw new Exception($"LeumitCommitment with ID {id} does not exist or is inactive.");
+                    return null;
                 }
                 return mapper.Map<LeumitCommitmentsDTO>(entity);
             }
@@ -97,7 +97,7 @@ namespace StudioUp.Repo.Repositories
                                                   .FirstOrDefaultAsync(l => l.Id == lc.Id && l.IsActive);
                 if (existingEntity == null)
                 {
-                    throw new Exception($"LeumitCommitment with ID {lc.Id} does not exist or is inactive.");
+                    return null;
                 }
 
                 mapper.Map(lc, existingEntity);

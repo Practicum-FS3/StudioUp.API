@@ -38,8 +38,11 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-
                 LeumitCommimentTypesDTO leumitCommimentTypesDTO = await leumitCommimentTypesRepository.GetByIdAsync(id);
+                if (leumitCommimentTypesDTO == null)
+                {
+                    return NotFound($"LeumitCommimentType with ID {id} not found.");
+                }
                 return Ok(leumitCommimentTypesDTO);
             }
             catch (Exception exeption)
@@ -52,7 +55,12 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                await leumitCommimentTypesRepository.UpdateAsync(newLeumitCommimentTypesDTO);
+                var leumitCommiment =  await leumitCommimentTypesRepository.UpdateAsync(newLeumitCommimentTypesDTO);
+                if (leumitCommiment == null)
+                {
+                    return NotFound($"Training with ID {newLeumitCommimentTypesDTO.Id} not found.");
+                }
+                
                 return Ok(newLeumitCommimentTypesDTO);
             }
             catch (Exception ex)

@@ -79,7 +79,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainingTypeRepository>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            // ·„Â‚Ó‰ ‰ÊÂ, ‰ÓÈÓÂ˘ ˘Ï ICustomerSubscriptionRepository ‰Â‡ CustomerSubscriptionRepository
+            // √°√£√•√¢√Æ√§ √§√¶√•, √§√Æ√©√Æ√•√π √π√¨ ICustomerSubscriptionRepository √§√•√† CustomerSubscriptionRepository
             builder.Services.AddScoped<ICustomerSubscriptionRepository, CustomerSubscriptionRepository>();
             builder.Services.AddScoped<IContactRepository, ContactRepository>();
             builder.Services.AddScoped<IHMORepository, HMORepository>();
@@ -93,7 +93,8 @@ namespace StudioUp.API
 
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
             builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
-            builder.Services.AddScoped<IRepository<TrainingCustomerTypeDTO>, TrainingCustomerTypeRepository>();
+            builder.Services.AddScoped<IInternalHomeLinksRepository,InternalHomeLinksRepository>();
+            builder.Services.AddScoped<ITrainingCustomerTypesRepository, TrainingCustomerTypeRepository>();
             builder.Services.AddScoped<ICustomerHMOSRepository, CustomerHMOSRepository>();
             builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
             builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
@@ -101,7 +102,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
-          //  builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
+            //builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
