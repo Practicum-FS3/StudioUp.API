@@ -26,7 +26,7 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var trainer = await trainerRepository.GetAllTrainers();
+                var trainer = await trainerRepository.GetAllTrainersAsync();
                 return Ok(trainer);
             }
             catch (Exception ex)
@@ -41,7 +41,7 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                var trainer = await trainerRepository.GetTrainerById(id);
+                var trainer = await trainerRepository.GetTrainerByIdAsync(id);
                 if (trainer == null)
                 {
                     return NotFound("customer not found by ID");
@@ -64,7 +64,7 @@ namespace StudioUp.API.Controllers
             }
             try
             {
-                var trainer = await trainerRepository.AddTrainer(t);
+                var trainer = await trainerRepository.AddTrainerAsync(t);
                 return Ok(trainer);
             }
             catch (Exception ex)
@@ -85,7 +85,7 @@ namespace StudioUp.API.Controllers
             }
             try
             {
-                 await trainerRepository.UpdateTrainer(t);
+                 await trainerRepository.UpdateTrainerAsync(t);
                 return NoContent();
 
             }
@@ -101,12 +101,30 @@ namespace StudioUp.API.Controllers
         {
             try
             {
-                await trainerRepository.DeleteTrainer(id);
+                await trainerRepository.DeleteTrainerAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, " this error in TrainerControllers/deleteTrainer");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        [Route("filter")]
+        public async Task<ActionResult<List<TrainerDTO>>> FilterTrainer([FromQuery] DTO.TrainerFilterDto filter)
+        {
+            try
+            {
+
+                filter.FirstName = filter.FirstName?.Trim();
+                filter.LastName = filter.LastName?.Trim();
+                filter.mail = filter.mail?.Trim();
+                return Ok(await trainerRepository.FilterTrainerAsync(filter));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in TrainerControllers/Filter");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
