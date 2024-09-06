@@ -42,10 +42,7 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var startDate = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Sunday));
-                var endDate = startDate.AddDays(7);
-                var trainings = await _context.TrainingCustomers.Where(x => x.IsActive
-                && DateOnly.FromDateTime( x.Training.Date )>= startDate && DateOnly.FromDateTime(x.Training.Date) < endDate)
+                var trainings = await _context.TrainingCustomers.Where(x => x.IsActive)      
                       .Include(tc => tc.Customer)
                             .ThenInclude(c => c.CustomerType)
                        .Include(tc => tc.Training)
