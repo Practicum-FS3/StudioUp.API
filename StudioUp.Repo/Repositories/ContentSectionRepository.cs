@@ -2,52 +2,119 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using AutoMapper;
+using StudioUp.DTO;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.IO;
 
 namespace StudioUp.Repo
 {
     public class ContentSectionRepository : IContentSectionRepository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly ILogger<ContentSectionRepository> _logger;
 
-        public ContentSectionRepository(DataContext context)
+
+        public ContentSectionRepository(DataContext context, IMapper mapper, ILogger<ContentSectionRepository> logger
+            )
         {
             _context = context;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public async Task<IEnumerable<ContentSection>> GetAllAsync()
+        public async Task<IEnumerable<ContentSectionDTO>> GetAllAsync()
         {
-            return await _context.ContentSections.Include(cs => cs.ContentType).ToListAsync();
+            try
+            {
+                var cS = await _context.ContentSections.Include(cs => cs.ContentType).Where(cS => cS.IsActive).ToListAsync();
+                return _mapper.Map<IEnumerable<ContentSectionDTO>>(cS);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
 
-        public async Task<ContentSection> GetByIdAsync(int id)
+        public async Task<ContentSectionDTO> GetByIdAsync(int id)
         {
-            return await _context.ContentSections.Include(cs => cs.ContentType).FirstOrDefaultAsync(cs => cs.ID == id);
+            try
+            {
+                var contentSection = await _context.ContentSections.Include(cs => cs.ContentType).FirstOrDefaultAsync(cs => cs.ID == id && cs.IsActive);
+                return _mapper.Map<ContentSectionDTO>(contentSection);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task AddAsync(ContentSection contentSection)
+        public async Task<ContentSectionDTO> AddAsync(ContentSectionManagementDTO contentSection)
         {
-            await _context.ContentSections.AddAsync(contentSection);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var cS=_mapper.Map<ContentSection>(contentSection);
+                var c = await _context.ContentSections.AddAsync(_mapper.Map<ContentSection>(contentSection));
+                await _context.SaveChangesAsync();
+                return _mapper.Map<ContentSectionDTO>(cS);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
 
-        public async Task UpdateAsync(ContentSection contentSection)
+        public async Task UpdateAsync(ContentSectionManagementDTO contentSection)
         {
-            _context.ContentSections.Update(contentSection);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.ContentSections.Update(_mapper.Map<ContentSection>(contentSection));
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+        public async Task DeleteAsync(int ID)
+        {
+            try
+            {
+                var contentSectionToDelete = await _context.ContentSections
+                    .FindAsync(ID);
+
+                if (contentSectionToDelete == null)
+                {
+                    throw new Exception($"can't delete content section with id:{ID}");
+                }
+                contentSectionToDelete.IsActive = false;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task DeleteAsync(ContentSection contentSection)
+        public async Task<IEnumerable<ContentSectionDTO>> GetByContentTypeAsync(int contentTypeId)
         {
-            _context.ContentSections.Remove(contentSection);
-            await _context.SaveChangesAsync();
-        }
+            try
+            {
+                return _mapper.Map<IEnumerable<ContentSectionDTO>>(await _context.ContentSections
+                             .Include(cs => cs.ContentType)
+                             .Where(cs => cs.ContentTypeID == contentTypeId)
+                             .ToListAsync());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
-        public async Task<IEnumerable<ContentSection>> GetByContentTypeAsync(int contentTypeId)
-        {
-            return await _context.ContentSections
-                .Include(cs => cs.ContentType)
-                .Where(cs => cs.ContentTypeID == contentTypeId)
-                .ToListAsync();
         }
     }
 }

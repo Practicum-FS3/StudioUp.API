@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -16,71 +15,78 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext context;
         private readonly IMapper mapper;
+        private readonly ILogger<CustomerRepository> _logger;
 
-        public CustomerRepository(DataContext context, IMapper mapper)
+        public CustomerRepository(DataContext context, IMapper mapper, ILogger<CustomerRepository> logger)
         {
             this.context = context;
             this.mapper = mapper;
-            
+            _logger = logger;
         }
 
-        public async Task<DTO.CustomerDTO> AddAsync(CustomerDTO entity)
-
+        public async Task<CustomerDTO> AddAsync(CustomerDTO entity)
         {
             try
             {
-                var mapCast = mapper.Map<Models.Customer>(entity);
-                var newCustomer = await context.Customers.AddAsync(mapCast);
+                var x = await context.Customers.AddAsync(mapper.Map<Customer>(entity));
+
+
+   /*             var mapCast = mapper.Map<Customer>(entity);
+                var newCustomer = await context.Customers.AddAsync(mapCast);*/
                 await context.SaveChangesAsync();
-                entity.Id = newCustomer.Entity.Id;
                 return entity;
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
         public async Task<CustomerDTO> GetCustomerByEmailAndPassword(string email, string password)
         {
-            var login = await context.Login.FirstOrDefaultAsync(l => l.Email == email && l.Password == password);
-            if (login is not null)
+            try
             {
-                try
+                var login = await context.Login.FirstOrDefaultAsync(l => l.Email == email && l.Password == password);
+                if (login is not null)
                 {
-                    var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
-                    var mapCust = mapper.Map<CustomerDTO>(cust);
-                    return mapCust;
+                    try
+                    {
+                        var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email && c.IsActive);
+                        var mapCust = mapper.Map<CustomerDTO>(cust);
+                        return mapCust;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("An error occurred while retrieving the customer by email and password.", ex);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    throw ex;
+                    return null;
                 }
             }
-            else
+            catch
             {
-                return null;
-            }          
+                throw;
+            }
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             try
             {
-                var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
-                if (c == null)
+                var customers = await context.Customers.FindAsync(id);
+                if (customers == null || !customers.IsActive)
                 {
-                    return false;
+                    throw new Exception($"Customer with ID {id} does not exist or is already inactive.");
                 }
-                var mapC = mapper.Map<Customer>(c);
-                context.Customers.Remove(mapC);
-                await context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
 
+                customers.IsActive = false;
+                await context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
             }
         }
 
@@ -88,107 +94,93 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var l = await context.Customers.ToListAsync();
-
-                return mapper.Map<List<CustomerDTO>>(l);
-                
+                var customers = await context.Customers.Where(ct => ct.IsActive).ToListAsync();
+                return mapper.Map<List<CustomerDTO>>(customers);
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
-
+                throw;
             }
-
         }
 
         public async Task<CustomerDTO> GetByIdAsync(int id)
         {
             try
             {
-                var c = await context.Customers.FirstOrDefaultAsync(t => t.Id == id);
-                var mapCust = mapper.Map<CustomerDTO>(c);
+                var customer = await context.Customers.FirstOrDefaultAsync(t => t.Id == id && t.IsActive);
+                if (customer == null)
+                {
+                    throw new Exception($"Customer with ID {id} does not exist or is inactive.");
+                }
+                var mapCust = mapper.Map<CustomerDTO>(customer);
                 return mapCust;
-
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
-        public async Task<bool> UpdateAsync(CustomerDTO entity)
+        public async Task UpdateAsync(CustomerDTO entity)
         {
             try
             {
-                var customerToUpdate = await context.Customers.FirstOrDefaultAsync(customerToUpdate => customerToUpdate.Id == entity.Id);
-
-                if (customerToUpdate == null)
+                var existingCustomer = await context.Customers.FindAsync(entity.Id);
+                if (existingCustomer == null)
                 {
-                    return false;
+                    throw new Exception($"Customer with ID {entity.Id} does not exist.");
                 }
 
-                customerToUpdate.Address = entity.Address;
-                customerToUpdate.LastName = entity.LastName;
-                customerToUpdate.FirstName = entity.FirstName;
-                customerToUpdate.PaymentOptionId = entity.PaymentOptionId;
-                customerToUpdate.HMOId = entity.HMOId;
-                customerToUpdate.CustomerTypeId = entity.CustomerTypeId;
-
-                customerToUpdate.IsActive = entity.IsActive;
-                customerToUpdate.SubscriptionTypeId = entity.SubscriptionTypeId;
-                customerToUpdate.Tel = entity.Tel;
-                customerToUpdate.Email = entity.Email;
-                context.Customers.Update(mapper.Map<Customer>(customerToUpdate));
-
+                mapper.Map(entity, existingCustomer);
                 await context.SaveChangesAsync();
-                return true;
-
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
+
         public async Task<List<CustomerDTO>> FilterAsync(CustomerFilterDTO filter)
         {
-            var query = context.Customers.AsQueryable();
-
-            if (!string.IsNullOrEmpty(filter.FirstName) || !string.IsNullOrEmpty(filter.LastName))
+            try
             {
-                var firstName = filter.FirstName?.Trim().Replace(" ", "").ToLower();
-                var lastName = filter.LastName?.Trim().Replace(" ", "").ToLower();
+                var query = context.Customers.AsQueryable();
 
-                query = query.Where(c =>
-                    (string.IsNullOrEmpty(firstName) || c.FirstName.ToLower().Replace(" ", "").Contains(firstName)) &&
-                    (string.IsNullOrEmpty(lastName) || c.LastName.ToLower().Replace(" ", "").Contains(lastName)));
+                if (!string.IsNullOrEmpty(filter.FirstName) || !string.IsNullOrEmpty(filter.LastName))
+                {
+                    var firstName = filter.FirstName?.Trim().Replace(" ", "").ToLower();
+                    var lastName = filter.LastName?.Trim().Replace(" ", "").ToLower();
+
+                    query = query.Where(c =>
+                        (string.IsNullOrEmpty(firstName) || c.FirstName.ToLower().Replace(" ", "").Contains(firstName)) &&
+                        (string.IsNullOrEmpty(lastName) || c.LastName.ToLower().Replace(" ", "").Contains(lastName)));
+                }
+
+                if (!string.IsNullOrEmpty(filter.Email))
+                {
+                    var email = filter.Email.Trim().Replace(" ", "").ToLower();
+                    query = query.Where(c => c.Email.ToLower().Replace(" ", "").Contains(email));
+                }
+
+                return await query.Select(c => new CustomerDTO
+                {
+                    Id = c.Id,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    Address = c.Address,
+                    Email = c.Email,
+                    Tel = c.Tel,
+                    PaymentOptionId = c.PaymentOptionId.Value,
+                    HMOId = c.HMOId.Value,
+                    CustomerTypeId = c.CustomerTypeId.Value,
+                    SubscriptionTypeId = c.SubscriptionTypeId.Value,
+                    IsActive = c.IsActive
+                }).Where(ct => ct.IsActive).ToListAsync();
             }
-
-            if (!string.IsNullOrEmpty(filter.Email))
+            catch
             {
-                var email = filter.Email.Trim().Replace(" ", "").ToLower();
-                query = query.Where(c => c.Email.ToLower().Replace(" ", "").Contains(email));
+                throw;
             }
-
-            return await query.Select(c => new CustomerDTO
-            {
-                Id = c.Id,
-                FirstName = c.FirstName,
-                LastName = c.LastName,
-                Address = c.Address,
-                Email = c.Email,
-                Tel = c.Tel,
-                PaymentOptionId = c.PaymentOptionId,
-                HMOId = c.HMOId,
-                CustomerTypeId = c.CustomerTypeId,
-                SubscriptionTypeId = c.SubscriptionTypeId,
-                IsActive = c.IsActive
-            }).ToListAsync();
         }
-
-
-
-
     }
 }
-
-

@@ -1,5 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using StudioUp.DTO;
 using StudioUp.Models;
+using StudioUp.Repo.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,45 +14,91 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class SubscriptionTypeRepository : IRepository<SubscriptionType>
+    public class SubscriptionTypeRepository : IRepository<SubscriptionTypeDTO>
     {
         private readonly DataContext _context;
-
-        public SubscriptionTypeRepository(DataContext context)
+        private readonly IMapper _mapper;
+        public SubscriptionTypeRepository(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-
-        public async Task<List<SubscriptionType>> GetAllAsync()
+        public async Task<List<SubscriptionTypeDTO>> GetAllAsync()
         {
-            return await _context.SubscriptionTypes.ToListAsync();
-        }
 
-        public async Task<SubscriptionType> GetByIdAsync(int id)
-        {
-            return await _context.SubscriptionTypes.FindAsync(id);
-        }
-
-        public async Task AddAsync(SubscriptionType subscriptionType)
-        {
-            await _context.SubscriptionTypes.AddAsync(subscriptionType);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(SubscriptionType subscriptionType)
-        {
-            _context.SubscriptionTypes.Update(subscriptionType);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            var subscriptionType = await _context.SubscriptionTypes.FindAsync(id);
-            if (subscriptionType != null)
+            try
             {
-                _context.SubscriptionTypes.Remove(subscriptionType);
+                var x = await _context.SubscriptionTypes.Where(y => y.IsActive).ToListAsync();
+                return _mapper.Map<List<SubscriptionTypeDTO>>(x);
+                          }
+            catch 
+            {
+                throw;
+            }
+
+        }
+        public async Task<SubscriptionTypeDTO> GetByIdAsync(int id)
+        {
+            try
+            {
+                var s = await _context.SubscriptionTypes.FindAsync(id);
+                if (s.IsActive)
+                      return _mapper.Map<SubscriptionTypeDTO>(s);
+                else
+                    throw new Exception($"cant find SubscriptionType by ID {id}");
+               
+            }
+            catch 
+            {
+                throw;
+            }
+
+        }
+        public async Task<SubscriptionTypeDTO> AddAsync(SubscriptionTypeDTO subscriptionType)
+        {
+            try
+            {
+                var s = await _context.SubscriptionTypes.AddAsync(_mapper.Map<SubscriptionType>(subscriptionType));
+                await _context.SaveChangesAsync();
+                return subscriptionType;
+            }
+            catch
+            {
+                throw;
+            }
+
+        }
+        public async Task UpdateAsync(SubscriptionTypeDTO subscriptionTypeDto)
+        {
+            try
+            {
+                _context.SubscriptionTypes.Update(_mapper.Map<SubscriptionType>(subscriptionTypeDto));
                 await _context.SaveChangesAsync();
             }
+            catch 
+            {
+                throw;
+            }
+
         }
+        public async Task DeleteAsync(int id)
+        {
+            try
+            {
+                var subscriptionType = await _context.SubscriptionTypes.FindAsync(id);
+                if (subscriptionType == null||subscriptionType.IsActive==false)
+                {
+                    throw new Exception($"cant find subscription by ID {id}");
+                }
+               subscriptionType.IsActive=false;
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+
+        }
+
     }
 }

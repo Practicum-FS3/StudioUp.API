@@ -1,68 +1,79 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repository
 {
     public class HMORepository : IHMORepository
     {
-
         private readonly DataContext _context;
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
+        private readonly ILogger<HMORepository> _logger;
 
-        public HMORepository(DataContext context, IMapper mapper)
+        public HMORepository(DataContext context, IMapper mapper, ILogger<HMORepository> logger)
         {
-            this._context = context;
-            this.mapper = mapper;
+            _context = context;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<HMODTO> AddAsync(HMODTO hmo)
         {
-            try{
-                var newHMO = await this._context.HMOs.AddAsync(mapper.Map<HMO>(hmo));
-                await this._context.SaveChangesAsync();
-                return hmo;
-            }
-            catch (Exception ex) {
-                throw new Exception("Failed to add HMO");
-            }
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
             try
             {
-                var hmo = await this._context.HMOs.FirstOrDefaultAsync(h => h.ID == id);
-                if (hmo != null)
-                {
-                    this._context.HMOs.Remove(hmo);
-                    await this._context.SaveChangesAsync();
-                    return true;
-                }
-                return false;
+                var newHMO = _mapper.Map<HMO>(hmo);
+                newHMO.IsActive = true; 
+                await _context.HMOs.AddAsync(newHMO);
+                await _context.SaveChangesAsync();
+                return hmo;
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to delete HMO");
+                _logger.LogError(ex, "- this error in the func AddAsync-Repo");
+                throw;
             }
         }
+
+        public async Task DeleteAsync(int id)
+        {
+            try
+            {
+                var hmo = await _context.HMOs.FirstOrDefaultAsync(h => h.ID == id && h.IsActive);
+                if (hmo == null)
+                {
+                    throw new Exception($"HMO with ID {id} does not exist or is already inactive.");
+                }
+
+                hmo.IsActive = false;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "- this error in the func DeleteAsync-Repo");
+                throw;
+            }
+        }
+
+
 
         public async Task<List<HMODTO>> GetAllAsync()
         {
             try
             {
-                return mapper.Map<List<HMO>, List<HMODTO>>(await this._context.HMOs.ToListAsync());
+                var activeHMOs = await _context.HMOs.Where(h => h.IsActive).ToListAsync();
+                return _mapper.Map<List<HMODTO>>(activeHMOs);
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to fetch any HMOS");
+                _logger.LogError(ex, "- this error in the func GetAllAsync-Repo");
+                throw;
             }
         }
 
@@ -70,33 +81,34 @@ namespace StudioUp.Repo.Repository
         {
             try
             {
-                var h = mapper.Map<HMO , HMODTO>(await _context.HMOs.FirstOrDefaultAsync(x => x.ID == id));
-                return h;
+                var hmo = await _context.HMOs.FirstOrDefaultAsync(h => h.ID == id && h.IsActive);
+                if (hmo == null)
+                {
+                    throw new Exception($"HMO with ID {id} does not exist or is inactive.");
+                }
+                return _mapper.Map<HMODTO>(hmo);
             }
             catch (Exception ex)
             {
-                throw new Exception("HMO return failed");
+                _logger.LogError(ex, "- this error in the func GetByIdAsync-Repo");
+                throw;
             }
         }
 
-        public async Task<bool> UpdateAsync(int id , HMODTO hmo)
+        public async Task<bool> UpdateAsync(HMODTO hmoDTO)
         {
-            try
-            {
-                var h = await this._context.HMOs.FirstOrDefaultAsync(h => h.ID == id);
-                if (h == null) { 
-                    return false;
-                }
-                h.Title = hmo.Title;
+            try { 
+           HMO hmo = _mapper.Map<HMO>(hmoDTO); 
 
-                h.IsActive = hmo.IsActive;
-                _context.HMOs.Update(mapper.Map<HMO>(h));
-                await this._context.SaveChangesAsync();
+            _context.HMOs.Update(hmo);
+            await _context.SaveChangesAsync();
                 return true;
+               
             }
             catch (Exception ex)
             {
-                throw new Exception("Update to HMO failed");
+                _logger.LogError(ex, "- this error in the func UpdateAsync-Repo");
+                throw;
             }
         }
     }

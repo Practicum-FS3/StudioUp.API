@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
-using StudioUp.Models;
 using StudioUp.Repo;
 using AutoMapper;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 
 namespace StudioUp.API.Controllers
 {
@@ -13,88 +11,143 @@ namespace StudioUp.API.Controllers
     public class ContentTypeController : ControllerBase
     {
         private readonly IContentTypeRepository _repository;
-        private readonly IMapper _mapper;
+        private readonly ILogger<ContentTypeController> _logger;
 
-        public ContentTypeController(IContentTypeRepository repository, IMapper mapper)
+        public ContentTypeController(IContentTypeRepository repository,ILogger<ContentTypeController> logger)
         {
             _repository = repository;
-            _mapper = mapper;
+            _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ContentTypeDTO>>> GetAll()
+        [HttpGet("GetAllContentType")]
+        public async Task<ActionResult<IEnumerable<ContentTypeDTO>>> GetAllContentType()
         {
-            var contentTypes = await _repository.GetAll();
-            return Ok(_mapper.Map<IEnumerable<ContentTypeDTO>>(contentTypes));
-        }
-
-        [HttpGet("GetByIdWithContentSection/{id}")]
-        public async Task<ActionResult<ContentTypeDTO>> GetByIdWithContentSection(int id)
-        {
-            ContentType contentTypes = await _repository.GetByIdWithContentSection(id);
-            return Ok(_mapper.Map<ContentTypeDTO>(contentTypes));
-        }
-         [HttpGet("GetByIdWithContentSectionHPOnly/{id}")]
-        public async Task<ActionResult<ContentTypeDTO>> GetByIdWithContentSectionHPOnly(int id)
-        {
-            ContentType contentTypes = await _repository.GetByIdWithContentSectionHPOnly(id);
-            return Ok(_mapper.Map<ContentTypeDTO>(contentTypes));
-        }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ContentTypeDTO>> GetById(int id)
-        {
-            var contentType = await _repository.GetById(id);
-            if (contentType == null)
+            try
             {
-                return NotFound();
+                var contentTypes = await _repository.GetAll();
+                return Ok(contentTypes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in ContentTypeController/GetAllContentType");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("GetContentTypeByIdWithContentSection/{id}")]
+        public async Task<ActionResult<ContentTypeDTO>> GetContentTypeByIdWithContentSection(int id)
+        {
+            try
+            {
+                ContentTypeDTO contentTypes = await _repository.GetByIdWithContentSection(id);
+                if (contentTypes == null)
+                {
+                    return NotFound("content types not found by ID");
+                }
+                return Ok(contentTypes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in ContentTypeController/GetContentTypeByIdWithContentSection");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
-            return Ok(_mapper.Map<ContentTypeDTO>(contentType));
         }
-
-        [HttpPost]
-        public async Task<ActionResult<ContentTypeDTO>> Create(ContentTypeDTO contentTypeDTO)
+        [HttpGet("GetContentTypeByIdWithContentSectionHPOnly/{id}")]
+        public async Task<ActionResult<ContentTypeDTO>> GetContentTypeByIdWithContentSectionHPOnly(int id)
         {
-            var contentType = _mapper.Map<ContentType>(contentTypeDTO);
-            contentType = await _repository.Create(contentType);
-
-            return CreatedAtAction(nameof(GetById), new { id = contentType.ID }, _mapper.Map<ContentTypeDTO>(contentType));
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ContentTypeDTO>> Update(int id, ContentTypeDTO contentTypeDTO)
-        {
-            if (id != contentTypeDTO.ID)
+            try
             {
-                return BadRequest();
+                ContentTypeDTO contentTypes = await _repository.GetByIdWithContentSectionHPOnly(id);
+                if (contentTypes == null)
+                {
+                    return NotFound("content types not found by ID");
+
+                }
+                return Ok(contentTypes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in ContentTypeController/GetContentTypeByIdWithContentSectionHPOnly");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
-            var contentType = _mapper.Map<ContentType>(contentTypeDTO);
-            contentType = await _repository.Update(contentType);
-
-            return Ok(_mapper.Map<ContentTypeDTO>(contentType));
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpGet("GetByContentTypeId/{id}")]
+        public async Task<ActionResult<ContentTypeDTO>> GetByContentTypeId(int id)
         {
             try
             {
                 var contentType = await _repository.GetById(id);
                 if (contentType == null)
                 {
-                    return NotFound($"Training with ID {id} not found.");
+                    return NotFound("content types not found by ID");
                 }
 
-                contentType.IsActive = false;
-                await _repository.Update(contentType);
+                return Ok(contentType);
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError(ex, " this error in ContentTypeController/GetByContentTypeId");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
+        }
+
+        [HttpPost("CreateContentType")]
+        public async Task<ActionResult<ContentTypeDTO>> CreateContentType(ContentTypeDTO contentTypeDTO)
+        {
+            if (contentTypeDTO == null)
+            {
+                return BadRequest("The content type field is null.");
+            }
+            try
+            {
+                var contentType = await _repository.Create(contentTypeDTO);
+                return Ok(contentType); 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in ContentTypeController/CreateContentType");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
+        }
+
+        [HttpPut("UpdateContentType")]
+        public async Task<ActionResult> UpdateContentType(ContentTypeDTO contentTypeDTO)
+        {
+            if (contentTypeDTO == null)
+            {
+                return BadRequest("The content type field is null.");
+            }
+            try
+            {
+                await _repository.Update(contentTypeDTO);
                 return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, " this error in ContentTypeController/Update");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+
+        }
+
+        [HttpDelete("DeleteContentType/{id}")]
+        public async Task<IActionResult> DeleteContentType(int id)
+        {
+            try
+            {
+                await _repository.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in ContentTypeController/DeleteContentType");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
         }
     }
 }

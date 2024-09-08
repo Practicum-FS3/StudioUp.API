@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using StudioUp.Models;
+using StudioUp.DTO;
 using StudioUp.Repo;
 
 namespace StudioUp.API.Controllers
@@ -9,68 +9,107 @@ namespace StudioUp.API.Controllers
     [ApiController]
     public class PaymentOptionController : ControllerBase
     {
-        private readonly IRepository<PaymentOption> _repository;
+        private readonly IRepository<PaymentOptionDTO> _repository;
+        private readonly ILogger<PaymentOptionController> _logger;
 
-        public PaymentOptionController(IRepository<PaymentOption> repsitory)
+
+        public PaymentOptionController(IRepository<PaymentOptionDTO> repsitory, ILogger<PaymentOptionController> logger)
         {
             _repository = repsitory;
+            _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PaymentOption>>> GetPaymentOptions()
+        [HttpGet("GetPaymentOptions")]
+        public async Task<ActionResult<IEnumerable<PaymentOptionDTO>>> GetAPaymentOptions()
         {
-            var paymentOptions = await _repository.GetAllAsync();
-            return Ok(paymentOptions);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<object>> GetPaymentOption(int id)
-        {
-            var paymentOption = await _repository.GetByIdAsync(id);
-            if (paymentOption == null)
+            try
             {
-                return NotFound();
+                var paymentOptions = await _repository.GetAllAsync();
+                return Ok(paymentOptions);
             }
-            return Ok(paymentOption);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPaymentOption(int id, PaymentOption paymentOption)
-        {
-            if (id != paymentOption.ID)
+            catch (Exception ex)
             {
-                return BadRequest();
+                _logger.LogError(ex, " this error in PaymentOptionController/GetPaymentOptions");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+
             }
 
-            await _repository.UpdateAsync(paymentOption);
-            return NoContent();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<object>> PostPaymentOption(PaymentOption paymentOption)
-        {
-            await _repository.AddAsync(paymentOption);
-            return CreatedAtAction(nameof(GetPaymentOption), new { id = paymentOption.ID }, paymentOption);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePaymentOption(int id)
+        [HttpGet("GetPaymentOptionById/{id}")]
+        public async Task<ActionResult<PaymentOptionDTO>> GetPaymentOptionById(int id)
         {
             try
             {
                 var paymentOption = await _repository.GetByIdAsync(id);
                 if (paymentOption == null)
                 {
-                    return NotFound($"Training with ID {id} not found.");
+                    return NotFound("payment option not found by ID");
                 }
+                return Ok(paymentOption);
 
-                paymentOption.IsActive = false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in PaymentOptionController/GetPaymentOption");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
+        }
+
+        [HttpPut("UpdatePaymentOption")]
+        public async Task<IActionResult> UpdatePaymentOption(PaymentOptionDTO paymentOption)
+        {
+            if (paymentOption == null)
+            {
+                return BadRequest("The payment option field is null.");
+            }
+           
+            try
+            {
                 await _repository.UpdateAsync(paymentOption);
-
                 return NoContent();
             }
             catch (Exception ex)
             {
+
+                _logger.LogError(ex, " this error in PaymentOptionController/PutPaymentOption");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
+        }
+
+        [HttpPost("CreatePaymentOption")]
+        public async Task<ActionResult<PaymentOptionDTO>> CreatePaymentOption(PaymentOptionDTO paymentOption)
+        {
+            if (paymentOption == null)
+            {
+                return BadRequest("The payment option field is null.");
+            }
+            try
+            {
+                var p = await _repository.AddAsync(paymentOption);
+                return Ok(p);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in PaymentOptionController/PostPaymentOption");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("DeletePaymentOptionById/{id}")]
+        
+        public async Task<IActionResult> DeletePaymentOption(int id)
+        {
+            try
+            {
+                await _repository.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in PaymentOptionController/DeletePaymentOption");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

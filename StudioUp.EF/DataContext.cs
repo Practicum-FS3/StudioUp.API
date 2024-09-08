@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StudioUp.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,17 @@ namespace StudioUp.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LoginModel>()
-                .HasKey(l => l.Id); // הוסף הגדרה של מפתח ראשי
-           
+                .HasKey(l => l.Id); 
+          
+            modelBuilder.Entity<Training>()
+           .HasOne(t => t.TrainingCustomerType)
+           .WithMany()
+           .HasForeignKey(t => t.TrainingCustomerTypeId);
         }
+    
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<PaymentOption> PaymentOptions { get; set; }
-
+        public DbSet<Contact> Contacts { get; set; }
         public DbSet<SubscriptionType> SubscriptionTypes { get; set; }
         public DbSet<TrainingType> TrainingTypes { get; set; }
         public DbSet<HMO> HMOs { get; set; }
@@ -35,10 +41,19 @@ namespace StudioUp.Models
         public DbSet<TrainingCustomerType> TrainingCustomersTypes { get;set; }
         public DbSet<ContentSection> ContentSections { get; set; }
         public DbSet<FileUpload> Files { get; set; }
+        public DbSet<CustomerHMOS> CustomerHMOS { get; set; }
+        public DbSet<LeumitCommitments> LeumitCommitments { get; set; }
+        public DbSet<LeumitCommimentTypes> LeumitCommimentTypes { get; set; }
+        public DbSet<CustomerSubscription> CustomerSubscriptions { get; set; }
+
+        public DbSet<CustomerFixedTraining> CustomerFixedTrainings { get; set; }
+        public DbSet<InternalHomeLinks> InternalHomeLinks { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //optionsBuilder.EnableSensitiveDataLogging();
             //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StudioUp");
+
         }
 
     }

@@ -1,51 +1,119 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using StudioUp.DTO;
 using StudioUp.Models;
+using StudioUp.Repo.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class CustomerTypeRepository : IRepository<CustomerType>
+    public class CustomerTypeRepository : ICustomerTypeRepository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly ILogger<CustomerTypeRepository> _logger;
 
-        public CustomerTypeRepository(DataContext context)
+        public CustomerTypeRepository(DataContext context, IMapper mapper, ILogger<CustomerTypeRepository> logger)
         {
             _context = context;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public async Task<List<CustomerType>> GetAllAsync()
+        public async Task<List<CustomerTypeDTO>> GetAllAsync()
         {
-            return await _context.CustomerTypes.ToListAsync();
+            try
+            {
+                var customerTypes = await _context.CustomerTypes.Where(ct => ct.IsActive).ToListAsync();
+                return _mapper.Map<List<CustomerTypeDTO>>(customerTypes);
+            }
+            catch 
+            {
+                throw;
+            }
         }
 
-        public async Task<CustomerType> GetByIdAsync(int id)
+        public async Task<CustomerTypeDTO> GetByIdAsync(int id)
         {
-            return await _context.CustomerTypes.FindAsync(id);
+            try
+            {
+                var customerType = await _context.CustomerTypes
+                                                  .Where(ct => ct.ID == id && ct.IsActive)
+                                                  .FirstOrDefaultAsync();
+                if (customerType == null)
+                {
+                    throw new KeyNotFoundException("CustomerType with the specified ID does not exist.");
+                }
+
+                return _mapper.Map<CustomerTypeDTO>(customerType);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public async Task AddAsync(CustomerType customerType)
+        public async Task<CustomerTypeDTO> AddAsync(CustomerTypeDTO customerType)
         {
-            await _context.CustomerTypes.AddAsync(customerType);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var entity = _mapper.Map<CustomerType>(customerType);
+                await _context.CustomerTypes.AddAsync(entity);
+                await _context.SaveChangesAsync();
+                return _mapper.Map<CustomerTypeDTO>(entity);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public async Task UpdateAsync(CustomerType customerType)
+        public async Task UpdateAsync(CustomerTypeDTO customerType)
         {
-            _context.CustomerTypes.Update(customerType);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var existingCustomerType = await _context.CustomerTypes.FindAsync(customerType.ID);
+
+                if (existingCustomerType == null)
+                {
+                    throw new KeyNotFoundException("CustomerType with the specified ID does not exist.");
+                }
+
+                _mapper.Map(customerType, existingCustomerType);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task DeleteAsync(int id)
         {
-            var customerType = await _context.CustomerTypes.FindAsync(id);
-            if (customerType != null)
+            try
             {
-                _context.CustomerTypes.Remove(customerType);
+                var customerType = await _context.CustomerTypes.FindAsync(id);
+
+                if (customerType == null)
+                {
+                    throw new KeyNotFoundException("CustomerType with the specified ID does not exist.");
+                }
+
+                if (!customerType.IsActive)
+                {
+                    throw new InvalidOperationException("CustomerType is already inactive.");
+                }
+
+                customerType.IsActive = false;
                 await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
             }
         }
     }

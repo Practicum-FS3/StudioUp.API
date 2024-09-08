@@ -1,4 +1,4 @@
-﻿using StudioUp.Models;
+﻿using StudioUp.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,11 +6,11 @@ namespace StudioUp.Repo
 {
     public interface IContentSectionRepository
     {
-        Task<IEnumerable<ContentSection>> GetAllAsync();
-        Task<ContentSection> GetByIdAsync(int id);
-        Task AddAsync(ContentSection contentSection);
-        Task UpdateAsync(ContentSection contentSection);
-        Task DeleteAsync(ContentSection contentSection);
-        Task<IEnumerable<ContentSection>> GetByContentTypeAsync(int contentTypeId); // הוספת פונקציה חדשה
+        Task<IEnumerable<ContentSectionDTO>> GetAllAsync();
+        Task<ContentSectionDTO> GetByIdAsync(int id);
+        Task<ContentSectionDTO> AddAsync(ContentSectionManagementDTO contentSection);
+        Task UpdateAsync(ContentSectionManagementDTO contentSection);
+        Task DeleteAsync(int ID);
+        Task<IEnumerable<ContentSectionDTO>> GetByContentTypeAsync(int contentTypeId); // הוספת פונקציה חדשה
     }
 }

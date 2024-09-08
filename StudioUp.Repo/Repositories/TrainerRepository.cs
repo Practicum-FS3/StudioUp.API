@@ -8,116 +8,99 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using StudioUp.Repo.Repository;
 namespace StudioUp.Repo.Repositories
 {
     public class TrainerRepository : ITrainerRepository
     {
-
-
         private readonly DataContext context;
         private readonly IMapper mapper;
-
         public TrainerRepository(DataContext context, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
-
         }
-        public async Task<TrainerDTO> AddTrainer(TrainerDTO trainer)
-        {
-            try
-            {
-                var trainer1 = await this.context.Trainers.AddAsync(mapper.Map<Trainer>(trainer));
-                await this.context.SaveChangesAsync();
-                return trainer;
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Failed to add a trainer");
-            }
-        }
-
-
-        public async Task<bool> DeleteTrainer(int id)
-        {
-            try
-            {
-                var c = await context.Trainers.FirstOrDefaultAsync(t => t.ID == id);
-                if (c == null)
-                {
-                    return false;
-                }
-                var mapT = mapper.Map<Trainer>(c);
-                context.Trainers.Remove(c);
-                await context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw e;
-
-            }
-        }
-
         public async Task<List<TrainerDTO>> GetAllTrainers()
         {
             try
             {
-                var trainers = await context.Trainers.ToListAsync();
+                var x = await context.Trainers.Where(y => y.IsActive).ToListAsync();
+                return mapper.Map<List<TrainerDTO>>(x);
 
-                return mapper.Map<List<TrainerDTO>>(trainers);
 
             }
-            catch (Exception e)
+            catch
             {
-                throw e;
-
+                throw;
             }
-
         }
-
         public async Task<TrainerDTO> GetTrainerById(int id)
         {
             try
             {
                 var c = await context.Trainers.FirstOrDefaultAsync(t => t.ID == id);
-                var mapTrain = mapper.Map<TrainerDTO>(c);
-                return mapTrain;
-
+                if (c.IsActive)
+                    return mapper.Map<TrainerDTO>(c);
+                else
+                    throw new Exception($"cant find trainer  by ID {id}");
+               
             }
-            catch (Exception e)
+            catch 
             {
-                throw e;
+                throw;
             }
         }
-
-        public async Task<bool> UpdateTrainer(TrainerDTO trainer)
+        public async Task<TrainerDTO> AddTrainer(TrainerDTO t)
         {
             try
             {
-                var trainer1 = await this.context.Trainers.FirstOrDefaultAsync(trainer1 => trainer1.ID == trainer.ID);
-                if (trainer1 == null)
-                {
-                    return false;
-                }
-                trainer1.Address = trainer.Address;
-                trainer1.Tel = trainer.Tel;
-                trainer1.Mail = trainer.Mail;
-                trainer1.LastName = trainer.LastName;
-                trainer1.FirstName = trainer.FirstName;
-                trainer1.IsActive = trainer.IsActive;
-                context.Trainers.Update(mapper.Map<Trainer>(trainer1));
+                var trainer = await context.Trainers.AddAsync(mapper.Map<Trainer>(t));
                 await this.context.SaveChangesAsync();
-                return true;
+                return t;
             }
-            catch (Exception e)
+            catch 
             {
-                throw new Exception("Update to trainer failed");
+                throw;
             }
-
         }
+        public async Task UpdateTrainer(TrainerDTO t)
+        {
+            try
+            {
+                var trainer = await this.context.Trainers.FirstOrDefaultAsync(trainer => trainer.ID == t.ID);
+                trainer.Address = t.Address;
+                trainer.Tel = t.Tel;
+                trainer.Mail = t.Mail;
+                trainer.LastName = t.LastName;
+                trainer.FirstName = t.FirstName;
+                trainer.IsActive = t.IsActive;
+                context.Trainers.Update(mapper.Map<Trainer>(trainer));
+                await context.SaveChangesAsync();
+            }
+            catch 
+            {
+                throw;
+            }
+        }
+        public async Task DeleteTrainer(int id)
+        {
+            try
+            {
+                var c = await context.Trainers.FirstOrDefaultAsync(t => t.ID == id);
+                if (c == null||c.IsActive==false)
+                {
+                    throw new($"Not found trainre with ID: {id}");
+                }
+                c.IsActive = false;
+                await context.SaveChangesAsync();
+            }
+            catch 
+            {
+                throw;
 
-
+            }
+        }
     }
 }
 

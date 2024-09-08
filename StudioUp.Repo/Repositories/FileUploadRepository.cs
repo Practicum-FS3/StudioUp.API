@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
@@ -15,10 +16,13 @@ namespace StudioUp.Repo.Repositories
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        public FileUploadRepository(DataContext context, IMapper mapper)
+        private readonly ILogger<FileUploadRepository> _logger;
+
+        public FileUploadRepository(DataContext context, IMapper mapper, ILogger<FileUploadRepository> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
         public async Task<FileDownloadDTO> GetFileAsync(int id)
         {
@@ -33,8 +37,8 @@ namespace StudioUp.Repo.Repositories
             {
                 throw;
             }
-
         }
+
         public async Task<int> AddFileAsync(IFormFile file)
         {
             try
@@ -60,6 +64,7 @@ namespace StudioUp.Repo.Repositories
                 throw;
             }
         }
+
         public async Task DeleteFileAsync(int id)
         {
             try
@@ -68,14 +73,16 @@ namespace StudioUp.Repo.Repositories
                 fileUpload.IsActive = false;
                 if (fileUpload == null)
                     throw new Exception("File not found by id");
-                // _context.Files.Update(fileUpload);
+               // _context.Files.Update(fileUpload);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
                 throw;
             }
-
+           
         }
+      
+       
     }
 }
