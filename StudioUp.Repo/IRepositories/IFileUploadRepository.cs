@@ -11,7 +11,7 @@ namespace StudioUp.Repo.IRepositories
     public interface IFileUploadRepository
     {
         Task<FileDownloadDTO> GetFileAsync(int id);
-        Task<FileDownloadDTO> AddFileAsync(IFormFile file);
+        Task<int> AddFileAsync(IFormFile file);
         Task DeleteFileAsync(int id);
     }
 }

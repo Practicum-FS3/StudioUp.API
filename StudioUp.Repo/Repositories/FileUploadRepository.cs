@@ -39,7 +39,7 @@ namespace StudioUp.Repo.Repositories
             }
 
         }
-        public async Task<FileDownloadDTO> AddFileAsync(IFormFile file)
+        public async Task<int> AddFileAsync(IFormFile file)
         {
             try
             {
@@ -55,7 +55,8 @@ namespace StudioUp.Repo.Repositories
                     };
                     _context.Files.Add(fileUpload);
                     await _context.SaveChangesAsync();
-                    return _mapper.Map<FileDownloadDTO>(fileUpload);
+                    //return _mapper.Map<FileDownloadDTO>(fileUpload);
+                    return fileUpload.Id;
                 }
             }
             catch (Exception)
