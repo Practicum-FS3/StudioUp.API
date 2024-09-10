@@ -28,8 +28,8 @@ namespace StudioUp.Repo.Repositories
             {
                 var lst = await _context.Trainings.Where(t => t.IsActive)
                               .Include(t => t.TrainingCustomerType.CustomerType)
-                 .Include(t => t.TrainingCustomerType.TrainingType)
-                 .Include(t => t.Trainer)
+                              .Include(t => t.TrainingCustomerType.TrainingType)
+                              .Include(t => t.Trainer)
                               .ToListAsync();
                 return _mapper.Map<List<TrainingDTO>>(lst);
             }
