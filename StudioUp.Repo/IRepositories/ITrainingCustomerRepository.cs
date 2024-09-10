@@ -18,5 +18,6 @@ namespace StudioUp.Repo.IRepositories
         Task<TrainingCustomerDTO> AddTraningCustomer(TrainingCustomerDTO trainingCustomer);
         Task<bool> UpdateTrainingCustomers(TrainingCustomerDTO trainingCustomer);       
         Task<bool> DeleteTraningCustomer(int id);
+        Task<bool> AddTrainingForCustomer(int TrainingId, int CustomerId);
     }
 }

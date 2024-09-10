@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudioUp.DTO;
+using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
 using StudioUp.Repo.Repositories;
 using System;
@@ -125,6 +126,22 @@ namespace StudioUp.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet(" AddTrainingForCustomer")]
+        public async Task<ActionResult> addTraining( int trainingId,int customerId)
+        {
+            try { 
+                var trainingCustomer = await _trainingCustomerRepository.AddTrainingForCustomer(trainingId, customerId);
+                if (trainingCustomer == false)
+                {
+                    return NotFound();
+                }
+                return Ok(trainingCustomer);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }
