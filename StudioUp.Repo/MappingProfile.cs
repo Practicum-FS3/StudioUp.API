@@ -52,7 +52,7 @@ namespace StudioUp.Repo
             CreateMap<TrainingCustomerType, TrainingCustomerTypeDTO>()
                .ForMember(dest => dest.TrainingCustomerTypeName, opt => opt.MapFrom(src => src.TrainingType.Title + " " + src.CustomerType.Title));
             CreateMap<TrainingCustomerTypePostComand, TrainingCustomerType>().ReverseMap();
-            CreateMap<Training, TrainingDTO>().ReverseMap();
+            CreateMap<TrainingDTO, Training>().ReverseMap();
             CreateMap<TrainingType, TrainingTypeDTO>().ReverseMap();
             CreateMap<FileUpload, FileUploadDTO>().ReverseMap();
             CreateMap<FileUpload, FileDownloadDTO>().ReverseMap();
@@ -78,7 +78,6 @@ namespace StudioUp.Repo
              .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.Training.TrainingCustomerType.TrainingType.Title));
 
 
-            CreateMap<Training, TrainingDTO>().ReverseMap();
 
             CreateMap<TrainingCustomer, CalanderAvailableTrainingDTO>()
             .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Training.Training.Trainer != null ? $"{src.Training.Training.Trainer.FirstName} {src.Training.Training.Trainer.LastName}" : string.Empty))
@@ -89,9 +88,27 @@ namespace StudioUp.Repo
             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.Training.Training.DayOfWeek))
             .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.Training.ParticipantsCount))
              .ForMember(dest => dest.IsRegistered, opt => opt.MapFrom(src => true));
-        
+            CreateMap<Training, TrainingDTO>()
+               .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Trainer.FirstName + " " + src.Trainer.LastName))
+                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Hour, src.Minute)))
+            .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.CustomerType.Title))
+            .ForMember(dest => dest.TrainingCustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title + ' ' + src.TrainingCustomerType.CustomerType.Title))
+            .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title));
 
-        CreateMap<DateTime, DateOnly>()
+
+
+            CreateMap<Training, TrainingPostDTO>();
+            CreateMap<TrainingPostDTO, Training>()
+             .ForMember(dest => dest.TrainerID, opt => opt.MapFrom(src => src.TrainerID))
+             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.DayOfWeek))
+             .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => src.Hour))
+             .ForMember(dest => dest.Minute, opt => opt.MapFrom(src => src.Minute))
+             .ForMember(dest => dest.TrainingCustomerTypeId, opt => opt.MapFrom(src => src.TrainingCustomerTypeId))
+             .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.ParticipantsCount))
+             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+
+
+            CreateMap<DateTime, DateOnly>()
              .ConvertUsing(src => DateOnly.FromDateTime(src));
             CreateMap<DateOnly, DateTime>()
                 .ConvertUsing(src => src.ToDateTime(TimeOnly.MinValue));
