@@ -69,6 +69,20 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
+        public async Task<CustomerDTO> GetCustomerByEmail(string email)
+        {
+            try
+            {
+                var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email && c.IsActive);
+                var mapCust = mapper.Map<CustomerDTO>(cust);
+                return mapCust;
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public async Task DeleteAsync(int id)
         {
             try
