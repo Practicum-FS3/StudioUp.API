@@ -55,7 +55,17 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
+                var x= await context.Trainers.FirstOrDefaultAsync(y => y.FirstName == t.FirstName&&y.LastName==t.LastName&&y.Mail==t.Mail);
+                    if (x==null)
+                {
                 var trainer = await context.Trainers.AddAsync(mapper.Map<Trainer>(t));
+
+                }
+                else
+                {
+                    x.IsActive = true;
+                    context.Trainers.Update(mapper.Map<Trainer>(x));
+                }
                 await this.context.SaveChangesAsync();
                 return t;
             }
