@@ -90,7 +90,6 @@ namespace StudioUp.API
             builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
             builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainingTypeRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-            builder.Services.AddScoped<EmailService>();
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
 /*            builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
 */
@@ -108,6 +107,7 @@ namespace StudioUp.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
+            builder.Services.AddSingleton<EmailService>();
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));

@@ -16,10 +16,8 @@ namespace StudioUp.Repo
     {
         public MappingProfile()
         {
-
             CreateMap<AvailableTraining, AvailableTrainingDTO>().ReverseMap();
             CreateMap<InternalHomeLinks, InternalHomeLinksDTO>().ReverseMap();
-
             CreateMap<Contact, ContactDTO>().ReverseMap();
             CreateMap<Customer, CustomerDTO>().ReverseMap();
             CreateMap<CustomerType, CustomerTypeDTO>().ReverseMap();
@@ -35,8 +33,6 @@ namespace StudioUp.Repo
             CreateMap<TrainingCustomerType, TrainingCustomerTypeDTO>().ReverseMap();
             CreateMap<CustomerSubscriptionDTO, CustomerSubscription>().ReverseMap();
             CreateMap<TrainingCustomer, TrainingCustomerDTO>().ReverseMap();
-
-
             CreateMap<ContentType, ContentTypeDTO>().ReverseMap();
             CreateMap<ContentSection, ContentSectionDTO>()
                 .ForMember(dest => dest.Image, opt => opt.MapFrom(src => new FileDownloadDTO
@@ -45,7 +41,6 @@ namespace StudioUp.Repo
                     ContentType = "image/png", // ערך קבוע
                     Data = src.ImageData,
                 }));
-
             CreateMap<ContentSectionManagementDTO, ContentSection>()
              .ForMember(dest => dest.ImageData, opt => opt.MapFrom(src => ConvertIFormFileToByteArray(src.fileUploadDTO)));
 
@@ -66,9 +61,6 @@ namespace StudioUp.Repo
             .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.CustomerType.Title))
             .ForMember(dest => dest.TrainingTypeId, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.ID))
             .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title));
-
-
-
 
             CreateMap<AvailableTraining, CalanderAvailableTrainingDTO>()
              .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Training.Trainer.FirstName + " " + src.Training.Trainer.LastName))
@@ -94,8 +86,6 @@ namespace StudioUp.Repo
             .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.CustomerType.Title))
             .ForMember(dest => dest.TrainingCustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title + ' ' + src.TrainingCustomerType.CustomerType.Title))
             .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title));
-
-
 
             CreateMap<Training, TrainingPostDTO>();
             CreateMap<TrainingPostDTO, Training>()
