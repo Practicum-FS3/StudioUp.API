@@ -14,6 +14,8 @@ namespace StudioUp.Repo.IRepositories
         Task<CustomerDTO> GetByIdAsync(int id);
         Task<CustomerDTO> GetCustomerByEmailAndPassword(string email, string password);
         Task<CustomerDTO> GetCustomerByEmail(string email);
+        Task<string> GetPasswordrByEmail(string email);
+
 
         Task UpdateAsync(CustomerDTO entity);
 
