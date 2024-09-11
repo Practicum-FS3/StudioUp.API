@@ -83,6 +83,24 @@ namespace StudioUp.Repo.Repositories
                 throw;
             }
         }
+
+        public async Task<string> GetPasswordrByEmail(string email)
+        {
+            try
+            {
+                var login = await context.Login.FirstOrDefaultAsync(c => c.Email == email);
+                if (login == null) 
+                {
+                    return null;
+                }
+                var password = login.Password;
+                return password;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public async Task DeleteAsync(int id)
         {
             try

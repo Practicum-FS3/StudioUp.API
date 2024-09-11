@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using StudioUp.Models;
 using StudioUp.Repo;
 using StudioUp.Repo.IRepositories;
@@ -34,10 +35,12 @@ namespace StudioUp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel login)
         {
-            var cust = await _iCustomerRepository.GetCustomerByEmailAndPassword(login.Email, login.Password);
-            if (cust is not null)
+            try
             {
-                var claims = new List<Claim>()
+                var cust = await _iCustomerRepository.GetCustomerByEmailAndPassword(login.Email, login.Password);
+                if (cust is not null)
+                {
+                    var claims = new List<Claim>()
                 {
                 new Claim("Id", cust.Id.ToString()),
                 new Claim("Name", cust.FirstName+" "+cust.LastName),
@@ -51,19 +54,25 @@ namespace StudioUp.API.Controllers
                 new Claim("Email", cust.Email)
                  };
 
-                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JWT:Key")));
-                var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                var tokeOptions = new JwtSecurityToken(
-                    issuer: _configuration.GetValue<string>("JWT:Issuer"),
-                    audience: _configuration.GetValue<string>("JWT:Audience"),
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(60),
-                    signingCredentials: signinCredentials
-                );
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-                return Ok(new { Token = tokenString });
+                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("JWT:Key")));
+                    var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                    var tokeOptions = new JwtSecurityToken(
+                        issuer: _configuration.GetValue<string>("JWT:Issuer"),
+                        audience: _configuration.GetValue<string>("JWT:Audience"),
+                        claims: claims,
+                        expires: DateTime.Now.AddMinutes(60),
+                        signingCredentials: signinCredentials
+                    );
+                    var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+                    return Ok(new { Token = tokenString });
+                }
+                return Unauthorized();
             }
-            return Unauthorized();
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Exception occurred: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred" });
+            }
         }
 
         [HttpPost("loginWithGoogle")]
@@ -109,6 +118,23 @@ namespace StudioUp.API.Controllers
                 {
                     return Unauthorized(new { message = "Customer not found" });
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Exception occurred: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred" });
+            }
+        }
+
+        [HttpPost("forget-password")]
+        public async Task<IActionResult> ForgetPassword([FromBody] loginWithGoogleModel email)
+        {
+            try
+            {
+                var password = await _iCustomerRepository.GetPasswordrByEmail(email.Email);
+                if (password == null)
+                    return NotFound();
+                return Ok(password);
             }
             catch (Exception ex)
             {
