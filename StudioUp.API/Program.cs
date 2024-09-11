@@ -90,11 +90,12 @@ namespace StudioUp.API
             builder.Services.AddScoped<IRepository<PaymentOptionDTO>, PaymentOptionRepository>();
             builder.Services.AddScoped<IRepository<TrainingTypeDTO>, TrainingTypeRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-
+            builder.Services.AddScoped<EmailService>();
             builder.Services.AddScoped<IContentSectionRepository, ContentSectionRepository>();
-            builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
+/*            builder.Services.AddScoped<CustomerTrainingsDetailsRepository>();
+*/
             builder.Services.AddScoped<IInternalHomeLinksRepository,InternalHomeLinksRepository>();
-            builder.Services.AddScoped<IRepository<TrainingCustomerTypeDTO>, TrainingCustomerTypeRepository>();
+            builder.Services.AddScoped<ITrainingCustomerTypesRepository, TrainingCustomerTypeRepository>();
             builder.Services.AddScoped<ICustomerHMOSRepository, CustomerHMOSRepository>();
             builder.Services.AddScoped<ILeumitCommimentsRepository, LeumitCommimentRepository>();
             builder.Services.AddScoped<ILeumitCommimentTypesRepository, LeumitCommimentTypesRepository>();
@@ -102,7 +103,7 @@ namespace StudioUp.API
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             builder.Services.AddScoped<ITrainingCustomerRepository, TrainingCustomerRepository>();
-          //  builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
+            //builder.Services.AddScoped<ITrainingCustomerTypeRepository, TrainingCustomerTypeRepository>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();

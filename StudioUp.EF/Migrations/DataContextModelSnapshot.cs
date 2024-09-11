@@ -30,8 +30,8 @@ namespace StudioUp.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -216,6 +216,32 @@ namespace StudioUp.Models.Migrations
                     b.HasIndex("SubscriptionTypeId");
 
                     b.ToTable("T_Customers");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.CustomerFixedTraining", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("TrainingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("TrainingId");
+
+                    b.ToTable("T_CustomerFixedTrainings");
                 });
 
             modelBuilder.Entity("StudioUp.Models.CustomerHMOS", b =>
@@ -734,6 +760,21 @@ namespace StudioUp.Models.Migrations
                     b.Navigation("PaymentOption");
 
                     b.Navigation("SubscriptionType");
+                });
+
+            modelBuilder.Entity("StudioUp.Models.CustomerFixedTraining", b =>
+                {
+                    b.HasOne("StudioUp.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("StudioUp.Models.Training", "Training")
+                        .WithMany()
+                        .HasForeignKey("TrainingId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Training");
                 });
 
             modelBuilder.Entity("StudioUp.Models.CustomerHMOS", b =>

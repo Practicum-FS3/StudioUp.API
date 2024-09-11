@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace StudioUp.Repo.Repositories
 {
-    public class TrainingCustomerTypeRepository : IRepository<TrainingCustomerTypeDTO>
+    public class TrainingCustomerTypeRepository : ITrainingCustomerTypesRepository
     {
 
 
@@ -29,7 +29,16 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var TrainingCustomerType = await _context.TrainingCustomersTypes.Where(t => t.IsActive).ToListAsync();
+                //List<Training> lst = await _context.Trainings.Where(t => t.IsActive)
+                //.Include(t => t.TrainingCustomerType.CustomerType)
+                //.Include(t => t.TrainingCustomerType.TrainingType)
+                //.Include(t => t.Trainer)
+                //.ToListAsync();
+                //return _mapper.Map<List<CalanderTrainingDTO>>(lst);
+                var TrainingCustomerType = await _context.TrainingCustomersTypes.Where(t => t.IsActive)
+                    .Include(t => t.TrainingType)
+                    .Include(t => t.CustomerType)
+                    .ToListAsync();
                 return _mapper.Map<List<TrainingCustomerTypeDTO>>(TrainingCustomerType);
             }
 
@@ -44,7 +53,9 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
-                var c = await _context.TrainingCustomersTypes.Where(t => t.Id == id && t.IsActive).FirstOrDefaultAsync();
+                var c = await _context.TrainingCustomersTypes.Where(t => t.Id == id && t.IsActive)
+                     .Include(t => t.TrainingType)
+                    .Include(t => t.CustomerType).FirstOrDefaultAsync();
                 return _mapper.Map<TrainingCustomerTypeDTO>(c);
             }
             catch (Exception ex)
@@ -56,7 +67,7 @@ namespace StudioUp.Repo.Repositories
 
 
         //הוספת אימון כולל בדיקות האם זה אפשרי
-        public async Task<TrainingCustomerTypeDTO> AddAsync(TrainingCustomerTypeDTO trainingCustomerTypedto)
+        public async Task<TrainingCustomerTypePostComand> AddAsync(TrainingCustomerTypePostComand trainingCustomerTypedto)
         {
             try
             {
@@ -85,9 +96,7 @@ namespace StudioUp.Repo.Repositories
                             foreach (var item in allTrainingCustomerType)
                             {
                                 if (item.TrainingTypeID == trainingCustomerType.TrainingTypeId && item.CustomerTypeID == trainingCustomerType.CustomerTypeID)
-                                {
-                                    throw new Exception("כבר קיים כזה סוג אימון!!");
-                                }
+                                { throw new Exception("כבר קיים כזה סוג אימון!!");}
                             }
                             var TrainingCustomerType1 = await _context.TrainingCustomersTypes.AddAsync(_mapper.Map<TrainingCustomerType>(trainingCustomerType));
                             await _context.SaveChangesAsync();
@@ -107,7 +116,7 @@ namespace StudioUp.Repo.Repositories
         }
 
 
-        public async Task UpdateAsync(TrainingCustomerTypeDTO trainingCustomerTypedto)
+        public async Task UpdateAsync(TrainingCustomerTypePostComand trainingCustomerTypedto)
         {
             try
             {

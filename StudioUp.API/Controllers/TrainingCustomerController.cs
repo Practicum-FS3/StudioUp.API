@@ -46,6 +46,19 @@ namespace StudioUp.API.Controllers
 
         }
 
+        [HttpGet("GetAllRegisteredTrainingsDetails")]
+        public async Task<ActionResult<IEnumerable<CalanderAvailableTrainingDTO>>> GetAllRegisteredTrainingsDetailsAsync()
+        {
+            try
+            {
+                var trainings = await _trainingCustomerRepository.GetAllRegisteredTrainingsDetailsAsync();
+                return Ok(trainings);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         [HttpGet("GetTraningCustomerById/{id}")]
         public async Task<ActionResult<TrainingCustomerDTO>> GetTraningCustomerById(int id)
@@ -173,6 +186,19 @@ namespace StudioUp.API.Controllers
             {
                 _logger.LogError(ex, "this error in TrainingCustomerController/DeleteTrainingCustomer");
                 return StatusCode(500, $"Internal server error:{ex.Message}");
+            }
+        }
+        [HttpGet("FilterCustomersTrainingDeatails")]
+        public async Task<ActionResult<List<CalanderAvailableTrainingDTO>>> FilterCustomersTrainingDeatails([FromQuery] DTO.CalanderAvailableTrainingFilterDTO filter)
+        {
+            try
+            {
+                return Ok(await _trainingCustomerRepository.FilterAsync(filter));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in CustomerTrainingsDetails/FilterTrainings");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }

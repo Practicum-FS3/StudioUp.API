@@ -31,9 +31,13 @@ namespace StudioUp.Repo.Repositories
         {
             try
             {
+                var mapCast = mapper.Map<Customer>(entity);
+                var newCustomer = await context.Customers.AddAsync(mapCast);
                 var x = await context.Customers.AddAsync(mapper.Map<Customer>(entity));
+
           /*    var mapCast = mapper.Map<Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);*/
+
                 await context.SaveChangesAsync();
 
                 return entity;
@@ -73,6 +77,38 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
+        public async Task<CustomerDTO> GetCustomerByEmail(string email)
+        {
+            try
+            {
+                var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email && c.IsActive);
+                var mapCust = mapper.Map<CustomerDTO>(cust);
+                return mapCust;
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<string> GetPasswordrByEmail(string email)
+        {
+            try
+            {
+                var login = await context.Login.FirstOrDefaultAsync(c => c.Email == email);
+                if (login == null) 
+                {
+                    return null;
+                }
+                var password = login.Password;
+                return password;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public async Task DeleteAsync(int id)
         {
             try

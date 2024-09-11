@@ -84,7 +84,7 @@ namespace StudioUp.API.Controllers
 
         // POST: api/Training
         [HttpPost("AddTraining")]
-        public async Task<IActionResult> AddTraining([FromBody] TrainingDTO trainingDTO)
+        public async Task<IActionResult> AddTraining([FromBody] TrainingPostDTO trainingDTO)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace StudioUp.API.Controllers
                 }
                 var training = await _trainingRepository.AddTraining(trainingDTO);
                 training.IsActive = true;
-                return CreatedAtAction(nameof(GetAllTrainings), new { id = training.ID }, training);
+                return CreatedAtAction(nameof(GetAllTrainings), new { id = 0 }, training);
             }
             catch (Exception ex)
             {
@@ -146,6 +146,23 @@ namespace StudioUp.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, " this error in TrainingController/DeleteTraining");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+        // GET: api/Training/forCalander
+        [HttpGet("ByCustomerTypeIdForCalander/{CustomerTypeId}")]
+        public async Task<ActionResult<IEnumerable<TrainingDTO>>> GetByCustomerTypeIdForCalander(int CustomerTypeId)
+        {
+            try
+            {
+                var trainings = await _trainingRepository.GetByCustomerTypeForCalander(CustomerTypeId);
+                return Ok(trainings);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in TrainingController/GetTrainingsCalender");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
