@@ -12,12 +12,21 @@ public class EmailService
 {
     private static readonly string[] Scopes = { GmailService.Scope.GmailSend };
     private static readonly string ApplicationName = "StudioUp";
+    private readonly IConfiguration _configuration;
+
+    public EmailService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
 
     public async Task SendEmailAsync(string toAddress, string subject, string body)
     {
         UserCredential credential;
+        var credentialsFilePath = _configuration["EmailSettings:CredentialsFilePath"];
 
-        using (var stream = new FileStream("Services/credentials.json", FileMode.Open, FileAccess.Read))
+
+        using (var stream = new FileStream(credentialsFilePath, FileMode.Open, FileAccess.Read))
         {
             credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                 GoogleClientSecrets.Load(stream).Secrets,
@@ -33,7 +42,9 @@ public class EmailService
         });
 
         var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("FullStack3 Practicum", "practicumfs3@gmail.com"));
+        var senderName = _configuration["EmailSettings:SenderName"];
+        var senderEmail = _configuration["EmailSettings:SenderEmail"];
+        message.From.Add(new MailboxAddress(senderName, senderEmail));
         message.To.Add(new MailboxAddress("", toAddress));
         message.Subject = subject;
         message.Body = new TextPart("plain") { Text = body };
