@@ -20,5 +20,6 @@ namespace StudioUp.Repo.IRepositories
         Task UpdateTrainingCustomer(TrainingCustomerDTO trainingCustomer);       
         Task DeleteTrainingCustomer(int id);
         Task<List<CalanderAvailableTrainingDTO>> FilterAsync(CalanderAvailableTrainingFilterDTO filter);
+        Task AddTrainingForCustomer(int TrainingId, int CustomerId);
     }
 }
