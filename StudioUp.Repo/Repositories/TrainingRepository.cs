@@ -28,8 +28,8 @@ namespace StudioUp.Repo.Repositories
             {
                 var lst = await _context.Trainings.Where(t => t.IsActive)
                               .Include(t => t.TrainingCustomerType.CustomerType)
-                 .Include(t => t.TrainingCustomerType.TrainingType)
-                 .Include(t => t.Trainer)
+                              .Include(t => t.TrainingCustomerType.TrainingType)
+                              .Include(t => t.Trainer)
                               .ToListAsync();
                 return _mapper.Map<List<TrainingDTO>>(lst);
             }
@@ -135,6 +135,18 @@ namespace StudioUp.Repo.Repositories
 
         }
 
+        public async Task<List<CalanderTrainingDTO>> GetByCustomerTypeForCalander(int customerTypeId)
+        {
+            var all = await _context.TrainingCustomersTypes.Where(x => x.CustomerTypeID == customerTypeId).Select(t => t.Id).ToListAsync();
 
+            List<Training> lst = await _context.Trainings.Where(y => all.Contains((int)(y.TrainingCustomerTypeId)))
+                            .Include(t => t.TrainingCustomerType.CustomerType)
+                            .Include(t => t.TrainingCustomerType.TrainingType)
+                            .Include(t => t.Trainer)
+                            .ToListAsync();
+            return _mapper.Map<List<CalanderTrainingDTO>>(lst);
+        }
+
+        
     }
 }

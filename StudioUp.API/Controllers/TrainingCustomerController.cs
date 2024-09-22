@@ -201,5 +201,18 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("AddTrainingForCustomer")]
+        public async Task<ActionResult> addTrainingForCustomer(int trainingId, int customerId)
+        {
+            try
+            {
+                await _trainingCustomerRepository.AddTrainingForCustomer(trainingId, customerId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        }
     }
-}

@@ -9,10 +9,11 @@ namespace StudioUp.Repo.IRepositories
 {
     public interface ITrainerRepository
     {
-        Task<List<TrainerDTO>> GetAllTrainers();
-        Task<TrainerDTO> GetTrainerById(int id);
-        Task UpdateTrainer(TrainerDTO trainer);
-        Task<TrainerDTO> AddTrainer(TrainerDTO trainer);
-        Task DeleteTrainer(int id);
+        Task<List<TrainerDTO>> GetAllTrainersAsync();
+        Task<TrainerDTO> GetTrainerByIdAsync(int id);
+        Task UpdateTrainerAsync(TrainerDTO trainer);
+        Task<TrainerDTO> AddTrainerAsync(TrainerDTO trainer);
+        Task DeleteTrainerAsync(int id);
+        Task<List<TrainerDTO>> FilterTrainerAsync(TrainerFilterDto filter);
     }
 }

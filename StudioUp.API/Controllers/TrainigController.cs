@@ -149,5 +149,22 @@ namespace StudioUp.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+        // GET: api/Training/forCalander
+        [HttpGet("ByCustomerTypeIdForCalander/{CustomerTypeId}")]
+        public async Task<ActionResult<IEnumerable<TrainingDTO>>> GetByCustomerTypeIdForCalander(int CustomerTypeId)
+        {
+            try
+            {
+                var trainings = await _trainingRepository.GetByCustomerTypeForCalander(CustomerTypeId);
+                return Ok(trainings);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " this error in TrainingController/GetTrainingsCalender");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
