@@ -37,31 +37,71 @@ namespace StudioUp.API.Controllers
             }
 
         }
-        [HttpPost("UploadFile")]
-        public async Task<ActionResult> UploadFile([FromForm] FileUploadDTO fileUploadDTO)
+        [HttpPost("UploadFileAndReturnFile")]
+        public async Task<ActionResult> UploadFileAndReturnFile([FromForm] FileUploadDTO fileUploadDTO)
         {
             try
             {
-                if (fileUploadDTO.File == null || fileUploadDTO.File.Length == 0)
-                    return BadRequest("File not selected");
+                var validationResult = ValidateFile(fileUploadDTO.File);
+                if (!validationResult.IsValid)
+                    return BadRequest(validationResult.ErrorMessage);
 
-                var permittedExtensions = new[] { ".pdf", ".png", ".jpg" };
-                var extension = Path.GetExtension(fileUploadDTO.File.FileName).ToLowerInvariant();
-                if (string.IsNullOrEmpty(extension) || !permittedExtensions.Contains(extension))
-                    return BadRequest("Invalid file type");
-                const long maxFileSize = 2 * 1024 * 1024;
-                if (fileUploadDTO.File.Length > maxFileSize)
-                    return BadRequest("File size exceeds the limit of 2 MB");
-                var result = await _fileUploadRepository.AddFileAsync(fileUploadDTO.File);
-                return File(result.Data, result.ContentType, result.FileName);
+                var fileId = await SaveFileAsync(fileUploadDTO.File);
+
+                var fileResult = await _fileUploadRepository.GetFileAsync(fileId);
+                if (fileResult == null)
+                    return NotFound("File not found.");
+
+                return File(fileResult.Data, fileResult.ContentType, fileResult.FileName);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, " this error in FileUploadController/UploadFile");
+                _logger.LogError(ex, "Error in FileUploadController/UploadFileAndReturnFile");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
         }
+
+        [HttpPost("UploadFileAndReturnId")]
+        public async Task<ActionResult> UploadFileAndReturnId([FromForm] FileUploadDTO fileUploadDTO)
+        {
+            try
+            {
+                var validationResult = ValidateFile(fileUploadDTO.File);
+                if (!validationResult.IsValid)
+                    return BadRequest(validationResult.ErrorMessage);
+
+                var fileId = await SaveFileAsync(fileUploadDTO.File);
+                return Ok(new { id = fileId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in FileUploadController/UploadFileAndReturnId");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        private (bool IsValid, string ErrorMessage) ValidateFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return (false, "File not selected");
+
+            var permittedExtensions = new[] { ".pdf", ".png", ".jpg" };
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(extension) || !permittedExtensions.Contains(extension))
+                return (false, "Invalid file type");
+
+            const long maxFileSize = 2 * 1024 * 1024;
+            if (file.Length > maxFileSize)
+                return (false, "File size exceeds the limit of 2 MB");
+
+            return (true, null);
+        }
+
+        private async Task<int> SaveFileAsync(IFormFile file)
+        {
+            return await _fileUploadRepository.AddFileAsync(file);
+        }
+        
         [HttpDelete("DeleteFile/{id}")]
         public async Task<IActionResult> DeleteFile(int id)
         {
