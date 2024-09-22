@@ -12,13 +12,16 @@ namespace StudioUp.API.Mappings
             CreateMap<ContentSection, ContentSectionDTO>().ReverseMap();
 
 
-            CreateMap<TrainingDTO, Training>()
-                 .ForMember(dest => dest.TrainerID, opt => opt.MapFrom(src => src.TrainerID))
-                 .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.DayOfWeek))
-                 //  .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.Time != null ? new TrainingTime { Hour = src.Time.Hour, Minute = src.Time.Minute } : null))
-                 .ForMember(dest => dest.TrainingCustomerTypeId, opt => opt.MapFrom(src => src.TrainingCustomerTypeId))
-                 .ForMember(dest => dest.ParticipantsCount, opt => opt.MapFrom(src => src.ParticipantsCount));
-            CreateMap<TrainingPostDTO, Training>();
+            CreateMap<Training, TrainingDTO>()
+               .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Trainer.FirstName + " " + src.Trainer.LastName))
+                  .ForMember(dest => dest.Hour, opt => opt.MapFrom(src => string.Format("{0}:{1}", src.Hour, src.Minute)))
+            .ForMember(dest => dest.CustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.CustomerType.Title))
+            .ForMember(dest => dest.TrainingCustomerTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title + ' ' + src.TrainingCustomerType.CustomerType.Title))
+            .ForMember(dest => dest.TrainingTypeName, opt => opt.MapFrom(src => src.TrainingCustomerType.TrainingType.Title));
+
+
+
+            CreateMap<Training,TrainingPostDTO >();
            CreateMap<TrainingPostDTO, Training>()
             .ForMember(dest => dest.TrainerID, opt => opt.MapFrom(src => src.TrainerID))
             .ForMember(dest => dest.DayOfWeek, opt => opt.MapFrom(src => src.DayOfWeek))

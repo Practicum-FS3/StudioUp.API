@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MailKit.Net.Smtp;
+using MimeKit;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StudioUp.DTO;
 using StudioUp.Models;
 using StudioUp.Repo.IRepositories;
+using MailKit.Security;
 
 namespace StudioUp.Repo.Repositories
 {
@@ -31,7 +34,12 @@ namespace StudioUp.Repo.Repositories
                 var mapCast = mapper.Map<Customer>(entity);
                 var newCustomer = await context.Customers.AddAsync(mapCast);
                 var x = await context.Customers.AddAsync(mapper.Map<Customer>(entity));
+
+          /*    var mapCast = mapper.Map<Customer>(entity);
+                var newCustomer = await context.Customers.AddAsync(mapCast);*/
+
                 await context.SaveChangesAsync();
+
                 return entity;
             }
             catch
@@ -69,6 +77,38 @@ namespace StudioUp.Repo.Repositories
             }
         }
 
+        public async Task<CustomerDTO> GetCustomerByEmail(string email)
+        {
+            try
+            {
+                var cust = await context.Customers.FirstOrDefaultAsync(c => c.Email == email && c.IsActive);
+                var mapCust = mapper.Map<CustomerDTO>(cust);
+                return mapCust;
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<string> GetPasswordrByEmail(string email)
+        {
+            try
+            {
+                var login = await context.Login.FirstOrDefaultAsync(c => c.Email == email);
+                if (login == null) 
+                {
+                    return null;
+                }
+                var password = login.Password;
+                return password;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public async Task DeleteAsync(int id)
         {
             try
@@ -178,6 +218,23 @@ namespace StudioUp.Repo.Repositories
             catch
             {
                 throw;
+            }
+        }
+
+        public async Task SendEmailAsync(string email, string subject, string message)
+        {
+            var emailMessage = new MimeMessage();
+            emailMessage.From.Add(new MailboxAddress("Up Studio", "UpStudio@example.com"));
+            emailMessage.To.Add(new MailboxAddress("", email));
+            emailMessage.Subject = subject;
+            emailMessage.Body = new TextPart("plain") { Text = message };
+
+            using (var client = new SmtpClient())
+            {
+                await client.ConnectAsync("smtp.example.com", 587, SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync("UpStudio@example.com", "password");
+                await client.SendAsync(emailMessage);
+                await client.DisconnectAsync(true);
             }
         }
     }

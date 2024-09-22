@@ -50,7 +50,7 @@ namespace StudioUp.DTO
             {
                 return number.ToString("D2");
             }
-            return "00";
+            return "11";
         }
 
 

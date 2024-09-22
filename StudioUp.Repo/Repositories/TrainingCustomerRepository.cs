@@ -319,6 +319,103 @@ namespace StudioUp.Repo.Repositories
                 if (isPast) query = query.Where(x => DateOnly.FromDateTime(x.Training.Date) <= DateOnly.FromDateTime(DateTime.Now));
             }
         }
+        public async Task AddTrainingForCustomer(int TrainingId, int CustomerId)
+        {
+            try
+            {
+                var training = await _context.AvailableTraining
+                .Include(tc => tc.Training)
+                .Include(at => at.Training.TrainingCustomerType)
+                .FirstOrDefaultAsync(x => x.TrainingId == TrainingId);
+                if (training == null)
+                    throw new Exception($"cant find training by ID {TrainingId}");
 
+                var customer = await _context.Customers
+               .Include(c => c.SubscriptionType)
+               .FirstOrDefaultAsync(x => x.Id == CustomerId);
+                if (customer == null)
+                    throw new Exception($"cant find customer by ID {CustomerId}");
+
+                if (await numOfParticipants(training) && await trainingQuota(customer, training.Date)
+                    && await checkType(customer, training))
+                {
+                    training.ParticipantsCount = training.ParticipantsCount + 1;
+                    TrainingCustomerDTO trainingCustomer = new TrainingCustomerDTO();
+                    trainingCustomer.TrainingID = TrainingId;
+                    trainingCustomer.CustomerID = CustomerId;
+                    trainingCustomer.Attended = false;
+                    trainingCustomer.IsActive = true;
+                    AddTrainingCustomer(trainingCustomer);
+                    await _context.SaveChangesAsync();
+                    throw new Exception($"You have successfully registered for this training");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<bool> trainingQuota(Customer customer, DateTime date)
+        {
+            try
+            {
+                var maxOfTrainingPerWeek = customer.SubscriptionType.NumberOfTrainingPerWeek; //מס' ימי סוג האימון הנוכחי לשבוע
+                int currentDayOfWeek = (int)date.DayOfWeek;
+
+                // טווח שבוע האימון הנוכחי
+                DateTime startDate = date.AddDays(-currentDayOfWeek);
+                DateTime endDate = startDate.AddDays(7);
+
+                // מס' פעמים ששהה באימון בשבוע של אימון זה
+                var numOfTrainingPerWeek = await _context.TrainingCustomers
+                .Include(tc => tc.Training)
+                .Where(x => x.CustomerID == customer.Id && x.Attended &&
+                x.Training.Date >= startDate && x.Training.Date < endDate)
+                .CountAsync();
+
+                if (numOfTrainingPerWeek < maxOfTrainingPerWeek)
+                {
+                    return true;
+                }
+                throw new Exception($"You have exceeded the amount of training this week");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> numOfParticipants(AvailableTraining training)
+        {
+            try
+            {
+                var currentNumOfParticipants = training.ParticipantsCount; //מס' משתתפים נוכחי
+                var MaxNumOfParticipants = training.Training.ParticipantsCount; //מס' מקסימלי של משתתפים
+                if (currentNumOfParticipants < MaxNumOfParticipants)
+                {
+                    return true;
+                }
+                throw new Exception($"The quota of participants for this training is full");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<bool> checkType(Customer customer, AvailableTraining training)
+        {
+            try
+            {
+                if (training.Training.TrainingCustomerType.CustomerTypeID == customer.CustomerTypeId)
+                {
+                    return true;
+                }
+                throw new Exception($"Your client type is not compatible with this training");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
